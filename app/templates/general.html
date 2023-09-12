@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>General Spectra</h1>
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="col-md-12">
+                <button class="btn btn-secondary">Add Spectra</button>
+                <button class="btn btn-secondary">Save Target Spectra</button>
+                <button class="btn btn-secondary">Open Target Spectra</button>
+            </div>
+            <div class="col-md-12">
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="radioOption" id="radioOption1" value="option1">
+                    <label class="form-check-label" for="radioOption1">
+                        This is a point source
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="radioOption" id="radioOption2" value="option2">
+                    <label class="form-check-label" for="radioOption2">
+                        This is a diffuse source
+                    </label>
+                </div>
+            </div>
+            <div class="col-md-12">
+            </div>
+
+        </div>
+        <div class="col-md-6">
+            to be replaced with source
+            <div style="width: 600px; height: 200px; background-color: ghostwhite;"></div>
+        </div>
+        <div class="container">
+
+            <div class="row">
+                <div class="col-md-3">
+                    <h5>Solar Items</h5>
+                    <form>
+                        <div class="form-group">
+                            <label for="year1">Year:</label>
+                            <input type="number" class="form-control" id="year1" name="year1" placeholder="Enter Year">
+                        </div>
+                        <div class="form-group">
+                            <label for="elongation1">Elongation:</label>
+                            <input type="number" class="form-control" id="elongation1" name="elongation1" placeholder="Enter Elongation">
+                        </div>
+                        <div class="form-group">
+                            <label for="latitude1">Latitude:</label>
+                            <input type="number" class="form-control" id="latitude1" name="latitude1" placeholder="Enter Latitude">
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-3">
+                    <h5>Lunar Items</h5>
+                    <form>
+                        <div class="form-group">
+                            <label for="year2">Year:</label>
+                            <input type="number" class="form-control" id="year2" name="year2" placeholder="Enter Year">
+                        </div>
+                        <div class="form-group">
+                            <label for="elongation2">Elongation:</label>
+                            <input type="number" class="form-control" id="elongation2" name="elongation2" placeholder="Enter Elongation">
+                        </div>
+                        <div class="form-group">
+                            <label for="latitude2">Latitude:</label>
+                            <input type="number" class="form-control" id="latitude2" name="latitude2" placeholder="Enter Latitude">
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-3">
+                    <h5>Earthly Items</h5>
+                    <form>
+                        <div class="form-group">
+                            <label for="year3">Year:</label>
+                            <input type="number" class="form-control" id="year3" name="year3" placeholder="Enter Year">
+                        </div>
+                        <div class="form-group">
+                            <label for="elongation3">Elongation:</label>
+                            <input type="number" class="form-control" id="elongation3" name="elongation3" placeholder="Enter Elongation">
+                        </div>
+                        <div class="form-group">
+                            <label for="latitude3">Latitude:</label>
+                            <input type="number" class="form-control" id="latitude3" name="latitude3" placeholder="Enter Latitude">
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-3">
+                    <h5>Spectrum Plot Options</h5>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="spectrum1" name="spectrum1" value="option1">
+                        <label class="form-check-label" for="spectrum1">
+                            Include atmospheric extinction
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="spectrum2" name="spectrum2" value="option2">
+                        <label class="form-check-label" for="spectrum2">
+                            Multiply flux with mirror area and efficiency
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="spectrum3" name="spectrum3" value="option3">
+                        <label class="form-check-label" for="spectrum3">
+                            calculate flux in seeing disk
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="contain">
+    <div class="row">
+        <div class="col-md-6">
+            To be replaced with plots
+            <div style="width: 600px; height: 300px; background-color: grey;"></div>
+        </div>
+        <div class="col-md-6">
+            To be replaced with plots
+            <div style="width: 600px; height: 300px; background-color: grey;"></div>
+        </div>
+
+        <div class="container">
+            <br>
+            <div class="row">
+                <div class="col-md-6">
+                    <button class="btn btn-primary">Update Spectrum</button>
+                </div>
+                <div class="col-md-6 text-right">
+                    <button class="btn btn-danger">Clear Spectrum</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<br><br><br>
+<br><br>
+
+
+{% endblock %}
+
+{% block active_tab %}general{% endblock %}
