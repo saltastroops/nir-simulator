@@ -4,281 +4,317 @@
 <h4>Makae An Exposure</h4>
 <script src="{{ url_for('static', filename='exposure.js') }}"></script>
 <div class="container">
-    <div class="row">
-        <div class="col-md-6">
-            <h5>Input</h5>
-            <!-- Input Section -->
-            <div class="card">
-                    <!-- Content for the first row, first column -->
-                    <div class="row">
-                        <div class="card col-md-12">
-                            <div class="container">
+    <div class="form-control">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-control">
+                    <!-- Input Section -->
+                    <h6>Input</h6>
+                    <div>
+                        <!-- Content for the first row, first column -->
+                        <div class="row">
+                            <div class="col-md-5">
                                 <div class="form-control">
+                                    <h6>Gain:</h6>
                                     <div class="row">
-                                        <!-- Gain Radio Buttons -->
-                                        <div class="col-md-4 mt-2">
-                                            <h6>Gain:</h6>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="radio" name="gainRadio" id="expo-faint-object" value="faint-object" checked>
-                                                <label class="form-check-label" for="expo-faint-object">
-                                                    Faint Object
-                                                </label>
+                                            <!-- Gain Radio Buttons -->
+                                            <div class="col-md-12 mt-2">
+                                                <div class="form-check">
+                                                    <input
+                                                            class="form-check-input"
+                                                            type="radio"
+                                                            name="gainRadio"
+                                                            id="expo-faint-object"
+                                                            value="faint-object"
+                                                            checked
+                                                    >
+                                                    <label class="form-check-label" for="expo-faint-object">
+                                                        Faint Object
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input
+                                                            class="form-check-input"
+                                                            type="radio"
+                                                            name="gainRadio"
+                                                            id="expo-bright-object"
+                                                            value="bright-object"
+                                                    >
+                                                    <label class="form-check-label" for="expo-bright-object">
+                                                        Bright Object
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input
+                                                            class="form-check-input"
+                                                            type="radio"
+                                                            name="gainRadio"
+                                                            id="expo-custom-object"
+                                                            value="custom-object"
+                                                    >
+                                                    <label class="form-check-label" for="expo-custom-object">
+                                                        Custom Object
+                                                    </label>
+                                                </div>
                                             </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="radio" name="gainRadio" id="expo-bright-object" value="bright-object">
-                                                <label class="form-check-label" for="expo-bright-object">
-                                                    Bright Object
-                                                </label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="radio" name="gainRadio" id="expo-custom-object" value="custom-object">
-                                                <label class="form-check-label" for="expo-custom-object">
-                                                    Custom Object
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <!-- Content Sections -->
-                                        <div class="col-md-8  mr-4">
-
+                                            <!-- Content Sections -->
+                                            <div class="col-md-12 mt-2">
                                                 <!-- Faint Section -->
                                                 <div class="gain-content" id="faint-object">
-                                                    <div class="card">
-                                                        <div class="card-body">
-
-
-                                                                    <div class="form-group">
-                                                                        <div class="row">
-                                                                            <div class="col-md-4"><input disabled type="text" class="form-control" id="field1" value="2.4"></div>
-                                                                            <div class="col-md-8 text-center"><label for="field1">e<sup>-</sup>/ADU</label></div>
-                                                                        </div>
-
-                                                                    </div>
-                                                                    <div class="form-group col-md-12">
-                                                                        <label for="field2">Read Noice = </label>
-                                                                        <input type="text" class="form-control" id="field2" value="17">e<sup>-</sup>
-                                                                    </div>
-                                                                    <div class="form-group col-md-12">
-                                                                        <label for="field3">Full Well = </label>
-                                                                        <input type="text" class="form-control" id="field3" placeholder="60 000">e<sup>-</sup>
-                                                                    </div>
-
-
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <!-- Bright Section -->
-                                                <div class="gain-content" id="bright-object" style="display: none;">
-                                                    <div class="card">
-                                                        <div class="card-body">
-                                                            <h6>Bright Object</h6>
-                                                            <p>This is the content for Section 2.</p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <!-- Custom Section -->
-                                                <div class="gain-content" id="custom-object" style="display: none;">
-                                                    <div class="card">
-                                                        <div class="card-body">
-                                                            <h6>Custom</h6>
-                                                            <p>This is the content for Section 3.</p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-
-
-
-
-                        <div class="card col-md-12 mt-2">
-                            <div class="form-control">
-                                <div class="row">
-                                    <!-- Gain Radio Buttons -->
-                                    <div class="col-md-6">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="gainRadio" id="expo-fowler-sampling" value="faint-object" checked>
-                                            <label class="form-check-label" for="expo-fowler-sampling">
-                                                Fowler Sampling
-                                            </label>
-                                        </div>
-                                        <div style="width: 290px; height: 230px; background-color: grey;"></div>
-
-                                    </div>
-
-                                    <!-- Sampling Images -->
-                                    <div class="col-md-6">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="gainRadio" id="expo-up-the-ramp-sampling" value="faint-object" checked>
-                                            <label class="form-check-label" for="expo-up-the-ramp-sampling">
-                                                Up The Ramp Sampling
-                                            </label>
-                                        </div>
-                                        <div style="width: 290px; height: 230px; background-color: grey;"></div>
-                                    </div>
-
-                                    <!-- Sampling Size-->
-                                    <div class="col-md-6">
-                                        <label class="form-check-label" for="expo-sample-number">
-                                            Number Of Samples
-                                        </label>
-                                        <input class="form-control" type="text" name="sample-number" id="expo-sample-number" value="20">
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-
-
-
-
-                        <div class="card col-md-12 mt-2">
-                            <div class="container">
-
-                                <!-- Tab Navigation -->
-                                <ul class="nav nav-tabs" id="myTabs" role="tablist">
-                                    <li class="nav-item" role="presentation">
-                                        <a class="nav-link active" id="expo-solve-snr" data-bs-toggle="tab" href="#tab1" role="tab" aria-controls="tab1" aria-selected="true">
-                                            Solve For SNR
-                                        </a>
-                                    </li>
-                                    <li class="nav-item" role="presentation">
-                                        <a class="nav-link" id="expo-solve-exposure-time" data-bs-toggle="tab" href="#tab2" role="tab" aria-controls="tab2" aria-selected="false">
-                                            Solve For Exposure Time
-                                        </a>
-                                    </li>
-                                </ul>
-
-                                <!-- Tab Content -->
-                                <div class="tab-content" id="myTabsContent">
-                                    <!-- Tab 1 Content -->
-                                    <div class="tab-pane fade show active" id="tab1" role="tabpanel" aria-labelledby="expo-solve-snr">
-                                        <div class="form-control">
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <label class="form-check-label" for="expo-exposure-time">
-                                                        Exposure Time
-                                                    </label>
-                                                    <input class="form-control" type="text" name="sample-number" id="expo-exposure-time" value="3600">
-                                                </div>
-
-                                                <div class="col-md-12 mt-2">
-                                                    <label class="form-check-label" for="expo-detector-iterations">
-                                                        Detector Iterations
-                                                    </label>
-                                                    <input class="form-control" type="text" name="sample-number" id="expo-detector-iterations" value="1">
-                                                </div>
-
-                                                <div class="col-md-12 mt-4 mb-2">
-                                                    <input class="form-control btn btn-info" type="text" name="sample-number" id="submit-solve-snr" value="Solve For Signal To Noise">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Tab 2 Content -->
-                                    <div class="tab-pane fade" id="tab2" role="tabpanel" aria-labelledby="expo-solve-exposure-time">
-                                        <div class="container">
-                                            <div class="form-control">
-
-                                                <div class="row">
-                                                    <div class="col-md-6">
-                                                        <label class="form-check-label" for="solve-requested-snr">
-                                                            Requested SNR
-                                                        </label>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <input class="form-control" type="text" name="sample-number" id="solve-requested-snr" value="10">
-                                                    </div>
-                                                </div>
-
-                                                <div class="row">
-                                                    <div class="col-md-12">
+                                                    <div class="form-control">
                                                         <p>
-                                                            SNR Requested At which Wavelength
+                                                            2.04 e<sup>-</sup>/ADU
+                                                        </p>
+                                                        <p>
+                                                            Read Noice = 17 e<sup>-</sup>
+                                                        </p>
+
+                                                        <p>
+                                                            Full Well = 60 000 e<sup>-</sup>
                                                         </p>
                                                     </div>
-                                                    <div class=" col-md-6">
-                                                        <input class="form-check-input" type="radio" name="expo-wavelength" id="solve-central-wavelength" checked>
-                                                        <label class="form-check-label" for="solve-central-wavelength">
-                                                            Central Wavelength
-                                                        </label>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <input  class="form-control" disabled type="text" id="cen-wavelength" value="13000">
+                                                </div>
+                                                <!-- Bright Section -->
+                                                <div class="gain-content" id="bright-object" style="display: none;">
+                                                    <div class="form-control">
+                                                        <p>
+                                                            5.74 e<sup>-</sup>/ADU
+                                                        </p>
+                                                        <p>
+                                                            Read Noice = 20 e<sup>-</sup>
+                                                        </p>
+
+                                                        <p>
+                                                            Full Well = 120 000 e<sup>-</sup>
+                                                        </p>
                                                     </div>
                                                 </div>
+                                                <!-- Custom Section -->
+                                                <div class="gain-content" id="custom-object" style="display: none;">
+                                                    <div class="form-control">
+                                                        <div class="form-group">
+                                                            <div class="row mt-1">
+                                                                <div class="col-md-7">
+                                                                    <input type="text" class="form-control" id="custom-electrons" value="1">
+                                                                </div>
+                                                                <div class="col-md-5 pt-2">
+                                                                    <label for="custom-electrons">e<sup>-</sup>/ADU</label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
 
+                                                            <div class="pt-2"><label for="custom-read-noice">Read Noice</label></div>
+                                                            <div class="row">
+                                                                <div class="col-md-9">
+                                                                    <input type="text" class="form-control" id="custom-read-noice" value="10">
+                                                                </div>
+                                                                <div class="col-md-3">e<sup>-</sup></div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
 
-                                                <div class="row">
-                                                    <div class="col-md-6">
-                                                        <input class="form-check-input" type="radio" name="expo-wavelength" id="solve-specified-wavelength" checked>
-                                                        <label class="form-check-label" for="solve-specified-wavelength">
-                                                            Specified Wavelength
-                                                        </label>
-                                                    </div>
-                                                    <div class="col-md-6 mt-2">
-                                                        <input class="form-control" disabled type="text" id="spe-wavelength" value="13000">
+                                                            <div class="pt-2"><label for="custom-full-well">Full Well</label></div>
+                                                            <div class="row mt-1">
+                                                                <div class="col-md-9">
+                                                                    <input type="text" class="form-control" id="custom-full-well" value="100 000">
+                                                                </div>
+                                                                <div class="col-md-3 pt-2">e<sup>-</sup></div>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
-
-
-                                                <div class="row">
-                                                    <div class="col-md-12  mt-4 mb-2">
-                                                        <input class="form-control btn btn-info" type="text" name="sample-number" id="submit-solve-exp" value="Solve For Signal To Noise">
-                                                    </div>
-                                                </div>
-
                                             </div>
+                                        </div>
+                                </div>
+                            </div>
+                            <div class="col-md-7 mt-2">
+                                <div class="form-control">
+                                    <h6>Sampling</h6>
+                                    <div class="row">
+                                        <!-- Gain Radio Buttons -->
+                                        <div class="col-md-6">
+                                            <div class="form-check">
+                                                <input
+                                                    class="form-check-input"
+                                                    type="radio"
+                                                    name="samplingRadio"
+                                                    id="expo-fowler-sampling"
+                                                    value="faint-object"
+                                                    checked
+                                                >
+                                                <label class="form-check-label" for="expo-fowler-sampling">
+                                                    Fowler
+                                                </label>
+                                            </div>
+                                            <div style="width: 150px; height: 130px; background-color: grey;"></div>
+                                        </div>
+                                        <!-- Sampling Images -->
+                                        <div class="col-md-6">
+                                            <div class="form-check">
+                                                <input
+                                                        class="form-check-input"
+                                                        type="radio"
+                                                        name="samplingRadio"
+                                                        id="expo-up-the-ramp-sampling"
+                                                        value="faint-object"
+                                                >
+                                                <label class="form-check-label" for="expo-up-the-ramp-sampling">
+                                                    Up The Ramp
+                                                </label>
+                                            </div>
+                                            <div style="width: 150px; height: 130px; background-color: grey;"></div>
+                                        </div>
+                                        <!-- Sampling Size-->
+                                        <div class="col-md-8 mt-2">
+                                            <label class="form-check-label" for="expo-sample-number">
+                                                Number Of Samples
+                                            </label>
+                                            <input class="form-control" type="text" name="sample-number" id="expo-sample-number" value="20">
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+                            <div class="col-md-12 mt-2">
+                                <div class="form-control">
+                                    <!-- Tab Navigation -->
+                                    <ul class="nav nav-tabs" id="myTabs" role="tablist">
+                                        <li class="nav-item" role="presentation">
+                                            <a class="nav-link active" id="expo-solve-snr" data-bs-toggle="tab"
+                                               href="#tab1" role="tab" aria-controls="tab1" aria-selected="true">
+                                                Solve For SNR
+                                            </a>
+                                        </li>
+                                        <li class="nav-item" role="presentation">
+                                            <a class="nav-link" id="expo-solve-exposure-time" data-bs-toggle="tab" href="#tab2" role="tab" aria-controls="tab2" aria-selected="false">
+                                                Solve For Exposure Time
+                                            </a>
+                                        </li>
+                                    </ul>
+                                    <!-- Tab Content -->
+                                    <div class="tab-content" id="myTabsContent">
+                                        <!-- Tab 1 Content -->
+                                        <div class="tab-pane fade show active" id="tab1" role="tabpanel" aria-labelledby="expo-solve-snr">
+                                            <div class="form-control">
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <label class="form-check-label" for="expo-exposure-time">
+                                                            Exposure Time
+                                                        </label>
+                                                        <input class="form-control" type="text" name="sample-number" id="expo-exposure-time" value="3600">
+                                                    </div>
 
+                                                    <div class="col-md-12 mt-2">
+                                                        <label class="form-check-label" for="expo-detector-iterations">
+                                                            Detector Iterations
+                                                        </label>
+                                                        <input class="form-control" type="text" name="sample-number" id="expo-detector-iterations" value="1">
+                                                    </div>
+
+                                                    <div class="col-md-12 mt-4 mb-2">
+                                                        <input class="form-control btn btn-info" type="text" name="sample-number" id="submit-solve-snr" value="Solve For Signal To Noise">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- Tab 2 Content -->
+                                        <div class="tab-pane fade" id="tab2" role="tabpanel" aria-labelledby="expo-solve-exposure-time">
+                                            <div class="form-control">
+                                                    <div class="row">
+                                                        <div class="col-md-4">
+                                                            <label class="form-check-label" for="solve-requested-snr">
+                                                                Requested SNR
+                                                            </label>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <input class="form-control" type="text" name="sample-number" id="solve-requested-snr" value="10">
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <p>
+                                                                SNR Requested At which Wavelength
+                                                            </p>
+                                                        </div>
+                                                        <div class=" col-md-4">
+                                                            <input
+                                                                    disabled
+                                                                    class="form-check-input"
+                                                                    type="radio"
+                                                                    name="expo-wavelength"
+                                                                    id="solve-central-wavelength"
+                                                                    checked
+                                                            >
+                                                            <label class="form-check-label" for="solve-central-wavelength">
+                                                                Central Wavelength
+                                                            </label>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <input  class="form-control" disabled type="text" id="cen-wavelength" value="13000">
+                                                        </div>
+                                                        <div class="col-md-4 pt-2">(&#226; &#9001; &#171;)</div>
+                                                    </div>
+
+                                                    <div class="row">
+                                                        <div class="col-md-4">
+                                                            <input class="form-check-input" type="radio" name="expo-wavelength" id="solve-specified-wavelength" disabled>
+                                                            <label class="form-check-label" for="solve-specified-wavelength">
+                                                                Specified Wavelength
+                                                            </label>
+                                                        </div>
+                                                        <div class="col-md-4 mt-2">
+                                                            <input class="form-control" disabled type="text" id="spe-wavelength" value="13000">
+                                                        </div>
+                                                        <div class="col-md-4 pt-2">(&#226; &#9001; &#171;)</div>
+                                                    </div>
+
+                                                    <div class="row">
+                                                        <div class="col-md-12  mt-4 mb-2">
+                                                            <input
+                                                                    class="form-control btn btn-info"
+                                                                    type="text"
+                                                                    name="sample-number"
+                                                                    id="submit-solve-exp"
+                                                                    value="Solve For Signal To Noise"
+                                                            >
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
                         </div>
                     </div>
-            </div>
-        </div>
-        </div>
-
-
-        <div class="col-md-6">
-            <h5>Target Electrons</h5>
-            <div class="card">
-                <div class="card-body">
-                    <!-- Content for the first row, second column -->
-
-                    <p> The First plot goes here</p>
-                    <div style="width: 800px; height: 500px; background-color: grey;"></div>
+                </div>
+                <div class="form-control mt-2">
+                    <h5>Instrument Status</h5>
+                    <div class="form-control">
+                        <!-- Content for the second row, first column -->
+                        <div style="width: 700px; height: 300px; background-color: ghostwhite;"></div>
+                    </div>
                 </div>
             </div>
-        </div>
-
-    </div>
-
-    <div class="row mt-4">
-        <div class="col-md-6">
-            <h5>Instrument Status</h5>
-            <div class="card">
-                <div class="card-body">
-                    <!-- Content for the second row, first column -->
-
-                    <p>This is the content for the second row, first column.</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <h5>Additional Output</h5>
-            <div class="card">
-                <div class="card-body">
-                    <!-- Content for the second row, second column -->
-
-                    <p>Second plot Goes here.</p>
-                    <div style="width: 800px; height: 500px; background-color: grey;"></div>
+            <div class="col-md-6">
+                <div class="form-control">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-control">
+                                <h6>Target Electrons</h6>
+                                <!-- Content for the first row, second column -->
+                                <div style="width: 700px; height: 405px; background-color: grey;"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-12 mt-2">
+                            <div class="form-control">
+                                <h5>Additional Output</h5>
+                                <!-- Content for the second row, second column -->
+                                <div style="width: 700px; height: 405px; background-color: grey;"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

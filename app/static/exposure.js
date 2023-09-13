@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', function () {
         radio.addEventListener('change', function () {
             const selectedSectionId = this.value;
             gainContentSections.forEach((section) => {
+                console.log(">>: ", section.id, selectedSectionId)
                 if (section.id === selectedSectionId) {
                     section.style.display = 'block';
                 } else {

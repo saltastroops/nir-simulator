@@ -1,9 +1,8 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>Configure</h1>
+<h4>Configure</h4>
 <script src="{{ url_for('static', filename='script.js') }}"></script>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>
     #specific-mode-options {
         position: relative;
@@ -24,82 +23,90 @@
 </style>
 
 <div class="container">
-    <div class="row">
-        <div class="controls col-md-3">
-            <!-- Configuration Options -->
-            <div class="mb-4">
-                <h5>Configuration Options</h5>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="configuration-options" id="imaging-mode" value="imaging-mode" checked>
-                    <label class="form-check-label" for="imaging-mode">
-                        Imaging Mode
-                    </label>
+    <div class="form-control">
+        <div class="row">
+            <div class="controls col-md-3">
+                <!-- Configuration Options -->
+                <div class="mb-4">
+                    <div class="form-control">
+                        <h6>Configuration Options</h6>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="configuration-options" id="imaging-mode" value="imaging-mode" checked>
+                            <label class="form-check-label" for="imaging-mode">
+                                Imaging Mode
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="configuration-options" id="spectroscopy-mode" value="spectroscopy-mode">
+                            <label class="form-check-label" for="spectroscopy-mode">
+                                Spectroscopy Mode
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label for="config-filter">Filter:</label>
+                            <select class="form-select" id="config-filter">
+                                <option>Clear Filter</option>
+                                <option>LWBF</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="configuration-options" id="spectroscopy-mode" value="spectroscopy-mode">
-                    <label class="form-check-label" for="spectroscopy-mode">
-                        Spectroscopy Mode
-                    </label>
-                </div>
-                <div class="form-group">
-                    <label for="config-filter">Filter:</label>
-                    <select class="form-select" id="config-filter">
-                        <option>Clear Filter</option>
-                        <option>LWBF</option>
-                    </select>
-                </div>
-            </div>
 
-            <!-- Specific Mode Options -->
-            <div id="specific-mode-options" class="mb-4">
-                <h5>Specific Mode Options</h5>
-                <div class="form-group">
-                    <label for="config-slit-type">Slit Type:</label>
-                    <select class="form-select" id="config-slit-type" disabled>
-                        <option>Longslit</option>
-                    </select>
+                <!-- Specific Mode Options -->
+                <div id="specific-mode-options" class="mb-4">
+                    <div class="form-control">
+                        <h5>Specific Mode Options</h5>
+                        <div class="form-group">
+                            <label for="config-slit-type">Slit Type:</label>
+                            <select class="form-select" id="config-slit-type" disabled>
+                                <option>Longslit</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="config-slit-width">Slit Width:</label>
+                            <select class="form-select" id="config-slit-width" disabled>
+                                <option>0.6</option>
+                                <option>1.0</option>
+                                <option>1.25</option>
+                                <option selected>1.5</option>
+                                <option>2.0</option>
+                                <option>3.0</option>
+                                <option>4.0</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="config-grating">Grating:</label>
+                            <select class="form-select" id="config-grating" disabled>
+                                <option>950</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="dropdown4">Grating Angle:</label>
+                            <select class="form-select" id="dropdown4" >
+                                <option>30</option>
+                                <option>35</option>
+                                <option selected>40</option>
+                                <option>45</option>
+                                <option>50</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="config-slit-width">Slit Width:</label>
-                    <select class="form-select" id="config-slit-width" disabled>
-                        <option>0.6</option>
-                        <option>1.0</option>
-                        <option>1.25</option>
-                        <option selected>1.5</option>
-                        <option>2.0</option>
-                        <option>3.0</option>
-                        <option>4.0</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="config-grating">Grating:</label>
-                    <select class="form-select" id="config-grating" disabled>
-                        <option>950</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="dropdown4">Grating Angle:</label>
-                    <select class="form-select" id="dropdown4" >
-                        <option>30</option>
-                        <option>35</option>
-                        <option selected>40</option>
-                        <option>45</option>
-                        <option>50</option>
-                    </select>
+            </div>
+            <div class="plot col-md-9">
+                <!-- Plot Section -->
+                <div id="config-telescope-throughput-plot" class="mb-5">
+                    <div class="form-control">
+                        <h6>Plot</h6>
+                        <!-- Include your plot or chart here -->
+                        <div style="width: 900px; height: 435px; background-color: grey;"></div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="plot col-md-9">
-            <!-- Plot Section -->
-            <div id="config-telescope-throughput-plot" class="mb-5">
-                <h5>Plot</h5>
-                <!-- Include your plot or chart here -->
-                <!-- For example: <img src="plot.png" alt="Plot"> -->
-                <div style="width: 800px; height: 500px; background-color: grey;"></div>
-            </div>
-        </div>
+        <div class="btn btn-primary">update Throughput</div>
     </div>
-    <div class="btn btn-primary">update Throughput</div>
+
 </div>
 
 {% endblock %}
