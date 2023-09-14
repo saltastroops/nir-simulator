@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h4>General Spectra</h4>
+<h4>Generate Spectra</h4>
 <div class="container">
     <div class="form-control">
         <div class="row">
@@ -9,7 +9,6 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="row mt-2">
-
                                 <div class="col-md-12">
                                     <div class="form-control">
                                     <div class="row">
@@ -33,12 +32,12 @@
                                         <input
                                                 class="form-check-input"
                                                 type="radio"
-                                                name="general-source-type"
-                                                id="general-point-source"
+                                                name="generate-source-type"
+                                                id="generate-point-source"
                                                 value="point-source"
                                                 checked
                                         >
-                                        <label class="form-check-label" for="general-point-source">
+                                        <label class="form-check-label" for="generate-point-source">
                                             This is a point source
                                         </label>
                                     </div>
@@ -46,11 +45,11 @@
                                         <input
                                                 class="form-check-input"
                                                 type="radio"
-                                                name="general-source-type"
-                                                id="general-defused-source"
+                                                name="generate-source-type"
+                                                id="generate-defused-source"
                                                 value="defused-source"
                                         >
-                                        <label class="form-check-label" for="general-defused-source">
+                                        <label class="form-check-label" for="generate-defused-source">
                                             This is a diffuse source
                                         </label>
                                     </div>
@@ -192,4 +191,4 @@
 
 {% endblock %}
 
-{% block active_tab %}general{% endblock %}
+{% block active_tab %}generate{% endblock %}

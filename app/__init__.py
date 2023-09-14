@@ -11,8 +11,8 @@ tabs = Blueprint('/', __name__)
 
 
 @tabs.route('/')
-def general():
-    return render_template('general.html')
+def generate():
+    return render_template('generate.html')
 
 
 @tabs.route('/configure')
