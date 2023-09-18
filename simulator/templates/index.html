@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Task List</title>
+</head>
+<body>
+<h1>Task List</h1>
+
+<form method="POST">
+    {{ form.hidden_tag() }}
+    <div>
+        {{ form.task.label }}
+        {{ form.task(size=32) }}
+    </div>
+    <div>
+        {{ form.submit() }}
+    </div>
+</form>
+
+<ul>
+    {% for task in tasks %}
+    <li>
+        {{ task.description }}
+        {% if not task.completed %}
+        <a href="{{ url_for('main.complete_task', task_id=task.id) }}">Mark as Completed</a>
+        {% else %}
+        (Completed)
+        {% endif %}
+    </li>
+    {% endfor %}
+</ul>
+</body>
+</html>

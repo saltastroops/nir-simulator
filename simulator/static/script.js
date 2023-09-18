@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
     const specificModeOptions = document.getElementById('specific-mode-options');
-    const imagingMode = document.getElementById('imaging-mode');
-    const spectroscopyMode = document.getElementById('spectroscopy-mode');
+    const imagingMode = document.getElementById('configuration_options-0');
+    const spectroscopyMode = document.getElementById('configuration_options-1');
     const formElementsToDisable = specificModeOptions.querySelectorAll('input, select');
     // Function to enable or disable spectroscopy mode form elements
     function toggleFormElements() {

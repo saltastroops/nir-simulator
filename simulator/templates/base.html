@@ -3,9 +3,15 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!-- Include Bokeh JS and CSS from a CDN -->
+        <script src="https://cdn.bokeh.org/bokeh/release/bokeh.min.js"></script>
+        <script src="https://cdn.bokeh.org/bokeh/release/bokeh-widgets.min.js"></script>
+        <link href="https://cdn.bokeh.org/bokeh/release/bokeh.min.css" rel="stylesheet" type="text/css">
+
         <link href="{{ url_for('static', filename='styles.css') }}" rel="stylesheet">
         <link href="{{ url_for('static', filename='css/bootstrap.css') }}" rel="stylesheet">
         <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='bokeh.js') }}"></script>
 
         <title>Flask Tabs App</title>
     </head>

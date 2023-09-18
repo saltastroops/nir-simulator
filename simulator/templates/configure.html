@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h4>Configure</h4>
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+<style>
+    #specific-mode-options {
+        position: relative;
+    }
+
+    #specific-mode-options.overlay {
+        background-color: rgba(255, 255, 255, 0.7);
+        pointer-events: none;
+    }
+
+    #specific-mode-options.disabled {
+        pointer-events: none;
+    }
+
+    #plot {
+        margin-top: 20px;
+    }
+</style>
+
+<div class="container">
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        <div class="form-control">
+            <div class="row">
+                <div class="controls col-md-2">
+                    <!-- Configuration Options -->
+                    <div class="mb-4">
+                        <div class="form-control">
+                            <h6>Configuration Options</h6>
+                            {% for radio in form.configuration_options %}
+                                <div class="form-check">
+                                    <input
+                                        class="form-check-input"
+                                        type="radio"
+                                        name="{{ form.configuration_options.name }}"
+                                        id="{{ radio.id }}"
+                                        value="{{ radio.data }}"
+                                        {% if radio.checked %} checked {% endif %}
+                                        >
+                                    <label class="form-check-label" for="{{ radio.id }}">
+                                        {{ radio.label }}
+                                    </label>
+                                </div>
+                            {% endfor %}
+                            <div class="form-group">
+                                <label for="config-filter">{{form.filter.label}}:</label>
+                                {{ form.filter(class="form-select", id="config-filter") }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Specific Mode Options -->
+                    <div id="specific-mode-options" class="mb-4">
+                        <div class="form-control">
+                            <h5>Specific Mode Options</h5>
+                            <div class="form-group">
+                                <label for="config-slit-type">Slit Type:</label>
+                                {{ form.slit_type(class="form-select", id="config-slit-type") }}
+                            </div>
+                            <div class="form-group">
+                                <label for="config-slit-width">Slit Width:</label>
+                                {{ form.slit_width(class="form-select", id="config-slit-width") }}
+                            </div>
+                            <div class="form-group">
+                                <label for="config-grating">Grating:</label>
+                                {{ form.grating(class="form-select", id="config-grating") }}
+                            </div>
+                            <div class="form-group">
+                                <label for="config-grating-angle">Grating Angle:</label>
+                                {{ form.grating_angle(class="form-select", id="config-grating-angle") }}
+                            </div>
+
+                        </div>
+
+                    </div>
+                    <div class="form-group">
+                        {{ form.update_throughput(class="btn btn-primary mt-2")}}
+                    </div>
+                </div>
+                <div class="plot col-md-10">
+                    <!-- Plot Section -->
+                    <div id="config-telescope-throughput-plot" class="mb-5">
+                        <div class="form-control">
+                            <!-- Include your plot or chart here -->
+                            <div style="width: 900px; height: 500px; background-color: grey;">
+                                {{ html|safe }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+</div>
+
+{% endblock %}
+{% block active_tab %}configure{% endblock %}
+
