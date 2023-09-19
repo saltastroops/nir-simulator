@@ -1,27 +1,5 @@
-{% extends 'base.html' %}
-
-{% block content %}
+<script src="{{ url_for('static', filename='configure.js') }}"></script>
 <h4>Configure</h4>
-<script src="{{ url_for('static', filename='script.js') }}"></script>
-<style>
-    #specific-mode-options {
-        position: relative;
-    }
-
-    #specific-mode-options.overlay {
-        background-color: rgba(255, 255, 255, 0.7);
-        pointer-events: none;
-    }
-
-    #specific-mode-options.disabled {
-        pointer-events: none;
-    }
-
-    #plot {
-        margin-top: 20px;
-    }
-</style>
-
 <div class="container">
     <form method="POST">
         {{ form.hidden_tag() }}
@@ -32,24 +10,24 @@
                     <div class="mb-4">
                         <div class="form-control">
                             <h6>Configuration Options</h6>
-                            {% for radio in form.configuration_options %}
+                            {% for choice, label, choice_id in form.configure.configuration_options.choices %}
                                 <div class="form-check">
                                     <input
                                         class="form-check-input"
                                         type="radio"
-                                        name="{{ form.configuration_options.name }}"
-                                        id="{{ radio.id }}"
-                                        value="{{ radio.data }}"
-                                        {% if radio.checked %} checked {% endif %}
+                                        name="{{ form.configure.configuration_options.name }}"
+                                        id="{{ choice_id }}"
+                                        value="{{ choice }}"
+                                        {% if choice == form.configure.configuration_options.data %} checked {% endif %}
                                         >
-                                    <label class="form-check-label" for="{{ radio.id }}">
-                                        {{ radio.label }}
+                                    <label class="form-check-label" for="{{ choice_id }}">
+                                        {{ label }}
                                     </label>
                                 </div>
                             {% endfor %}
                             <div class="form-group">
-                                <label for="config-filter">{{form.filter.label}}:</label>
-                                {{ form.filter(class="form-select", id="config-filter") }}
+                                <label for="config-filter">{{form.configure.filter.label}}:</label>
+                                {{ form.configure.filter(class="form-select", id="config-filter") }}
                             </div>
                         </div>
                     </div>
@@ -60,26 +38,26 @@
                             <h5>Specific Mode Options</h5>
                             <div class="form-group">
                                 <label for="config-slit-type">Slit Type:</label>
-                                {{ form.slit_type(class="form-select", id="config-slit-type") }}
+                                {{ form.configure.slit_type(class="form-select", id="config-slit-type") }}
                             </div>
                             <div class="form-group">
                                 <label for="config-slit-width">Slit Width:</label>
-                                {{ form.slit_width(class="form-select", id="config-slit-width") }}
+                                {{ form.configure.slit_width(class="form-select", id="config-slit-width") }}
                             </div>
                             <div class="form-group">
                                 <label for="config-grating">Grating:</label>
-                                {{ form.grating(class="form-select", id="config-grating") }}
+                                {{ form.configure.grating(class="form-select", id="config-grating") }}
                             </div>
                             <div class="form-group">
                                 <label for="config-grating-angle">Grating Angle:</label>
-                                {{ form.grating_angle(class="form-select", id="config-grating-angle") }}
+                                {{ form.configure.grating_angle(class="form-select", id="config-grating-angle") }}
                             </div>
 
                         </div>
 
                     </div>
                     <div class="form-group">
-                        {{ form.update_throughput(class="btn btn-primary mt-2")}}
+                        {{ form.configure.update_throughput(class="btn btn-primary mt-2")}}
                     </div>
                 </div>
                 <div class="plot col-md-10">
@@ -98,7 +76,4 @@
     </form>
 
 </div>
-
-{% endblock %}
-{% block active_tab %}configure{% endblock %}
 

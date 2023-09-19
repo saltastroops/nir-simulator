@@ -1,8 +1,10 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField
-from wtforms.validators import DataRequired
+from wtforms import StringField, SubmitField, FormField
+
+from simulator.forms.exposure import ExposureForm
+from simulator.forms.throughput import ThroughputForm
 
 
-class TaskForm(FlaskForm):
-    task = StringField('Task', validators=[DataRequired()])
-    submit = SubmitField('Add Task')
+class MainForm(FlaskForm):
+    configure = FormField(ThroughputForm)
+    exposure = FormField(ExposureForm)

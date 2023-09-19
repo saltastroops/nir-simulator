@@ -8,7 +8,7 @@ from flask import Blueprint
 
 
 db = SQLAlchemy()
-csrf = CSRFProtect()
+# csrf = CSRFProtect()
 
 
 # Create a blueprint for the tabs
@@ -18,10 +18,10 @@ def create_app(config_class=Config):
 
     app.config.from_object(Config)
     db.init_app(app)
-    csrf.init_app(app)
+    # csrf.init_app(app)
     migrate = Migrate(app, db)
     Bootstrap(app)
-
+    app.static_folder = 'static'
 
     with app.app_context():
         from .views import main  # Import the Blueprint

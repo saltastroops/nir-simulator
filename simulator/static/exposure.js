@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function () {
+function loadExposure() {
     // JavaScript to handle radio button change event
     const gainRadioButtons = document.querySelectorAll('input[name="gainRadio"]');
     const gainContentSections = document.querySelectorAll('.gain-content');
@@ -16,4 +16,4 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         });
     });
-});
+}

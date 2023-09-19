@@ -3,10 +3,13 @@ from wtforms import StringField, SubmitField, RadioField, SelectField
 from wtforms.validators import DataRequired
 
 
-class Throughput(FlaskForm):
+class ThroughputForm(FlaskForm):
     configuration_options = RadioField(
-        'Favorite Color',
-        choices=[('imaging-mode', 'Imaging Mode'), ('spectroscopy-mode', 'Spectroscopy Mode')],
+        'Configuration Options',
+        choices=[
+            ('imaging-mode', 'Imaging Mode', "configure-imaging-mode"),
+            ('spectroscopy-mode', 'Spectroscopy Mode', "configure-spectroscopy-mode")
+        ],
         default='imaging-mode'
     )
     slit_type = SelectField(

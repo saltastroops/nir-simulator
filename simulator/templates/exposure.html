@@ -1,9 +1,7 @@
-{% extends 'base.html' %}
-
-{% block content %}
 <h4>Make An Exposure</h4>
 <script src="{{ url_for('static', filename='exposure.js') }}"></script>
 <div class="container">
+    <form method="POST">
     <div class="form-control">
         <div class="row">
             <div class="col-md-6">
@@ -19,61 +17,24 @@
                                     <div class="row">
                                             <!-- Gain Radio Buttons -->
                                             <div class="col-md-12 mt-2">
-                                                <div class="form-check">
-                                                    <input
+                                                {% for choice, label, choice_id  in form.exposure.gain.choices %}
+                                                    <div class="form-check">
+                                                        <input
                                                             class="form-check-input"
                                                             type="radio"
-                                                            name="gainRadio"
-                                                            id="expo-faint-object"
-                                                            value="faint-object"
-                                                            checked
-                                                    >
-                                                    <label class="form-check-label" for="expo-faint-object">
-                                                        Faint Object
-                                                    </label>
-                                                </div>
-                                                <div class="form-check">
-                                                    <input
-                                                            class="form-check-input"
-                                                            type="radio"
-                                                            name="gainRadio"
-                                                            id="expo-bright-object"
-                                                            value="bright-object"
-                                                    >
-                                                    <label class="form-check-label" for="expo-bright-object">
-                                                        Bright Object
-                                                    </label>
-                                                </div>
-                                                <div class="form-check">
-                                                    <input
-                                                            class="form-check-input"
-                                                            type="radio"
-                                                            name="gainRadio"
-                                                            id="expo-custom-object"
-                                                            value="custom-object"
-                                                    >
-                                                    <label class="form-check-label" for="expo-custom-object">
-                                                        Custom Object
-                                                    </label>
-                                                </div>
+                                                            name="{{ form.exposure.gain.name }}"
+                                                            id="{{ choice_id }}"
+                                                            value="{{ choice }}"
+                                                            {% if choice == form.exposure.gain.data %} checked {% endif %}
+                                                        >
+                                                        <label class="form-check-label" for="{{ choice_id }}">
+                                                            {{label}}
+                                                        </label>
+                                                    </div>
+                                                {% endfor %}
                                             </div>
                                             <!-- Content Sections -->
                                             <div class="col-md-12 mt-2">
-                                                <!-- Faint Section -->
-                                                <div class="gain-content" id="faint-object">
-                                                    <div class="form-control">
-                                                        <p>
-                                                            2.04 e<sup>-</sup>/ADU
-                                                        </p>
-                                                        <p>
-                                                            Read Noice = 17 e<sup>-</sup>
-                                                        </p>
-
-                                                        <p>
-                                                            Full Well = 60 000 e<sup>-</sup>
-                                                        </p>
-                                                    </div>
-                                                </div>
                                                 <!-- Bright Section -->
                                                 <div class="gain-content" id="bright-object" style="display: none;">
                                                     <div class="form-control">
@@ -89,13 +50,28 @@
                                                         </p>
                                                     </div>
                                                 </div>
+                                                <!-- Faint Section -->
+                                                <div class="gain-content" id="faint-object">
+                                                    <div class="form-control">
+                                                        <p>
+                                                            2.04 e<sup>-</sup>/ADU
+                                                        </p>
+                                                        <p>
+                                                            Read Noice = 17 e<sup>-</sup>
+                                                        </p>
+
+                                                        <p>
+                                                            Full Well = 60 000 e<sup>-</sup>
+                                                        </p>
+                                                    </div>
+                                                </div>
                                                 <!-- Custom Section -->
                                                 <div class="gain-content" id="custom-object" style="display: none;">
                                                     <div class="form-control">
                                                         <div class="form-group">
                                                             <div class="row mt-1">
                                                                 <div class="col-md-7">
-                                                                    <input type="text" class="form-control" id="custom-electrons" value="1">
+                                                                    {{form.exposure.electrons(class="form-control", id="custom-electrons")}}
                                                                 </div>
                                                                 <div class="col-md-5 pt-2">
                                                                     <label for="custom-electrons">e<sup>-</sup>/ADU</label>
@@ -107,7 +83,7 @@
                                                             <div class="pt-2"><label for="custom-read-noice">Read Noice</label></div>
                                                             <div class="row">
                                                                 <div class="col-md-9">
-                                                                    <input type="text" class="form-control" id="custom-read-noice" value="10">
+                                                                    {{form.exposure.read_noice(class="form-control", id="custom-read-noice")}}
                                                                 </div>
                                                                 <div class="col-md-3">e<sup>-</sup></div>
                                                             </div>
@@ -117,7 +93,7 @@
                                                             <div class="pt-2"><label for="custom-full-well">Full Well</label></div>
                                                             <div class="row mt-1">
                                                                 <div class="col-md-9">
-                                                                    <input type="text" class="form-control" id="custom-full-well" value="100 000">
+                                                                    {{form.exposure.full_well(class="form-control", id="custom-full-well")}}
                                                                 </div>
                                                                 <div class="col-md-3 pt-2">e<sup>-</sup></div>
                                                             </div>
@@ -132,45 +108,39 @@
                                 <div class="form-control">
                                     <h6>Sampling</h6>
                                     <div class="row">
-                                        <!-- Gain Radio Buttons -->
-                                        <div class="col-md-6">
-                                            <div class="form-check">
-                                                <input
-                                                    class="form-check-input"
-                                                    type="radio"
-                                                    name="samplingRadio"
-                                                    id="expo-fowler-sampling"
-                                                    value="faint-object"
-                                                    checked
-                                                >
-                                                <label class="form-check-label" for="expo-fowler-sampling">
-                                                    Fowler
-                                                </label>
-                                            </div>
-                                            <div style="width: 150px; height: 130px; background-color: grey;"></div>
-                                        </div>
-                                        <!-- Sampling Images -->
-                                        <div class="col-md-6">
-                                            <div class="form-check">
-                                                <input
+                                        <!-- Sampling Radio Buttons -->
+                                        {% for choice, label, image_url in form.exposure.sampling.choices  %}
+                                            <div class="col-md-6">
+                                                <div class="form-check">
+                                                    <input
                                                         class="form-check-input"
                                                         type="radio"
-                                                        name="samplingRadio"
-                                                        id="expo-up-the-ramp-sampling"
-                                                        value="faint-object"
+                                                        name="{{ form.exposure.sampling.name }}"
+                                                        id="{{ choice }}"
+                                                        value="{{ choice }}"
+                                                        {% if choice == form.exposure.sampling.data %} checked {% endif %}
+                                                    >
+                                                    <label class="form-check-label" for="{{ choice }}">
+                                                        {{ label }}
+                                                    </label>
+                                                </div>
+                                                <div>
+                                                    <img
+                                                        style="width: 150px; height: 130px; background-color: grey;"
+                                                        src="{{ url_for('static', filename=image_url) }}"
+                                                        alt="{{ label }}"
                                                 >
-                                                <label class="form-check-label" for="expo-up-the-ramp-sampling">
-                                                    Up The Ramp
-                                                </label>
+                                                </div>
                                             </div>
-                                            <div style="width: 150px; height: 130px; background-color: grey;"></div>
-                                        </div>
+                                        {% endfor %}
                                         <!-- Sampling Size-->
                                         <div class="col-md-8 mt-2">
-                                            <label class="form-check-label" for="expo-sample-number">
-                                                Number Of Samples
-                                            </label>
-                                            <input class="form-control" type="text" name="sample-number" id="expo-sample-number" value="20">
+                                            <div class="form-group">
+                                                <label class="form-check-label" for="expo-sample-number">
+                                                    Number Of Samples
+                                                </label>
+                                                {{ form.exposure.samples_number(class="form-control", id="expo-sample-number") }}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -201,18 +171,18 @@
                                                         <label class="form-check-label" for="expo-exposure-time">
                                                             Exposure Time
                                                         </label>
-                                                        <input class="form-control" type="text" name="sample-number" id="expo-exposure-time" value="3600">
+                                                        {{ form.exposure.exposure_time(class="form-control", id="expo-exposure-time") }}
                                                     </div>
 
                                                     <div class="col-md-12 mt-2">
                                                         <label class="form-check-label" for="expo-detector-iterations">
                                                             Detector Iterations
                                                         </label>
-                                                        <input class="form-control" type="text" name="sample-number" id="expo-detector-iterations" value="1">
+                                                        {{ form.exposure.detector_iterations(class="form-control", id="expo-detector-iterations") }}
                                                     </div>
 
                                                     <div class="col-md-12 mt-4 mb-2">
-                                                        <input class="form-control btn btn-info" type="text" name="sample-number" id="submit-solve-snr" value="Solve For Signal To Noise">
+                                                        {{ form.exposure.solve_snr(class="form-control btn btn-info mt-2") }}
                                                     </div>
                                                 </div>
                                             </div>
@@ -251,7 +221,7 @@
                                                             </label>
                                                         </div>
                                                         <div class="col-md-4">
-                                                            <input  class="form-control" disabled type="text" id="cen-wavelength" value="13000">
+                                                            {{ form.exposure.central_wavelength(class="form-control", id="central-wavelength") }}
                                                         </div>
                                                         <div class="col-md-4 pt-2">(&#226; &#9001; &#171;)</div>
                                                     </div>
@@ -264,20 +234,14 @@
                                                             </label>
                                                         </div>
                                                         <div class="col-md-4 mt-2">
-                                                            <input class="form-control" disabled type="text" id="spe-wavelength" value="13000">
+                                                            {{ form.exposure.specified_wavelength(class="form-control", id="specified-wavelength") }}
                                                         </div>
                                                         <div class="col-md-4 pt-2">(&#226; &#9001; &#171;)</div>
                                                     </div>
 
                                                     <div class="row">
                                                         <div class="col-md-12  mt-4 mb-2">
-                                                            <input
-                                                                    class="form-control btn btn-info"
-                                                                    type="text"
-                                                                    name="sample-number"
-                                                                    id="submit-solve-exp"
-                                                                    value="Solve For Signal To Noise"
-                                                            >
+                                                            {{ form.exposure.solve_ext(class="form-control btn btn-info mt-2") }}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -319,7 +283,5 @@
             </div>
         </div>
     </div>
+    </form>
 </div>
-{% endblock %}
-{% block active_tab %}exposure{% endblock %}
-
