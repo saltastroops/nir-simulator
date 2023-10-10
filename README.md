@@ -20,3 +20,7 @@ npm run build
 
 Note: Currently files in the `public` folder won't be served by Django.
 
+### Development tools
+
+* Python: black, ruff
+* React: ESLint, Prettier
