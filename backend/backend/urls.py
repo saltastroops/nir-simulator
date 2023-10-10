@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.shortcuts import render
-from django.urls import path
+from django.urls import path, include
 
 
 def home(request):
@@ -9,5 +9,6 @@ def home(request):
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("", home, name="home")
+    path("", home, name="home"),
+    path("__reload__/", include("django_browser_reload.urls")),
 ]
