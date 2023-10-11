@@ -1,5 +1,11 @@
+import {Tabs} from "./components/Tabs.jsx";
+
 function App() {
-  return <h1>NIRWALS Simulator</h1>;
+  return (
+      <div>
+        <Tabs />
+      </div>
+  );
 }
 
 export default App;
