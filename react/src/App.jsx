@@ -2,7 +2,7 @@ import {Tabs} from "./components/Tabs.jsx";
 
 function App() {
   return (
-      <div>
+      <div className="container">
         <Tabs />
       </div>
   );

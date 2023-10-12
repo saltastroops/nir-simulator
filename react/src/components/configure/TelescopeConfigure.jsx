@@ -1,10 +1,5 @@
-import {useState} from "react";
 
-export function TelescopeConfigure(parentState, updateParentState) {
-    const [state, setState] = useState({})
-    const parentStateUpdate = () => {
-        updateParentState({...parentState, configure: {...state}})
-    }
+export function TelescopeConfigure() {
     return (
         <div>
             <h1 className="title is-1">Telescope Configure</h1>
