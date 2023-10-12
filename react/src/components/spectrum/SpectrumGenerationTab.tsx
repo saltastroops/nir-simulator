@@ -1,17 +1,20 @@
-import SourceSpectrumForm from "./SourceSpectrumForm";
-import { SimulationSetup } from "../../types";
+import SourceForm from "./SourceForm";
+import { SimulationSetup, Source, Spectrum } from "../../types";
 import Blackbody, { makeDefaultBlackbody } from "./Blackbody";
 
 interface Props {
-  simulationSetup: SimulationSetup;
+  source: Source;
+  updateSetup: (property: string, value: any) => void;
 }
 
-export function SpectrumGenerationTab({ simulationSetup }: Props) {
+export function SpectrumGenerationTab({ source, updateSetup }: Props) {
   return (
     <div>
-      <Blackbody blackbody={makeDefaultBlackbody()} />
       <h1 className="title is-1">Generate Spectra</h1>
-      <SourceSpectrumForm sourceSpectrum={simulationSetup.sourceSpectrum} />
+      <SourceForm
+        source={source}
+        update={(source: Source) => updateSetup("source", source)}
+      />
     </div>
   );
 }

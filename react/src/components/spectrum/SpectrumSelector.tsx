@@ -1,17 +1,19 @@
-import { ChangeEvent, useContext, useState } from "react";
-import SimulationSetupContext from "../SimulationSetupContext.js";
+import { ChangeEvent, useState } from "react";
 import { SpectrumType } from "../../types";
 
-export default function SpectrumSelector() {
-  const [selectedType, setSelectedType] = useState<SpectrumType>("Blackbody");
-  const { addToSourceSpectrum } = useContext(SimulationSetupContext);
+interface Props {
+  onSelect: (type: SpectrumType) => void;
+}
 
-  const onSelect = (event: ChangeEvent<HTMLSelectElement>) => {
+export default function SpectrumSelector({ onSelect }: Props) {
+  const [selectedType, setSelectedType] = useState<SpectrumType>("Blackbody");
+
+  const onChange = (event: ChangeEvent<HTMLSelectElement>) => {
     setSelectedType(() => event.target.value as SpectrumType);
   };
 
   const onClick = () => {
-    addToSourceSpectrum(selectedType);
+    onSelect(selectedType);
   };
 
   const spectrumTypes: SpectrumType[] = [
@@ -22,7 +24,7 @@ export default function SpectrumSelector() {
   return (
     <div>
       <div className="select">
-        <select value={selectedType} onChange={onSelect}>
+        <select value={selectedType} onChange={onChange}>
           {spectrumTypes.map((spectrumType) => (
             <option key={spectrumType}>{spectrumType}</option>
           ))}
