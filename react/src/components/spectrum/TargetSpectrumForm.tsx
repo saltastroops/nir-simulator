@@ -1,5 +1,5 @@
-import SpectrumSelector from "./SpectrumSelector.jsx";
-import SpectrumComponentForm from "./SpectrumComponentForm.jsx";
+import SpectrumSelector from "./SpectrumSelector";
+import SpectrumComponentForm from "./SpectrumComponentForm";
 import { useContext } from "react";
 import SimulationSetupContext from "../SimulationSetupContext.js";
 

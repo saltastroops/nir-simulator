@@ -1,4 +1,4 @@
-import TargetSpectrumForm from "./components/spectrum/TargetSpectrumForm.jsx";
+import TargetSpectrumForm from "./components/spectrum/TargetSpectrumForm.js";
 import SimulationSetupContext from "./components/SimulationSetupContext.js";
 import { useState } from "react";
 
