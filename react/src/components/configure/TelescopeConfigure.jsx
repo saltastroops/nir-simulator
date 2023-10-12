@@ -3,7 +3,7 @@ import axios from 'axios';
 import "./TelescopeConfigure.css"
 import {LinePlot} from "../plots/LinePlot.jsx";
 
-export function TelescopeConfigure(parentState, updateParentState) {
+export function TelescopeConfigure() {
     const [state, setState] = useState({
         configurationOptions: 'imaging-mode',
         filter1: 'clear-filter',
