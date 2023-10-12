@@ -1,4 +1,4 @@
-import TargetSpectrum from "./components/spectrum/TargetSpectrum.jsx";
+import TargetSpectrumForm from "./components/spectrum/TargetSpectrumForm.jsx";
 import SimulationSetupContext from "./components/SimulationSetupContext.js";
 import { useState } from "react";
 
@@ -38,7 +38,9 @@ function App() {
 
   return (
     <SimulationSetupContext.Provider value={contextValue}>
-      <TargetSpectrum spectrumComponents={simulationSetup.spectrumComponents} />
+      <TargetSpectrumForm
+        spectrumComponents={simulationSetup.spectrumComponents}
+      />
     </SimulationSetupContext.Provider>
   );
 }

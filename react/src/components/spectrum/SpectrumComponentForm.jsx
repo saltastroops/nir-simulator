@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import SimulationSetupContext from "../SimulationSetupContext.js";
 
-export default function SpectrumComponent({ index, children }) {
+export default function SpectrumComponentForm({ index, children }) {
   const { removeSpectrumComponent } = useContext(SimulationSetupContext);
 
   return (
