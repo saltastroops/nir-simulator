@@ -1,4 +1,4 @@
-export type SpectrumType = "Blackbody" | "Star" | "Emission Line";
+export type SpectrumType = "Blackbody" | "Galaxy" | "Emission Line";
 
 export interface Spectrum {
   type: SpectrumType;

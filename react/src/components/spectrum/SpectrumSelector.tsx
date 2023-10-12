@@ -14,7 +14,11 @@ export default function SpectrumSelector() {
     addToSourceSpectrum(selectedType);
   };
 
-  const spectrumTypes: SpectrumType[] = ["Blackbody", "Star", "Emission Line"];
+  const spectrumTypes: SpectrumType[] = [
+    "Blackbody",
+    "Galaxy",
+    "Emission Line",
+  ];
   return (
     <div>
       <div className="select">

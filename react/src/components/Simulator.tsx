@@ -11,8 +11,8 @@ function makeSpectrum(type: SpectrumType): Spectrum {
   switch (type) {
     case "Blackbody":
       return { type: "Blackbody", parameters: {}, errors: {} };
-    case "Star":
-      return { type: "Star", parameters: {}, errors: {} };
+    case "Galaxy":
+      return { type: "Galaxy", parameters: {}, errors: {} };
     case "Emission Line":
       return { type: "Emission Line", parameters: {}, errors: {} };
     default:
