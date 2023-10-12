@@ -24,25 +24,8 @@ export function TelescopeConfigure(parentState, updateParentState) {
             },
         ],
     });
-    const options = {
-        scales: {
-            x: [
-                {
-                    type: 'linear',
-                    position: 'bottom',
-                },
-            ],
-            y: [
-                {
-                    beginAtZero: true,
-                },
-            ],
-        },
-    };
 
-    const parentStateUpdate = () => {
-        updateParentState({...parentState, configure: {...state}})
-    }
+    const [error, setError] = useState(null)
 
     const handleConfigurationOptionsChange = (event) => {
         const  value = event.target.value
@@ -52,7 +35,6 @@ export function TelescopeConfigure(parentState, updateParentState) {
             disableModeOptions: value === 'imaging-mode',
             isOutdated: true
         });
-        // parentStateUpdate()
     };
     const handleSelectorChange = (event) => {
         const selectName = event.target.name
@@ -62,7 +44,6 @@ export function TelescopeConfigure(parentState, updateParentState) {
             [selectName]: selectValue,
             isOutdated: true
         });
-        // parentStateUpdate()
     };
     const updatePlot = () => {
         axios.get('http://127.0.0.1:8000/throughput')
@@ -83,9 +64,11 @@ export function TelescopeConfigure(parentState, updateParentState) {
                 };
 
                 setChartData(newData);
+                setError(null)
             })
-            .catch((error) => {
-                console.error('Error fetching plot data:', error);
+            .catch((err) => {
+                setError("Failed to fetch plot data.")
+                console.error('Error fetching plot data:', err);
             });
     };
 
@@ -205,12 +188,19 @@ export function TelescopeConfigure(parentState, updateParentState) {
                                 </div>
                             </div>
                         </div>
-                        <div className="tile"><button className="button" onClick={updatePlot}>Update Throughput</button></div>
+                        <div>
+                            <div className="tile">
+                                <button className={!error ? "button" : "button is-danger"} onClick={updatePlot}>Update Throughput</button>
+                            </div>
+                            {error && <div className="tile">
+                                <p className={"has-text-danger"}>{error}</p>
+                            </div>}
+                        </div>
                     </div>
                 </div>
 
                 <div className="column notification">
-                    <div className="tile">
+                    <div className={!error ? "tile" : "tile notification is-danger"}>
                         <LinePlot
                             data={chartData}
                             isOutdated={state.isOutdated && state.requested}
