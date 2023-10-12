@@ -1,8 +1,9 @@
 import { Context, createContext } from "react";
+import { SpectrumType } from "../types";
 
-interface SimulationSetupContextValue {
-  addSpectrumComponent: (any) => void;
-  removeSpectrumComponent: (index: number) => void;
+export interface SimulationSetupContextValue {
+  addToSourceSpectrum: (type: SpectrumType) => void;
+  removeFromSourceSpectrum: (index: number) => void;
 }
 
 const SimulationSetupContext: Context<SimulationSetupContextValue> =

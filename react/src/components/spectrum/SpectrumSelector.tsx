@@ -1,29 +1,20 @@
-import { useContext, useState } from "react";
+import { ChangeEvent, useContext, useState } from "react";
 import SimulationSetupContext from "../SimulationSetupContext.js";
-
-const SPECTRUM_TYPE = {
-  BLACKBODY: "Blackbody",
-  EMISSION_LINE: "Emission Line",
-  STAR: "Star",
-};
+import { SpectrumType } from "../../types";
 
 export default function SpectrumSelector() {
-  const [selectedType, setSelectedType] = useState(SPECTRUM_TYPE.BLACKBODY);
-  const { addSpectrumComponent } = useContext(SimulationSetupContext);
+  const [selectedType, setSelectedType] = useState<SpectrumType>("Blackbody");
+  const { addToSourceSpectrum } = useContext(SimulationSetupContext);
 
-  const onSelect = (event) => {
-    setSelectedType(() => event.target.value);
+  const onSelect = (event: ChangeEvent<HTMLSelectElement>) => {
+    setSelectedType(() => event.target.value as SpectrumType);
   };
 
   const onClick = () => {
-    addSpectrumComponent(selectedType);
+    addToSourceSpectrum(selectedType);
   };
 
-  const spectrumTypes = [
-    SPECTRUM_TYPE.BLACKBODY,
-    SPECTRUM_TYPE.STAR,
-    SPECTRUM_TYPE.EMISSION_LINE,
-  ];
+  const spectrumTypes: SpectrumType[] = ["Blackbody", "Star", "Emission Line"];
   return (
     <div>
       <div className="select">

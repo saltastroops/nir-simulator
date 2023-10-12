@@ -1,47 +1,10 @@
-import TargetSpectrumForm from "./components/spectrum/TargetSpectrumForm.js";
-import SimulationSetupContext from "./components/SimulationSetupContext.js";
-import { useState } from "react";
+import { Simulator } from "./components/Simulator";
 
 function App() {
-  const [simulationSetup, setSimulationSetup] = useState({
-    spectrumComponents: [],
-  });
-
-  const addSpectrumComponent = (spectrumType) => {
-    setSimulationSetup((previousSetup) => {
-      const updatedSpectrumComponents = [
-        ...previousSetup.spectrumComponents,
-        spectrumType,
-      ];
-      return {
-        ...previousSetup,
-        spectrumComponents: updatedSpectrumComponents,
-      };
-    });
-  };
-
-  const removeSpectrumComponent = (index) => {
-    setSimulationSetup((previousSetup) => {
-      const updatedSpectrumComponents =
-        previousSetup.spectrumComponents.toSpliced(index, 1);
-      return {
-        ...previousSetup,
-        spectrumComponents: updatedSpectrumComponents,
-      };
-    });
-  };
-
-  const contextValue = {
-    addSpectrumComponent,
-    removeSpectrumComponent,
-  };
-
   return (
-    <SimulationSetupContext.Provider value={contextValue}>
-      <TargetSpectrumForm
-        spectrumComponents={simulationSetup.spectrumComponents}
-      />
-    </SimulationSetupContext.Provider>
+    <div className="container">
+      <Simulator />
+    </div>
   );
 }
 

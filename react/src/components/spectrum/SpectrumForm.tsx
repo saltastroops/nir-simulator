@@ -4,7 +4,7 @@ interface Props {
   remove: () => void;
 }
 
-export default function SpectrumComponentForm({
+export default function SpectrumForm({
   remove,
   children,
 }: PropsWithChildren<Props>) {
