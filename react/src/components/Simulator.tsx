@@ -6,11 +6,12 @@ import SimulationSetupContext, {
   SimulationSetupContextValue,
 } from "./SimulationSetupContext.js";
 import { SimulationSetup, Spectrum, SpectrumType } from "../types.js";
+import { makeDefaultBlackbody } from "./spectrum/Blackbody";
 
 function makeSpectrum(type: SpectrumType): Spectrum {
   switch (type) {
     case "Blackbody":
-      return { type: "Blackbody", parameters: {}, errors: {} };
+      return makeDefaultBlackbody();
     case "Galaxy":
       return { type: "Galaxy", parameters: {}, errors: {} };
     case "Emission Line":
@@ -44,7 +45,7 @@ export function Simulator() {
     });
   };
 
-  const removeFromSourceSpectrum = (index) => {
+  const removeFromSourceSpectrum = (index: number) => {
     setSimulationSetup((previousSetup) => {
       const updatedSourceSpectrum = [...previousSetup.sourceSpectrum];
       updatedSourceSpectrum.splice(index, 1);
@@ -55,9 +56,21 @@ export function Simulator() {
     });
   };
 
+  const updateSourceSpectrum = (index: number, spectrum: Spectrum) => {
+    setSimulationSetup((previousSetup) => {
+      const updatedSourceSpectrum = [...previousSetup.sourceSpectrum];
+      updatedSourceSpectrum[index] = spectrum;
+      return {
+        ...previousSetup,
+        sourceSpectrum: updatedSourceSpectrum,
+      };
+    });
+  };
+
   const contextValue: SimulationSetupContextValue = {
     addToSourceSpectrum,
     removeFromSourceSpectrum,
+    updateSourceSpectrum,
   };
 
   return (

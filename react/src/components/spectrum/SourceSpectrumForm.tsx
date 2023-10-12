@@ -1,24 +1,44 @@
 import SpectrumSelector from "./SpectrumSelector";
 import SpectrumForm from "./SpectrumForm";
-import { useContext } from "react";
+import { ReactElement, useContext } from "react";
 import SimulationSetupContext from "../SimulationSetupContext.js";
-import { Spectrum } from "../../types";
+import { Spectrum, SpectrumType } from "../../types";
+import Blackbody, { BlackbodySpectrum } from "./Blackbody";
+
+function makeSpectrumForm(
+  type: SpectrumType,
+  spectrum: Spectrum,
+  update: (spectrum: Spectrum) => void,
+): ReactElement {
+  switch (type) {
+    case "Blackbody":
+      return (
+        <Blackbody blackbody={spectrum as BlackbodySpectrum} update={update} />
+      );
+    default:
+      throw new Error(`No spectrum form defined for type "${type}.`);
+  }
+}
 
 interface Props {
   sourceSpectrum: Spectrum[];
 }
 
 export default function SourceSpectrumForm({ sourceSpectrum }: Props) {
-  const { removeFromSourceSpectrum } = useContext(SimulationSetupContext);
+  const { removeFromSourceSpectrum, updateSourceSpectrum } = useContext(
+    SimulationSetupContext,
+  );
   return (
     <>
       <SpectrumSelector />
-      {sourceSpectrum.map((component, index) => (
+      {sourceSpectrum.map((spectrum, index) => (
         <SpectrumForm
           remove={() => removeFromSourceSpectrum(index)}
           key={index}
         >
-          {component.type}
+          {makeSpectrumForm("Blackbody", spectrum, (spectrum) => {
+            updateSourceSpectrum(index, spectrum);
+          })}
         </SpectrumForm>
       ))}
     </>
