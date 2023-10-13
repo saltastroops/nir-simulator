@@ -6,6 +6,10 @@ import Blackbody, {
   BlackbodySpectrum,
   makeDefaultBlackbody,
 } from "./Blackbody";
+import EmissionLine, {
+  EmissionLineSpectrum,
+  makeDefaultEmissionLine,
+} from "./EmissionLine";
 
 function makeSpectrum(type: SpectrumType): Spectrum {
   switch (type) {
@@ -14,24 +18,30 @@ function makeSpectrum(type: SpectrumType): Spectrum {
     case "Galaxy":
       return { type: "Galaxy", parameters: {}, errors: {} };
     case "Emission Line":
-      return { type: "Emission Line", parameters: {}, errors: {} };
+      return makeDefaultEmissionLine();
     default:
       throw new Error(`Cannot create spectrum of type "${type}".`);
   }
 }
 
 function makeSpectrumForm(
-  type: SpectrumType,
   spectrum: Spectrum,
   update: (spectrum: Spectrum) => void,
 ): ReactElement {
-  switch (type) {
+  switch (spectrum.type) {
     case "Blackbody":
       return (
         <Blackbody blackbody={spectrum as BlackbodySpectrum} update={update} />
       );
+    case "Emission Line":
+      return (
+        <EmissionLine
+          emissionLine={spectrum as EmissionLineSpectrum}
+          update={update}
+        />
+      );
     default:
-      throw new Error(`No spectrum form defined for type "${type}.`);
+      throw new Error(`No spectrum form defined for type "${spectrum.type}.`);
   }
 }
 
@@ -76,7 +86,7 @@ export default function SourceForm({ source, update }: Props) {
           remove={() => removeFromSourceSpectrum(index)}
           key={index}
         >
-          {makeSpectrumForm("Blackbody", spectrum, (spectrum) => {
+          {makeSpectrumForm(spectrum, (spectrum) => {
             updateSourceSpectrum(index, spectrum);
           })}
         </SpectrumForm>
