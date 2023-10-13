@@ -5,8 +5,8 @@ let idCounter = 0;
 export interface BlackbodySpectrum extends Spectrum {
   type: "Blackbody";
   parameters: {
-    magnitude: number;
-    temperature: number;
+    magnitude: string;
+    temperature: string;
   };
 }
 
@@ -19,8 +19,8 @@ export function makeDefaultBlackbody(): BlackbodySpectrum {
   return {
     type: "Blackbody",
     parameters: {
-      magnitude: 20,
-      temperature: 5000,
+      magnitude: "20",
+      temperature: "5000",
     },
     errors: {},
   };
@@ -28,7 +28,7 @@ export function makeDefaultBlackbody(): BlackbodySpectrum {
 
 export default function Blackbody({ blackbody, update }: Props) {
   const { parameters, errors } = blackbody;
-  const updateMagnitude = (value: any) => {
+  const updateMagnitude = (value: string) => {
     let error: string = undefined;
     const magnitude = parseFloat(value);
     if (isNaN(magnitude)) {
@@ -40,7 +40,7 @@ export default function Blackbody({ blackbody, update }: Props) {
     };
     const updatedParameters = {
       ...parameters,
-      magnitude,
+      magnitude: value,
     };
     update({
       type: "Blackbody",
@@ -49,7 +49,7 @@ export default function Blackbody({ blackbody, update }: Props) {
     });
   };
 
-  const updateTemperature = (value: any) => {
+  const updateTemperature = (value: string) => {
     const errorMessage = "The temperature must be a positive number.";
     let error: string = undefined;
     const temperature = parseFloat(value);
@@ -62,7 +62,7 @@ export default function Blackbody({ blackbody, update }: Props) {
     };
     const updatedParameters = {
       ...parameters,
-      temperature: temperature,
+      temperature: value,
     };
     update({
       type: "Blackbody",
@@ -86,7 +86,7 @@ export default function Blackbody({ blackbody, update }: Props) {
           <input
             id={magnitudeId}
             className="input"
-            type="number"
+            type="text"
             value={parameters.magnitude}
             min={0}
             max={30}
@@ -107,7 +107,7 @@ export default function Blackbody({ blackbody, update }: Props) {
           <input
             id={temperatureId}
             className="input"
-            type="number"
+            type="text"
             value={parameters.temperature}
             min={1000}
             max={15000}

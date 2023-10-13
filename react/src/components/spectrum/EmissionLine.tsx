@@ -5,22 +5,22 @@ let idCounter = 0;
 export interface EmissionLineSpectrum extends Spectrum {
   type: "Emission Line";
   parameters: {
-    centralWavelength: number;
-    fwhm: number;
-    flux: number;
-    redshift: number;
+    centralWavelength: string;
+    fwhm: string;
+    flux: string;
+    redshift: string;
   };
-  errors: Record<string, any>;
+  errors: Record<string, string>;
 }
 
 export function makeDefaultEmissionLine(): EmissionLineSpectrum {
   return {
     type: "Emission Line",
     parameters: {
-      centralWavelength: 1800,
-      fwhm: 1,
-      flux: 1e-16,
-      redshift: 0,
+      centralWavelength: "1800",
+      fwhm: "1",
+      flux: "1e-16",
+      redshift: "0",
     },
     errors: {},
   };
@@ -52,7 +52,7 @@ export default function EmissionLine({ emissionLine, update }: Props) {
     };
     const updatedParameters = {
       ...parameters,
-      centralWavelength: wavelength,
+      centralWavelength: value,
     };
     update({
       type: "Emission Line",
@@ -74,7 +74,7 @@ export default function EmissionLine({ emissionLine, update }: Props) {
     };
     const updatedParameters = {
       ...parameters,
-      fwhm: fwhm,
+      fwhm: value,
     };
     update({
       type: "Emission Line",
@@ -96,7 +96,7 @@ export default function EmissionLine({ emissionLine, update }: Props) {
     };
     const updatedParameters = {
       ...parameters,
-      flux: flux,
+      flux: value,
     };
     update({
       type: "Emission Line",
@@ -123,7 +123,7 @@ export default function EmissionLine({ emissionLine, update }: Props) {
     };
     const updatedParameters = {
       ...parameters,
-      redshift: redshift,
+      redshift: value,
     };
     update({
       type: "Emission Line",
@@ -149,7 +149,7 @@ export default function EmissionLine({ emissionLine, update }: Props) {
           <input
             id={centralWavelengthId}
             className="input"
-            type="number"
+            type="text"
             value={parameters.centralWavelength}
             min={0}
             max={30}
@@ -170,7 +170,7 @@ export default function EmissionLine({ emissionLine, update }: Props) {
           <input
             id={fwhmId}
             className="input"
-            type="number"
+            type="text"
             value={parameters.fwhm}
             min={1000}
             max={15000}
@@ -189,7 +189,7 @@ export default function EmissionLine({ emissionLine, update }: Props) {
           <input
             id={fluxId}
             className="input"
-            type="number"
+            type="text"
             value={parameters.flux}
             min={0}
             max={30}
@@ -208,7 +208,7 @@ export default function EmissionLine({ emissionLine, update }: Props) {
           <input
             id={redshiftId}
             className="input"
-            type="number"
+            type="text"
             value={parameters.redshift}
             min={0}
             max={30}
