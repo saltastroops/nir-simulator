@@ -151,8 +151,6 @@ export default function EmissionLine({ emissionLine, update }: Props) {
             className="input"
             type="text"
             value={parameters.centralWavelength}
-            min={0}
-            max={30}
             onChange={(event) => updateCentralWavelength(event.target.value)}
           />
         </div>
@@ -162,7 +160,7 @@ export default function EmissionLine({ emissionLine, update }: Props) {
       </div>
 
       {/* FWHM */}
-      <div className="w-48 mr-4">
+      <div className="mr-5 w-48">
         <div>
           <label htmlFor={fwhmId}>FWHM</label>
         </div>
@@ -172,8 +170,6 @@ export default function EmissionLine({ emissionLine, update }: Props) {
             className="input"
             type="text"
             value={parameters.fwhm}
-            min={1000}
-            max={15000}
             onChange={(event) => updateFWHM(event.target.value)}
           />
         </div>
@@ -191,8 +187,6 @@ export default function EmissionLine({ emissionLine, update }: Props) {
             className="input"
             type="text"
             value={parameters.flux}
-            min={0}
-            max={30}
             onChange={(event) => updateFlux(event.target.value)}
           />
         </div>
@@ -200,7 +194,7 @@ export default function EmissionLine({ emissionLine, update }: Props) {
       </div>
 
       {/* Redshift */}
-      <div className="mr-5 w-48">
+      <div className="w-48">
         <div>
           <label htmlFor={redshiftId}>Redshift</label>
         </div>
@@ -210,8 +204,6 @@ export default function EmissionLine({ emissionLine, update }: Props) {
             className="input"
             type="text"
             value={parameters.redshift}
-            min={0}
-            max={30}
             onChange={(event) => updateRedshift(event.target.value)}
           />
         </div>

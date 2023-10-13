@@ -10,13 +10,14 @@ import EmissionLine, {
   EmissionLineSpectrum,
   makeDefaultEmissionLine,
 } from "./EmissionLine";
+import Galaxy, { GalaxySpectrum, makeDefaultGalaxy } from "./Galaxy";
 
 function makeSpectrum(type: SpectrumType): Spectrum {
   switch (type) {
     case "Blackbody":
       return makeDefaultBlackbody();
     case "Galaxy":
-      return { type: "Galaxy", parameters: {}, errors: {} };
+      return makeDefaultGalaxy();
     case "Emission Line":
       return makeDefaultEmissionLine();
     default:
@@ -33,6 +34,8 @@ function makeSpectrumForm(
       return (
         <Blackbody blackbody={spectrum as BlackbodySpectrum} update={update} />
       );
+    case "Galaxy":
+      return <Galaxy galaxy={spectrum as GalaxySpectrum} update={update} />;
     case "Emission Line":
       return (
         <EmissionLine

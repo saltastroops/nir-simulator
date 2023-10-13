@@ -88,8 +88,6 @@ export default function Blackbody({ blackbody, update }: Props) {
             className="input"
             type="text"
             value={parameters.magnitude}
-            min={0}
-            max={30}
             onChange={(event) => updateMagnitude(event.target.value)}
           />
         </div>
@@ -109,8 +107,6 @@ export default function Blackbody({ blackbody, update }: Props) {
             className="input"
             type="text"
             value={parameters.temperature}
-            min={1000}
-            max={15000}
             onChange={(event) => updateTemperature(event.target.value)}
           />
         </div>

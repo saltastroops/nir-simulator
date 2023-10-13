@@ -1,5 +1,4 @@
 import { PropsWithChildren } from "react";
-import { Spectrum } from "../../types";
 
 interface Props {
   remove: () => void;
