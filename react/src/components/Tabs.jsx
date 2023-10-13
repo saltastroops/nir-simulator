@@ -14,17 +14,17 @@ export function Tabs() {
         <>
             <div className="tabs is-boxed">
                 <ul>
-                    <li className={activeComponent === 1 && "is-active"}>
+                    <li className={activeComponent === 1 ? "is-active" : ""}>
                         <a className="navbar-item" onClick={() => switchToComponent(1)}>
                             Generate Spectrum
                         </a>
                     </li>
-                    <li className={activeComponent === 2 && "is-active"}>
+                    <li className={activeComponent === 2 ? "is-active" : ""}>
                         <a className="navbar-item" onClick={() => switchToComponent(2)}>
                             Configure NIRWALS
                         </a>
                     </li>
-                    <li className={activeComponent === 3 && "is-active"}>
+                    <li className={activeComponent === 3 ? "is-active" : ""}>
                         <a className="navbar-item" onClick={() => switchToComponent(3)}>
                             Make an Exposure
                         </a>

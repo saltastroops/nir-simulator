@@ -1,12 +1,11 @@
 import {useState} from "react";
-import axios from 'axios';
 import "./TelescopeConfigure.css"
 import {LinePlot} from "../plots/LinePlot.jsx";
 
 export function TelescopeConfigure() {
     const [state, setState] = useState({
         configurationOptions: 'imaging-mode',
-        filter1: 'clear-filter',
+        filter: 'clear-filter',
         disableModeOptions: true,
         slitType: 'longslit',
         slitWidth: '1.5',
@@ -45,27 +44,90 @@ export function TelescopeConfigure() {
             isOutdated: true
         });
     };
-    const updatePlot = () => {
-        axios.get('http://127.0.0.1:8000/throughput')
-            .then((response) => {
-                setState({
-                    ...state,
-                    isOutdated: false,
-                    requested: true
-                });
-                const newData = {
-                    labels: response.data.x,
-                    datasets: [
-                        {
-                            label: 'Data Set 2',
-                            data: response.data.y,
-                        },
-                    ],
-                };
+    const updatePlot = (e) => {
+        e.preventDefault()
+        const formData  = {
+            configuration_options: state.configurationOptions,
+            filter: state.filter,
+            slit_type: state.slitType,
+            slit_width: state.slitWidth,
+            grating: state.grating,
+            grating_angle: state.gratingAngle,
 
-                setChartData(newData);
-                setError(null)
-            })
+        };
+        // Convert the data to URL-encoded format
+        const data = new URLSearchParams();
+        for (const key in formData) {
+            data.append(key, formData[key]);
+        }
+
+        // axios.post('http://127.0.0.1:8000/throughput/', formData, {
+        //     headers: {
+        //         'Content-Type': 'application/x-www-form-urlencoded'
+        //     }
+        // })
+        //     .then((response) => {
+        //         console.log(formData)
+        //         setState({
+        //             ...state,
+        //             isOutdated: false,
+        //             requested: true
+        //         });
+        //         const newData = {
+        //             labels: response.data.x,
+        //             datasets: [
+        //                 {
+        //                     borderWidth: 1,
+        //                     usePointStyle: false,
+        //                     borderColor: 'rgb(75, 192, 192)',
+        //                     pointRadius: 0,
+        //                     data: response.data.y,
+        //                 },
+        //             ],
+        //         };
+        //
+        //         setChartData(newData);
+        //         setError(null)
+        //     })
+        //     .catch((err) => {
+        //         setError("Failed to fetch plot data.")
+        //         console.error('Error fetching plot data:', err);
+        //     });
+
+        fetch('http://127.0.0.1:8000/throughput/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: data.toString(),
+        }).then((response) => {
+            if (!response.ok) {
+                throw new Error('Opps, Something went wrong.');
+            }
+            return response.json();
+        }).then((data) => {
+            console.log(formData)
+            setState({
+                ...state,
+                isOutdated: false,
+                requested: true
+            });
+            const newData = {
+                labels: data.x,
+                datasets: [
+                    {
+                        borderWidth: 1,
+                        usePointStyle: false,
+                        borderColor: 'rgb(75, 192, 192)',
+                        pointRadius: 0,
+                        data: data.y,
+                    },
+                ],
+            };
+
+            setChartData(newData);
+            setError(null)
+        })
             .catch((err) => {
                 setError("Failed to fetch plot data.")
                 console.error('Error fetching plot data:', err);
@@ -110,9 +172,9 @@ export function TelescopeConfigure() {
                                     <label className="label">Filter</label>
                                     <div className="select">
                                         <select
-                                            value={state.filter1}
+                                            value={state.filter}
                                             onChange={handleSelectorChange}
-                                            name="filter1"
+                                            name="filter"
                                         >
                                             <option value={'clear-filter'}>Clear Filter</option>
                                             <option value={'lwbf'}>LWBF</option>
