@@ -1,5 +1,6 @@
 import { Spectrum } from "../../types";
-import { ChangeEvent } from "react";
+
+let idCounter = 0;
 
 export interface BlackbodySpectrum extends Spectrum {
   type: "Blackbody";
@@ -26,6 +27,7 @@ export function makeDefaultBlackbody(): BlackbodySpectrum {
 }
 
 export default function Blackbody({ blackbody, update }: Props) {
+  const { parameters, errors } = blackbody;
   const updateMagnitude = (value: any) => {
     let error: string = undefined;
     const magnitude = parseFloat(value);
@@ -33,11 +35,11 @@ export default function Blackbody({ blackbody, update }: Props) {
       error = "The magnitude must be a number.";
     }
     const updatedErrors = {
-      ...blackbody.errors,
+      ...errors,
       magnitude: error,
     };
     const updatedParameters = {
-      ...blackbody.parameters,
+      ...parameters,
       magnitude,
     };
     update({
@@ -55,11 +57,11 @@ export default function Blackbody({ blackbody, update }: Props) {
       error = errorMessage;
     }
     const updatedErrors = {
-      ...blackbody.errors,
+      ...errors,
       temperature: error,
     };
     const updatedParameters = {
-      ...blackbody.parameters,
+      ...parameters,
       temperature: temperature,
     };
     update({
@@ -69,34 +71,52 @@ export default function Blackbody({ blackbody, update }: Props) {
     });
   };
 
+  idCounter++;
+  const magnitudeId = `magnitude-${idCounter}`;
+  const temperatureId = `temperature-${idCounter}`;
+
   return (
     <div className="flex flex-wrap items-top p-3">
+      {/* magnitude */}
       <div className="mr-5 w-48">
-        <div>Apparent Magnitude</div>
+        <div>
+          <label htmlFor={magnitudeId}>Apparent Magnitude</label>
+        </div>
         <div>
           <input
+            id={magnitudeId}
             className="input"
             type="number"
-            value={blackbody.parameters.magnitude}
+            value={parameters.magnitude}
             min={0}
             max={30}
             onChange={(event) => updateMagnitude(event.target.value)}
           />
         </div>
-        <div>ERROR</div>
+        {errors.magnitude && (
+          <div className="text-red-700">{errors.magnitude}</div>
+        )}
       </div>
+
+      {/* temperature */}
       <div className="w-48">
-        <div>Temperature</div>
+        <div>
+          <label htmlFor={temperatureId}>Temperature</label>
+        </div>
         <div>
           <input
+            id={temperatureId}
             className="input"
             type="number"
-            value={blackbody.parameters.temperature}
+            value={parameters.temperature}
             min={1000}
             max={15000}
             onChange={(event) => updateTemperature(event.target.value)}
           />
         </div>
+        {errors.temperature && (
+          <div className="text-red-700">{errors.temperature}</div>
+        )}
       </div>
     </div>
   );

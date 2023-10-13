@@ -4,8 +4,8 @@ export type SourceType = "Point" | "Diffuse";
 
 export interface Spectrum {
   type: SpectrumType;
-  parameters: object;
-  errors: object;
+  parameters: Record<string, any>;
+  errors: Record<string, any>;
 }
 
 export interface Source {
