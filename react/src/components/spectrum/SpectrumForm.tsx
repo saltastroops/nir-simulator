@@ -11,7 +11,7 @@ export default function SpectrumForm({
   return (
     <div className="border border-gray-200 p-2 mt-3">
       {children}
-      <span className="link" onClick={remove}>
+      <span className="hover:cursor-pointer text-red-500" onClick={remove}>
         Delete
       </span>
     </div>
