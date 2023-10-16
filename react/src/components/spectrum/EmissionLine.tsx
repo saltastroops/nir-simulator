@@ -10,7 +10,6 @@ export interface EmissionLineSpectrum extends Spectrum {
     flux: string;
     redshift: string;
   };
-  errors: Record<string, string>;
 }
 
 export function makeDefaultEmissionLine(): EmissionLineSpectrum {
@@ -38,7 +37,7 @@ export default function EmissionLine({ emissionLine, update }: Props) {
     const minWavelength = 1000;
     const maxWavelength = 5000;
     const errorMessage = `The wavelength must be a number between ${minWavelength} and ${maxWavelength}.`;
-    let error: string = undefined;
+    let error: string | undefined = undefined;
     const wavelength = parseFloat(value);
     if (isNaN(wavelength)) {
       error = errorMessage;
@@ -63,7 +62,7 @@ export default function EmissionLine({ emissionLine, update }: Props) {
 
   const updateFWHM = (value: any) => {
     const errorMessage = "The FWHM must be a positive number.";
-    let error: string = undefined;
+    let error: string | undefined = undefined;
     const fwhm = parseFloat(value);
     if (isNaN(fwhm) || fwhm <= 0) {
       error = errorMessage;
@@ -85,7 +84,7 @@ export default function EmissionLine({ emissionLine, update }: Props) {
 
   const updateFlux = (value: any) => {
     const errorMessage = "The flux must be a positive number.";
-    let error: string = undefined;
+    let error: string | undefined = undefined;
     const flux = parseFloat(value);
     if (isNaN(flux) || flux <= 0) {
       error = errorMessage;
@@ -109,7 +108,7 @@ export default function EmissionLine({ emissionLine, update }: Props) {
     const minRedshift = -20;
     const maxRedshift = 20;
     const errorMessage = `The redshift must be a number between ${minRedshift} and ${maxRedshift}.`;
-    let error: string = undefined;
+    let error: string | undefined = undefined;
     const redshift = parseFloat(value);
     if (isNaN(redshift)) {
       error = errorMessage;

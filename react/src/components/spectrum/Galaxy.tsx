@@ -14,7 +14,6 @@ export interface GalaxySpectrum extends Spectrum {
     age: string;
     redshift: string;
   };
-  errors: {};
 }
 
 export function makeDefaultGalaxy(): GalaxySpectrum {
@@ -35,10 +34,10 @@ interface Props {
   update: (spectrum: Spectrum) => void;
 }
 
-export default function Galaxy({ galaxy, update }) {
+export default function Galaxy({ galaxy, update }: Props) {
   const { parameters, errors } = galaxy;
   const updateMagnitude = (value: string) => {
-    let error: string = undefined;
+    let error: string | undefined = undefined;
     const magnitude = parseFloat(value);
     if (isNaN(magnitude)) {
       error = "The magnitude must be a number.";
@@ -60,7 +59,7 @@ export default function Galaxy({ galaxy, update }) {
 
   const updateType = (value: string) => {
     const errorMessage = `The type must be any of ${galaxyTypes.join(", ")}.`;
-    let error: string = undefined;
+    let error: string | undefined = undefined;
     if (galaxyTypes.indexOf(value.trim()) === -1) {
       error = errorMessage;
     }
@@ -81,7 +80,7 @@ export default function Galaxy({ galaxy, update }) {
 
   const updateAge = (value: string) => {
     const errorMessage = `The age must be any of ${ages.join(", ")}.`;
-    let error: string = undefined;
+    let error: string | undefined = undefined;
     if (ages.indexOf(value.trim()) === -1) {
       error = errorMessage;
     }
@@ -104,7 +103,7 @@ export default function Galaxy({ galaxy, update }) {
     const minRedshift = -20;
     const maxRedshift = 20;
     const errorMessage = `The redshift must be a number between ${minRedshift} and ${maxRedshift}.`;
-    let error: string = undefined;
+    let error: string | undefined = undefined;
     const redshift = parseFloat(value);
     if (isNaN(redshift)) {
       error = errorMessage;

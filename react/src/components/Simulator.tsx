@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { SpectrumGenerationTab } from "./spectrum/SpectrumGenerationTab";
-import { Exposure } from "./exposure/Exposure.jsx";
-import { TelescopeConfigure } from "./configure/TelescopeConfigure.jsx";
+import { Exposure } from "./exposure/Exposure";
+import { TelescopeConfigure } from "./configure/TelescopeConfigure.tsx";
 import { SimulationSetup } from "../types.js";
 
 export function Simulator() {

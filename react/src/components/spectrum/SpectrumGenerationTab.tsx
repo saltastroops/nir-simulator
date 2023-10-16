@@ -1,6 +1,5 @@
 import SourceForm from "./SourceForm";
-import { SimulationSetup, Source, Spectrum } from "../../types";
-import Blackbody, { makeDefaultBlackbody } from "./Blackbody";
+import { Source } from "../../types";
 
 interface Props {
   source: Source;

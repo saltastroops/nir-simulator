@@ -29,7 +29,7 @@ export function makeDefaultBlackbody(): BlackbodySpectrum {
 export default function Blackbody({ blackbody, update }: Props) {
   const { parameters, errors } = blackbody;
   const updateMagnitude = (value: string) => {
-    let error: string = undefined;
+    let error: string | undefined = undefined;
     const magnitude = parseFloat(value);
     if (isNaN(magnitude)) {
       error = "The magnitude must be a number.";
@@ -51,7 +51,7 @@ export default function Blackbody({ blackbody, update }: Props) {
 
   const updateTemperature = (value: string) => {
     const errorMessage = "The temperature must be a positive number.";
-    let error: string = undefined;
+    let error: string | undefined = undefined;
     const temperature = parseFloat(value);
     if (isNaN(temperature) || temperature <= 0) {
       error = errorMessage;
