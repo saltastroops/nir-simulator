@@ -61,39 +61,6 @@ export function TelescopeConfigure() {
             data.append(key, formData[key]);
         }
 
-        // axios.post('http://127.0.0.1:8000/throughput/', formData, {
-        //     headers: {
-        //         'Content-Type': 'application/x-www-form-urlencoded'
-        //     }
-        // })
-        //     .then((response) => {
-        //         console.log(formData)
-        //         setState({
-        //             ...state,
-        //             isOutdated: false,
-        //             requested: true
-        //         });
-        //         const newData = {
-        //             labels: response.data.x,
-        //             datasets: [
-        //                 {
-        //                     borderWidth: 1,
-        //                     usePointStyle: false,
-        //                     borderColor: 'rgb(75, 192, 192)',
-        //                     pointRadius: 0,
-        //                     data: response.data.y,
-        //                 },
-        //             ],
-        //         };
-        //
-        //         setChartData(newData);
-        //         setError(null)
-        //     })
-        //     .catch((err) => {
-        //         setError("Failed to fetch plot data.")
-        //         console.error('Error fetching plot data:', err);
-        //     });
-
         fetch('http://127.0.0.1:8000/throughput/', {
             method: 'POST',
             headers: {
