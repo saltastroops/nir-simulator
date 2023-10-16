@@ -37,8 +37,9 @@ Note: Currently files in the `public` folder won't be served by Django.
 First, define a component for setting the spectrum parameters.
 
 * Add the component in `src/components/spectrum`. The component has to accept two properties, namely `spectrum`, an object with the spectrum parameters (see below), and `update`, a function which must be called with the new parameters object whenever a parameter value is changed.
-* The `spectrum` property must be a `Spectrum`, i.e. it must have a `type`, a `parameters` and an `errors` property.
+* The `spectrum` property must be a `Spectrum`, i.e. it must have the properties `type` and `parameters`, as well as the methods `errors` and `typedParameters`.
 * The component should not keep state; the state is handled elsewhere in the Simulator. It should only communicate changes via the `update` function.
+* Labels should have proper ids, and a counter should be used for ensuring uniqueness. 
 
 Then in `src/components/spectrum/SourceForm.tsx` add the new component to `makeSpectrumForm` and the corresponding (initial) spectrum parameters to `makeSpectrum`.
 

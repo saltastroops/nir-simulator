@@ -1,11 +1,16 @@
-export type SpectrumType = "Blackbody" | "Galaxy" | "Emission Line";
+export type SpectrumType =
+  | "Blackbody"
+  | "Galaxy"
+  | "Emission Line"
+  | "User-Defined";
 
 export type SourceType = "Point" | "Diffuse";
 
 export interface Spectrum {
   type: SpectrumType;
-  parameters: Record<string, string>;
-  errors: Record<string, string | undefined>;
+  parameters: Record<string, string | File | null>;
+  errors: () => Record<string, string>;
+  typedParameters: () => Record<string, any>;
 }
 
 export interface Source {

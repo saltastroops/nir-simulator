@@ -2,24 +2,25 @@ import SpectrumSelector from "./SpectrumSelector";
 import SpectrumForm from "./SpectrumForm";
 import { ReactElement } from "react";
 import { Source, Spectrum, SpectrumType } from "../../types";
-import Blackbody, {
-  BlackbodySpectrum,
-  makeDefaultBlackbody,
-} from "./Blackbody";
-import EmissionLine, {
-  EmissionLineSpectrum,
-  makeDefaultEmissionLine,
-} from "./EmissionLine";
-import Galaxy, { GalaxySpectrum, makeDefaultGalaxy } from "./Galaxy";
+import BlackbodyPanel from "./BlackbodyPanel";
+import Blackbody from "../../spectrum/Blackbody";
+import EmissionLinePanel from "./EmissionLinePanel";
+import GalaxyPanel from "./GalaxyPanel";
+import UserDefinedPanel from "./UserDefinedPanel.tsx";
+import Galaxy from "../../spectrum/Galaxy";
+import EmissionLine from "../../spectrum/EmissionLine";
+import UserDefined from "../../spectrum/UserDefined.ts";
 
 function makeSpectrum(type: SpectrumType): Spectrum {
   switch (type) {
     case "Blackbody":
-      return makeDefaultBlackbody();
+      return new Blackbody();
     case "Galaxy":
-      return makeDefaultGalaxy();
+      return new Galaxy();
     case "Emission Line":
-      return makeDefaultEmissionLine();
+      return new EmissionLine();
+    case "User-Defined":
+      return new UserDefined();
     default:
       throw new Error(`Cannot create spectrum of type "${type}".`);
   }
@@ -32,14 +33,21 @@ function makeSpectrumForm(
   switch (spectrum.type) {
     case "Blackbody":
       return (
-        <Blackbody blackbody={spectrum as BlackbodySpectrum} update={update} />
+        <BlackbodyPanel blackbody={spectrum as Blackbody} update={update} />
       );
     case "Galaxy":
-      return <Galaxy galaxy={spectrum as GalaxySpectrum} update={update} />;
+      return <GalaxyPanel galaxy={spectrum as Galaxy} update={update} />;
     case "Emission Line":
       return (
-        <EmissionLine
-          emissionLine={spectrum as EmissionLineSpectrum}
+        <EmissionLinePanel
+          emissionLine={spectrum as EmissionLine}
+          update={update}
+        />
+      );
+    case "User-Defined":
+      return (
+        <UserDefinedPanel
+          userDefined={spectrum as UserDefined}
           update={update}
         />
       );
