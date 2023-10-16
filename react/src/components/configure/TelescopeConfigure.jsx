@@ -73,7 +73,6 @@ export function TelescopeConfigure() {
             }
             return response.json();
         }).then((data) => {
-            console.log(formData)
             setState({
                 ...state,
                 isOutdated: false,
