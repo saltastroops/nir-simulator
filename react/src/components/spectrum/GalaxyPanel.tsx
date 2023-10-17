@@ -65,7 +65,6 @@ export default function GalaxyPanel({ galaxy, update }: Props) {
                 {type}
               </option>
             ))}
-            <option>TEST</option>
           </select>
         </div>
         {errors.type && <div className="text-red-700">{errors.type}</div>}
@@ -87,7 +86,6 @@ export default function GalaxyPanel({ galaxy, update }: Props) {
                 {age}
               </option>
             ))}
-            <option>TEST</option>
           </select>
         </div>
         {errors.age && <div className="text-red-700">{errors.age}</div>}
