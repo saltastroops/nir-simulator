@@ -1,15 +1,17 @@
 import { useState } from "react";
 import { SpectrumGenerationTab } from "./spectrum/SpectrumGenerationTab";
 import { Exposure } from "./exposure/Exposure";
-import { TelescopeConfigure } from "./configure/TelescopeConfigure.tsx";
-import { SimulationSetup } from "../types.js";
-import { Moon } from "./spectrum/MoonPanel.tsx";
+import { TelescopeConfigure } from "./configure/TelescopeConfigure";
+import { SimulationSetup } from "../types";
+import { Moon } from "./spectrum/MoonPanel";
+import { Sun } from "./spectrum/SunPanel";
 
 export function Simulator() {
   const [activeIndex, setActiveIndex] = useState(1);
 
   const [setup, setSetup] = useState<SimulationSetup>({
     source: { type: "Point", spectrum: [] },
+    sun: new Sun(),
     moon: new Moon(),
   });
 
@@ -48,6 +50,7 @@ export function Simulator() {
       {activeIndex === 1 && (
         <SpectrumGenerationTab
           source={setup.source}
+          sun={setup.sun}
           moon={setup.moon}
           updateSetup={updateSetup}
         />

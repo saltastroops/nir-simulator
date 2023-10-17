@@ -1,4 +1,5 @@
 import { Moon } from "./components/spectrum/MoonPanel.tsx";
+import { Sun } from "./components/spectrum/SunPanel.tsx";
 
 export type SpectrumType =
   | "Blackbody"
@@ -22,5 +23,6 @@ export interface Source {
 
 export interface SimulationSetup {
   source: Source;
+  sun: Sun;
   moon: Moon;
 }
