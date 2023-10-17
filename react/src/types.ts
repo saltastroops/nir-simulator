@@ -1,3 +1,5 @@
+import { Moon } from "./components/spectrum/MoonPanel.tsx";
+
 export type SpectrumType =
   | "Blackbody"
   | "Galaxy"
@@ -20,4 +22,5 @@ export interface Source {
 
 export interface SimulationSetup {
   source: Source;
+  moon: Moon;
 }
