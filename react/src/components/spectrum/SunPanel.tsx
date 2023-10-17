@@ -129,7 +129,11 @@ export default function SunPanel({ sun, update }: Props) {
         <div>
           {["year", "solarElongation", "eclipticLatitude"].map(
             (key) =>
-              errors[key] && <div className="text-red-700">{errors[key]}</div>,
+              errors[key] && (
+                <div key={key} className="text-red-700">
+                  {errors[key]}
+                </div>
+              ),
           )}
         </div>
       )}

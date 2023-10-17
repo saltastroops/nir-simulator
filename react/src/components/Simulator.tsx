@@ -5,6 +5,7 @@ import { TelescopeConfigure } from "./configure/TelescopeConfigure";
 import { SimulationSetup } from "../types";
 import { Moon } from "./spectrum/MoonPanel";
 import { Sun } from "./spectrum/SunPanel";
+import { Earth } from "./spectrum/EarthPanel.tsx";
 
 export function Simulator() {
   const [activeIndex, setActiveIndex] = useState(1);
@@ -13,6 +14,7 @@ export function Simulator() {
     source: { type: "Point", spectrum: [] },
     sun: new Sun(),
     moon: new Moon(),
+    earth: new Earth(),
   });
 
   const updateSetup = (property: string, value: any) => {
@@ -52,6 +54,7 @@ export function Simulator() {
           source={setup.source}
           sun={setup.sun}
           moon={setup.moon}
+          earth={setup.earth}
           updateSetup={updateSetup}
         />
       )}

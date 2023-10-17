@@ -2,11 +2,13 @@ import SourceForm from "./SourceForm";
 import { Source } from "../../types";
 import MoonPanel, { Moon } from "./MoonPanel.tsx";
 import SunPanel, { Sun } from "./SunPanel.tsx";
+import { Earth, EarthPanel } from "./EarthPanel.tsx";
 
 interface Props {
   source: Source;
   sun: Sun;
   moon: Moon;
+  earth: Earth;
   updateSetup: (property: string, value: any) => void;
 }
 
@@ -14,6 +16,7 @@ export function SpectrumGenerationTab({
   source,
   sun,
   moon,
+  earth,
   updateSetup,
 }: Props) {
   return (
@@ -27,6 +30,10 @@ export function SpectrumGenerationTab({
       <MoonPanel
         moon={moon}
         update={(moon: Moon) => updateSetup("moon", moon)}
+      />
+      <EarthPanel
+        earth={earth}
+        update={(earth: Earth) => updateSetup("earth", earth)}
       />
     </div>
   );

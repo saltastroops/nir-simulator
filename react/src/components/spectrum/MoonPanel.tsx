@@ -154,7 +154,11 @@ export default function MoonPanel({ moon, update }: Props) {
         <div>
           {["zenithDistance", "phase", "lunarElongation"].map(
             (key) =>
-              errors[key] && <div className="text-red-700">{errors[key]}</div>,
+              errors[key] && (
+                <div key={key} className="text-red-700">
+                  {errors[key]}
+                </div>
+              ),
           )}
         </div>
       )}
