@@ -17,7 +17,7 @@ interface ScalesOptions {
   y: ScaleOptions;
 }
 
-interface LineOptions {
+export interface LineOptions {
   scales: ScalesOptions;
 }
 export function defaultLinePlotOptions(

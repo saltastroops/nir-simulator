@@ -1,23 +1,68 @@
 import { useState } from "react";
 import { SpectrumGenerationTab } from "./spectrum/SpectrumGenerationTab";
 import { Exposure } from "./exposure/Exposure";
-import { TelescopeConfigure } from "./configure/TelescopeConfigure";
-import { SimulationSetup } from "../types";
+import {
+  InstrumentConfiguration,
+  InstrumentConfigurationPanel,
+} from "./instrument/InstrumentConfigurationPanel.tsx";
 import { Moon } from "./spectrum/MoonPanel";
 import { Sun } from "./spectrum/SunPanel";
 import { Earth } from "./spectrum/EarthPanel.tsx";
-import { makeDefaultSpectrumPlotOptions } from "./spectrum/SpectrumPlotOptionsPanel.tsx";
+import { SpectrumPlotOptions } from "./spectrum/SpectrumPlotOptionsPanel.tsx";
+import { Source } from "./spectrum/SourceForm.tsx";
+
+interface SimulationSetupParameters {
+  source: Source;
+  sun: Sun;
+  moon: Moon;
+  earth: Earth;
+  spectrumPlotOptions: SpectrumPlotOptions;
+  instrumentConfiguration: InstrumentConfiguration;
+}
+
+export class SimulationSetup {
+  public source: Source = new Source();
+  public sun: Sun = new Sun();
+  public moon: Moon = new Moon();
+  public earth: Earth = new Earth();
+  public spectrumPlotOptions: SpectrumPlotOptions = new SpectrumPlotOptions();
+  public instrumentConfiguration: InstrumentConfiguration =
+    new InstrumentConfiguration();
+
+  public constructor(parameters?: SimulationSetupParameters) {
+    if (parameters) {
+      this.source = parameters.source;
+      this.sun = parameters.sun;
+      this.moon = parameters.moon;
+      this.earth = parameters.earth;
+      this.spectrumPlotOptions = parameters.spectrumPlotOptions;
+      this.instrumentConfiguration = parameters.instrumentConfiguration;
+    }
+  }
+
+  public data = () => ({
+    source: this.source.data(),
+    sun: this.sun.data(),
+    moon: this.moon.data(),
+    earth: this.earth.data(),
+    spectrumPlotOptions: this.spectrumPlotOptions.data(),
+    instrumentConfiguration: this.instrumentConfiguration.data(),
+  });
+}
 
 export function Simulator() {
   const [activeIndex, setActiveIndex] = useState(1);
 
-  const [setup, setSetup] = useState<SimulationSetup>({
-    source: { type: "Point", spectrum: [] },
-    sun: new Sun(),
-    moon: new Moon(),
-    earth: new Earth(),
-    spectrumPlotOptions: makeDefaultSpectrumPlotOptions(),
-  });
+  const [setup, setSetup] = useState<SimulationSetup>(
+    new SimulationSetup({
+      source: new Source(),
+      sun: new Sun(),
+      moon: new Moon(),
+      earth: new Earth(),
+      spectrumPlotOptions: new SpectrumPlotOptions(),
+      instrumentConfiguration: new InstrumentConfiguration(),
+    }),
+  );
 
   const updateSetup = (property: string, value: any) => {
     setSetup((previousSetup) => ({
@@ -61,7 +106,15 @@ export function Simulator() {
           updateSetup={updateSetup}
         />
       )}
-      {activeIndex === 2 && <TelescopeConfigure />}
+      {activeIndex === 2 && (
+        <InstrumentConfigurationPanel
+          instrumentConfiguration={setup.instrumentConfiguration}
+          setupData={setup.data()}
+          update={(instrumentConfiguration: InstrumentConfiguration) =>
+            updateSetup("instrumentConfiguration", instrumentConfiguration)
+          }
+        />
+      )}
       {activeIndex === 3 && <Exposure />}
     </>
   );

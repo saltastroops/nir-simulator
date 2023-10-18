@@ -18,17 +18,17 @@ export default class UserDefined implements Spectrum {
 
   public errors = () => {
     const errors: Record<string, string> = {};
-    const parameters = this.typedParameters();
+    const data = this.data();
 
     // file
-    if (!parameters.file) {
+    if (!data.file) {
       errors.file = "You need to choose a file.";
     }
 
     return errors;
   };
 
-  public typedParameters = () => ({
+  public data = () => ({
     file: this.parameters.file,
   });
 }

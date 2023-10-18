@@ -19,10 +19,10 @@ export class Moon {
 
   public errors = () => {
     const errors: Record<string, string> = {};
-    const parameters = this.typedParameters();
+    const data = this.data();
 
     // zenith distance
-    const zenithDistance = parameters.zenithDistance;
+    const zenithDistance = data.zenithDistance;
     const minZenithDistance = 0;
     const maxZenmithDistance = 180;
     if (
@@ -34,7 +34,7 @@ export class Moon {
     }
 
     // phase
-    const phase = parameters.phase;
+    const phase = data.phase;
     const minPhase = 0;
     const maxPhase = 180;
     if (Number.isNaN(phase) || phase < minPhase || phase > maxPhase) {
@@ -42,7 +42,7 @@ export class Moon {
     }
 
     // lunar elongation
-    const lunarElongation = parameters.lunarElongation;
+    const lunarElongation = data.lunarElongation;
     const minLunarElongation = 0;
     const maxLunarElongation = 180;
     if (
@@ -56,7 +56,7 @@ export class Moon {
     return errors;
   };
 
-  public typedParameters = () => {
+  public data = () => {
     return {
       zenithDistance: parseFloat(this.parameters.zenithDistance),
       phase: parseFloat(this.parameters.phase),

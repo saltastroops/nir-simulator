@@ -20,16 +20,16 @@ export default class Blackbody implements Spectrum {
 
   public errors = () => {
     const errors: Record<string, string> = {};
-    const parameters = this.typedParameters();
+    const data = this.data();
 
     // magnitude
-    const magnitude = parameters.magnitude;
+    const magnitude = data.magnitude;
     if (Number.isNaN(magnitude)) {
       errors.magnitude = "The magnitude must be a number.";
     }
 
     // temperature
-    const temperature = parameters.temperature;
+    const temperature = data.temperature;
     const minTemperature = 30;
     const maxTemperature = 100000;
     if (
@@ -43,7 +43,7 @@ export default class Blackbody implements Spectrum {
     return errors;
   };
 
-  public typedParameters = (): Record<string, any> => ({
+  public data = () => ({
     magnitude: parseFloat(this.parameters.magnitude),
     temperature: parseFloat(this.parameters.temperature),
   });

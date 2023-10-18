@@ -28,26 +28,26 @@ export default class Galaxy implements Spectrum {
 
   public errors = () => {
     const errors: Record<string, string> = {};
-    const parameters = this.typedParameters();
+    const data = this.data();
 
     // magnitude
-    const magnitude = parameters.magnitude;
+    const magnitude = data.magnitude;
     if (Number.isNaN(magnitude)) {
       errors.magnitude = "The magnitude must be a number.";
     }
 
     // type
-    if (!GALAXY_TYPES.includes(parameters.type)) {
+    if (!GALAXY_TYPES.includes(data.type)) {
       errors.type = `The type must be one of ${GALAXY_TYPES.join(", ")}.`;
     }
 
     // age
-    if (!GALAXY_AGES.includes(parameters.age)) {
+    if (!GALAXY_AGES.includes(data.age)) {
       errors.age = `The type must be one of ${GALAXY_AGES.join(", ")}.`;
     }
 
     // Redshift
-    const redshift = parameters.redshift;
+    const redshift = data.redshift;
     const minRedshift = -20;
     const maxRedshift = 20;
     if (
@@ -61,7 +61,7 @@ export default class Galaxy implements Spectrum {
     return errors;
   };
 
-  public typedParameters = () => ({
+  public data = () => ({
     magnitude: parseFloat(this.parameters.magnitude),
     type: this.parameters.type,
     age: this.parameters.age,
