@@ -3,12 +3,16 @@ import { Source } from "../../types";
 import MoonPanel, { Moon } from "./MoonPanel.tsx";
 import SunPanel, { Sun } from "./SunPanel.tsx";
 import { Earth, EarthPanel } from "./EarthPanel.tsx";
+import SpectrumPlotOptionsPanel, {
+  SpectrumPlotOptions,
+} from "./SpectrumPlotOptionsPanel.tsx";
 
 interface Props {
   source: Source;
   sun: Sun;
   moon: Moon;
   earth: Earth;
+  spectrumPlotOptions: SpectrumPlotOptions;
   updateSetup: (property: string, value: any) => void;
 }
 
@@ -17,6 +21,7 @@ export function SpectrumGenerationTab({
   sun,
   moon,
   earth,
+  spectrumPlotOptions,
   updateSetup,
 }: Props) {
   return (
@@ -34,6 +39,12 @@ export function SpectrumGenerationTab({
       <EarthPanel
         earth={earth}
         update={(earth: Earth) => updateSetup("earth", earth)}
+      />
+      <SpectrumPlotOptionsPanel
+        spectrumPlotOptions={spectrumPlotOptions}
+        update={(options: SpectrumPlotOptions) =>
+          updateSetup("spectrumPlotOptions", options)
+        }
       />
     </div>
   );

@@ -1,7 +1,7 @@
 import SpectrumSelector from "./SpectrumSelector";
 import SpectrumForm from "./SpectrumForm";
 import { ReactElement } from "react";
-import { Source, Spectrum, SpectrumType } from "../../types";
+import { Source, SourceType, Spectrum, SpectrumType } from "../../types";
 import BlackbodyPanel from "./BlackbodyPanel";
 import Blackbody from "../../spectrum/Blackbody";
 import EmissionLinePanel from "./EmissionLinePanel";
@@ -87,8 +87,17 @@ export default function SourceForm({ source, update }: Props) {
       spectrum: updatedSourceSpectrum,
     });
   };
+
+  const updateSourceType = (sourceType: SourceType) => {
+    update({
+      ...source,
+      type: sourceType,
+    });
+  };
+
   return (
     <>
+      {/* spectrum */}
       <SpectrumSelector
         onSelect={(type: SpectrumType) => addToSourceSpectrum(type)}
       />
@@ -102,6 +111,30 @@ export default function SourceForm({ source, update }: Props) {
           })}
         </SpectrumForm>
       ))}
+
+      {/* source type */}
+      <div>
+        <label>
+          <input
+            type="radio"
+            name="source-type"
+            value="Point"
+            onChange={() => updateSourceType("Point")}
+            checked={source.type === "Point"}
+          />
+          This is a point source
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="source-type"
+            value="Diffuse"
+            onChange={() => updateSourceType("Diffuse")}
+            checked={source.type === "Diffuse"}
+          />
+          This is a diffuse source
+        </label>
+      </div>
     </>
   );
 }

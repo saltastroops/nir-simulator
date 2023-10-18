@@ -6,6 +6,7 @@ import { SimulationSetup } from "../types";
 import { Moon } from "./spectrum/MoonPanel";
 import { Sun } from "./spectrum/SunPanel";
 import { Earth } from "./spectrum/EarthPanel.tsx";
+import { makeDefaultSpectrumPlotOptions } from "./spectrum/SpectrumPlotOptionsPanel.tsx";
 
 export function Simulator() {
   const [activeIndex, setActiveIndex] = useState(1);
@@ -15,6 +16,7 @@ export function Simulator() {
     sun: new Sun(),
     moon: new Moon(),
     earth: new Earth(),
+    spectrumPlotOptions: makeDefaultSpectrumPlotOptions(),
   });
 
   const updateSetup = (property: string, value: any) => {
@@ -55,6 +57,7 @@ export function Simulator() {
           sun={setup.sun}
           moon={setup.moon}
           earth={setup.earth}
+          spectrumPlotOptions={setup.spectrumPlotOptions}
           updateSetup={updateSetup}
         />
       )}
