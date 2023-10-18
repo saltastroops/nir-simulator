@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Spectrum } from "./spectrum/Spectrum.jsx";
 import { Exposure } from "./exposure/Exposure.jsx";
 import { TelescopeConfigure } from "./configure/TelescopeConfigure.jsx";
+import {defaultLinePlotOptions} from "./plots/PlotOptions";
 
 export function Tabs() {
     const [activeComponent, setActiveComponent] = useState(1);
@@ -19,9 +20,8 @@ export function Tabs() {
             chartData: {
                 x: [],
                 y: [],
-                xLabel: 'Wavelength',
-                yLabel: 'Throughput',
-                lineColor: 'rgb(75, 192, 192)'
+                lineColor: 'rgb(75, 192, 192)',
+                options: defaultLinePlotOptions('Wavelength (\u212B)', 'Throughput'),
             }
     },
         exposure: {
