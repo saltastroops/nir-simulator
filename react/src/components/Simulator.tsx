@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { SpectrumGenerationTab } from "./spectrum/SpectrumGenerationTab";
 import { Exposure } from "./exposure/Exposure";
 import {
@@ -51,8 +51,6 @@ export class SimulationSetup {
 }
 
 export function Simulator() {
-  const [activeIndex, setActiveIndex] = useState(1);
-
   const [setup, setSetup] = useState<SimulationSetup>(
     new SimulationSetup({
       source: new Source(),
@@ -64,6 +62,14 @@ export function Simulator() {
     }),
   );
 
+  const spectrumLIRef = useRef<HTMLLIElement>(null);
+  const instrumentConfigLIRef = useRef<HTMLLIElement>(null);
+  const exposureLIRef = useRef<HTMLLIElement>(null);
+
+  const spectrumDivRef = useRef<HTMLDivElement>(null);
+  const instrumentConfigDivRef = useRef<HTMLDivElement>(null);
+  const exposureDivRef = useRef<HTMLDivElement>(null);
+
   const updateSetup = (property: string, value: any) => {
     setSetup((previousSetup) => ({
       ...previousSetup,
@@ -72,31 +78,48 @@ export function Simulator() {
   };
 
   const switchToIndex = (index: number) => {
-    setActiveIndex(index);
+    // update tab highlighting
+    spectrumLIRef.current!.classList.remove("is-active");
+    instrumentConfigLIRef.current!.classList.remove("is-active");
+    exposureLIRef.current!.classList.remove("is-active");
+    if (index === 1) {
+      spectrumLIRef.current!.classList.add("is-active");
+    }
+    if (index === 2) {
+      instrumentConfigLIRef.current!.classList.add("is-active");
+    }
+    if (index === 3) {
+      exposureLIRef.current!.classList.add("is-active");
+    }
+
+    spectrumDivRef.current!.style.display = index === 1 ? "block" : "none";
+    instrumentConfigDivRef.current!.style.display =
+      index === 2 ? "block" : "none";
+    exposureDivRef.current!.style.display = index === 3 ? "block" : "none";
   };
 
   return (
     <>
       <div className="tabs is-boxed">
         <ul>
-          <li className={activeIndex === 1 ? "is-active" : undefined}>
+          <li ref={spectrumLIRef} className="is-active">
             <a className="navbar-item" onClick={() => switchToIndex(1)}>
               Generate Spectrum
             </a>
           </li>
-          <li className={activeIndex === 2 ? "is-active" : undefined}>
+          <li ref={instrumentConfigLIRef}>
             <a className="navbar-item" onClick={() => switchToIndex(2)}>
               Configure NIRWALS
             </a>
           </li>
-          <li className={activeIndex === 3 ? "is-active" : undefined}>
+          <li ref={exposureLIRef}>
             <a className="navbar-item" onClick={() => switchToIndex(3)}>
               Make an Exposure
             </a>
           </li>
         </ul>
       </div>
-      {activeIndex === 1 && (
+      <div ref={spectrumDivRef} style={{ display: "block" }}>
         <SpectrumGenerationTab
           source={setup.source}
           sun={setup.sun}
@@ -105,8 +128,8 @@ export function Simulator() {
           spectrumPlotOptions={setup.spectrumPlotOptions}
           updateSetup={updateSetup}
         />
-      )}
-      {activeIndex === 2 && (
+      </div>
+      <div ref={instrumentConfigDivRef} style={{ display: "none" }}>
         <InstrumentConfigurationPanel
           instrumentConfiguration={setup.instrumentConfiguration}
           setupData={setup.data()}
@@ -114,8 +137,10 @@ export function Simulator() {
             updateSetup("instrumentConfiguration", instrumentConfiguration)
           }
         />
-      )}
-      {activeIndex === 3 && <Exposure />}
+      </div>
+      <div ref={exposureDivRef} style={{ display: "none" }}>
+        <Exposure />
+      </div>
     </>
   );
 }
