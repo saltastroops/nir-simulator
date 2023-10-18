@@ -4,6 +4,7 @@ import { Exposure } from "./exposure/Exposure.jsx";
 import { TelescopeConfigure } from "./configure/TelescopeConfigure.jsx";
 
 export function Tabs() {
+    const [activeComponent, setActiveComponent] = useState(1);
     const [state, setState] = useState({
         configure: {
             configurationOptions: 'imaging-mode',
@@ -18,16 +19,15 @@ export function Tabs() {
             chartData: {
                 x: [],
                 y: [],
-                xLabel: "Wavelength",
-                yLabel: "Throughput",
+                xLabel: 'Wavelength',
+                yLabel: 'Throughput',
                 lineColor: 'rgb(75, 192, 192)'
             }
-        },
+    },
         exposure: {
             target_zd: "31"
         }
     });
-    const [activeComponent, setActiveComponent] = useState(1);
     const switchToComponent = (componentNumber) => {
         setActiveComponent(componentNumber);
     };
@@ -53,20 +53,13 @@ export function Tabs() {
                     </li>
                 </ul>
             </div>
-            <div style={{display: activeComponent === 1 ? 'block' : 'none'}}>
-                <Spectrum  />
-            </div>
-            <div style={{
-                display: activeComponent === 2 ? 'block' : 'none'
-            }}>
-                <TelescopeConfigure
-                    state={state}
-                    setState={setState}
-                />
-            </div>
-            <div style={{display: activeComponent === 3 ? 'block' : 'none' }}>
-                <Exposure />
-            </div>
+            {activeComponent === 1 && <Spectrum />}
+            {
+                activeComponent === 2 && <TelescopeConfigure
+                state={state}
+                setState={setState}
+            />}
+            {activeComponent === 3 && <Exposure />}
         </>
     );
 }

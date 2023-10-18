@@ -45,18 +45,14 @@ export function TelescopeConfigure({state, setState}) {
             target_zd: state.exposure.target_zd,
 
         };
-        // Convert the data to URL-encoded format
-        const data = new URLSearchParams();
-        for (const key in formData) {
-            data.append(key, formData[key]);
-        }
+
 
         fetch( environment.apiUrl+ '/throughput/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
             },
-            body: data.toString(),
+            body: formData,
         }).then((response) => {
             if (!response.ok) {
                 throw new Error('Opps, Something went wrong.');
