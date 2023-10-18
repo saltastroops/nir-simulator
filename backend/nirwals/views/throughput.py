@@ -1,6 +1,6 @@
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from ..modules.data.throughput import get_plot_data
+from nirwals.configure.data.throughput import get_plot_data
 
 
 @csrf_exempt
@@ -13,16 +13,17 @@ def throughput(request):
         "slit_width": "1.5",
         "grating": "950",
         "grating_angle": "40",
+        "target_zd": "31",
     }
+    form_data = default_options
 
-    if request.method == "POST":
-        # If it's a POST request, update configuration options with POST data
-        post_data = request.POST
-        for key in default_options:
-            default_options[key] = post_data.get(key, default_options[key])
+    # If it's a POST request, update configuration options with POST data
+    post_data = request.POST
+    for key in default_options:
+        form_data[key] = post_data.get(key, default_options[key])
 
     # Get plot data based on configuration options
-    x, y = get_plot_data(default_options)
+    x, y = get_plot_data(form_data)
 
     # Prepare data for response
     data = {

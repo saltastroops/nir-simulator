@@ -1,39 +1,47 @@
 import './linePlot.css';
 import { Line } from 'react-chartjs-2';
 
-export function LinePlot(data) {
+export function LinePlot({data, isOutdated}) {
     const options = {
         scales: {
             x: {
                 type: "linear",
                 title: {
                     display: true,
-                    text: 'Wavelength'
+                    text: data.xLabel
                 },
                 ticks: {
                     min: 8000,
                     max: 18000,
-                    stepSize: 1000 // <----- This prop sets the stepSize
+                    stepSize: 1000
                 }
             },
             y: {
                 type: "linear",
                 title: {
                     display: true,
-                    text: 'Throughput'
+                    text: data.yLabel
                 },
             },
-
         },
-        pan: {
-            enabled: true
-        },
+    };
+    const plotData = {
+        labels: data.x,
+        datasets: [
+            {
+                borderWidth: 1,
+                usePointStyle: false,
+                borderColor: data.lineColor,
+                pointRadius: 0,
+                data: data.y,
+            },
+        ],
     };
 
     return (
         <div className="chart-container">
-            { data.isOutdated && <div className="watermark">Outdated</div>}
-            <Line data={data.data} options={options}/>
+            { isOutdated && <div className="watermark">Outdated</div>}
+            <Line data={plotData} options={options}/>
         </div>
         );
 

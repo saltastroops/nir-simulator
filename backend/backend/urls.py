@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.shortcuts import render
 from django.urls import path, include
 
-from .views.throughput import throughput
+from nirwals.views.throughput import throughput
 
 
 def home(request):
