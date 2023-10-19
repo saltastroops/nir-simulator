@@ -1,11 +1,12 @@
 import csv
+import pathlib
 from functools import lru_cache
 
 import numpy as np
 from os import getenv
 from scipy.special import erf
 
-FILES_BASE_URL = getenv("FILES_BASE_URL")
+FILES_BASE_DIR = pathlib.Path(getenv("FILES_BASE_URL"))
 
 
 #  TODO Caching should be done Correctly
@@ -27,22 +28,22 @@ def get_slit_modifier(constant):
 
 def get_affected_filenames(form_data):
     filenames = [
-        f"{FILES_BASE_URL}data_sheets/adjusted_program_datasheets/detectorqe.csv",
-        f"{FILES_BASE_URL}data_sheets/adjusted_program_datasheets/combinedtelescope.csv"
+        FILES_BASE_DIR / "data_sheets" / "adjusted_program_datasheets" / "detectorqe.csv",
+        FILES_BASE_DIR / "data_sheets" / "adjusted_program_datasheets" / "combinedtelescope.csv"
     ]
     if form_data["configuration_options"] == "imaging-mode":
         if form_data["filter"] == "clear-filter":
-            filenames.append("data_sheets/adjusted_program_datasheets/clearfiltertransmission.csv")
+            filenames.append(FILES_BASE_DIR  / "data_sheets" /"adjusted_program_datasheets"/"clearfiltertransmission.csv")
         elif form_data["filter"] == "lwbf":
-            filenames.append(f"{FILES_BASE_URL}/data_sheets/adjusted_program_datasheets/lwbftransmission.csv")
+            filenames.append(FILES_BASE_DIR / "data_sheets" / "adjusted_program_datasheets" / "lwbftransmission.csv")
     elif form_data["configuration_options"] == "spectroscopy-mode":
         if form_data["filter"] == "clear-filter":
-            filenames.append(f"{FILES_BASE_URL}/data_sheets/adjusted_program_datasheets/clearfiltertransmission.csv")
+            filenames.append(FILES_BASE_DIR / "data_sheets" / "adjusted_program_datasheets" / "clearfiltertransmission.csv")
         elif form_data["filter"] == "lwbf":
-            filenames.append(f"{FILES_BASE_URL}/data_sheets/adjusted_program_datasheets/lwbftransmission.csv")
+            filenames.append(FILES_BASE_DIR / "data_sheets" / "adjusted_program_datasheets" / "lwbftransmission.csv")
         if form_data["grating"] == "950":
             filenames.append(
-                f"{FILES_BASE_URL}/data_sheets/adjusted_program_datasheets/tempVPH{form_data['grating_angle']}.csv")
+                FILES_BASE_DIR / "data_sheets" / "adjusted_program_datasheets" / f"tempVPH{form_data['grating_angle']}.csv")
     return list(set(filenames))
 
 
