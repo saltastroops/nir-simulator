@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import "./InstrumentConfiguration.css";
 import SpectroscopyConfigurationPanel, {
   SpectroscopyConfiguration,
@@ -69,6 +69,15 @@ export function InstrumentConfigurationPanel({
     requested: false,
   });
   const [error, setError] = useState<string | null>(null);
+  const Chart = useMemo(
+    () => (
+      <LinePlot
+        chartContent={chartContent}
+        isOutdated={false && chartContent.requested}
+      />
+    ),
+    [chartContent],
+  );
 
   const modeConfiguration = instrumentConfiguration.modeConfiguration;
   const mode = modeConfiguration.mode;
@@ -251,10 +260,7 @@ export function InstrumentConfigurationPanel({
 
         <div className="column notification">
           <div className={!error ? "tile" : "tile notification is-danger"}>
-            <LinePlot
-              chartContent={chartContent}
-              isOutdated={false && chartContent.requested}
-            />
+            {Chart}
           </div>
         </div>
       </div>
