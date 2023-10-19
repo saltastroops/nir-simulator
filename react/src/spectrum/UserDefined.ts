@@ -14,9 +14,11 @@ export default class UserDefined implements Spectrum {
     if (parameters) {
       this.parameters = { ...parameters }; // make TypeScript happy
     }
+    this.data.bind(this);
+    this.errors.bind(this);
   }
 
-  public errors = () => {
+  public errors() {
     const errors: Record<string, string> = {};
     const data = this.data();
 
@@ -26,9 +28,11 @@ export default class UserDefined implements Spectrum {
     }
 
     return errors;
-  };
+  }
 
-  public data = () => ({
-    file: this.parameters.file,
-  });
+  public data() {
+    return {
+      file: this.parameters.file,
+    };
+  }
 }

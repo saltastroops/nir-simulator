@@ -27,12 +27,15 @@ export class Source {
       this.spectrum = parameters.spectrum;
       this.type = parameters.type;
     }
+    this.data = this.data.bind(this);
   }
 
-  public data = () => ({
-    spectrum: this.spectrum.map((s) => s.data()),
-    type: this.type,
-  });
+  public data() {
+    return {
+      spectrum: this.spectrum.map((s) => s.data()),
+      type: this.type,
+    };
+  }
 }
 
 function makeSpectrum(type: SpectrumType): Spectrum {
@@ -88,19 +91,23 @@ interface Props {
 export default function SourceForm({ source, update }: Props) {
   const addToSourceSpectrum = (type: SpectrumType) => {
     const updatedSpectrum = [...source.spectrum, makeSpectrum(type)];
-    update({
-      ...source,
-      spectrum: updatedSpectrum,
-    });
+    update(
+      new Source({
+        ...source,
+        spectrum: updatedSpectrum,
+      }),
+    );
   };
 
   const removeFromSourceSpectrum = (index: number) => {
     const updatedSourceSpectrum = [...source.spectrum];
     updatedSourceSpectrum.splice(index, 1);
-    update({
-      ...source,
-      spectrum: updatedSourceSpectrum,
-    });
+    update(
+      new Source({
+        ...source,
+        spectrum: updatedSourceSpectrum,
+      }),
+    );
   };
 
   const updateSourceSpectrum = (index: number, spectrum: Spectrum) => {
@@ -114,10 +121,12 @@ export default function SourceForm({ source, update }: Props) {
   };
 
   const updateSourceType = (sourceType: SourceType) => {
-    update({
-      ...source,
-      type: sourceType,
-    });
+    update(
+      new Source({
+        ...source,
+        type: sourceType,
+      }),
+    );
   };
 
   return (

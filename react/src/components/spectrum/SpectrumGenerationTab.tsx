@@ -1,5 +1,4 @@
-import SourceForm from "./SourceForm";
-import { Source } from "../../types";
+import SourceForm, { Source } from "./SourceForm";
 import MoonPanel, { Moon } from "./MoonPanel.tsx";
 import SunPanel, { Sun } from "./SunPanel.tsx";
 import { Earth, EarthPanel } from "./EarthPanel.tsx";

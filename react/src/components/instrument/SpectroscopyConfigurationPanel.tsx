@@ -21,14 +21,18 @@ export class SpectroscopyConfiguration {
       this.grating = parameters.grating;
       this.gratingAngle = parameters.gratingAngle;
     }
+    this.data = this.data.bind(this);
   }
 
-  public data = () => ({
-    slitType: this.slitType,
-    slitWidth: parseFloat(this.slitWidth),
-    grating: this.grating,
-    gratingAngle: parseFloat(this.gratingAngle),
-  });
+  public data() {
+    return {
+      mode: this.mode,
+      slitType: this.slitType,
+      slitWidth: parseFloat(this.slitWidth),
+      grating: this.grating,
+      gratingAngle: parseFloat(this.gratingAngle),
+    };
+  }
 }
 
 interface Props {

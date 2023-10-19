@@ -15,9 +15,12 @@ export class Moon {
     if (parameters) {
       this.parameters = parameters;
     }
+    this.data.bind(this);
+    this.errors.bind(this);
+    this.hasErrors.bind(this);
   }
 
-  public errors = () => {
+  public errors() {
     const errors: Record<string, string> = {};
     const data = this.data();
 
@@ -54,15 +57,15 @@ export class Moon {
     }
 
     return errors;
-  };
+  }
 
-  public data = () => {
+  public data() {
     return {
       zenithDistance: parseFloat(this.parameters.zenithDistance),
       phase: parseFloat(this.parameters.phase),
       lunarElongation: parseFloat(this.parameters.lunarElongation),
     };
-  };
+  }
 
   public hasErrors() {
     return Object.keys(this.errors()).length > 0;

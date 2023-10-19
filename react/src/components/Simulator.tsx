@@ -38,16 +38,19 @@ export class SimulationSetup {
       this.spectrumPlotOptions = parameters.spectrumPlotOptions;
       this.instrumentConfiguration = parameters.instrumentConfiguration;
     }
+    this.data = this.data.bind(this);
   }
 
-  public data = () => ({
-    source: this.source.data(),
-    sun: this.sun.data(),
-    moon: this.moon.data(),
-    earth: this.earth.data(),
-    spectrumPlotOptions: this.spectrumPlotOptions.data(),
-    instrumentConfiguration: this.instrumentConfiguration.data(),
-  });
+  public data() {
+    return {
+      source: this.source.data(),
+      sun: this.sun.data(),
+      moon: this.moon.data(),
+      earth: this.earth.data(),
+      spectrumPlotOptions: this.spectrumPlotOptions.data(),
+      instrumentConfiguration: this.instrumentConfiguration.data(),
+    };
+  }
 }
 
 export function Simulator() {
@@ -71,10 +74,13 @@ export function Simulator() {
   const exposureDivRef = useRef<HTMLDivElement>(null);
 
   const updateSetup = (property: string, value: any) => {
-    setSetup((previousSetup) => ({
-      ...previousSetup,
-      [property]: value,
-    }));
+    setSetup(
+      (previousSetup) =>
+        new SimulationSetup({
+          ...previousSetup,
+          [property]: value,
+        }),
+    );
   };
 
   const switchToIndex = (index: number) => {

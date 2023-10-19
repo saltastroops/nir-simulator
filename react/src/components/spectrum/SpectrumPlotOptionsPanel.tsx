@@ -17,14 +17,17 @@ export class SpectrumPlotOptions {
         parameters.multiplyWithMirrorAreaAndEfficiency;
       this.calculateFluxInSeeingDisk = parameters.calculateFluxInSeeingDisk;
     }
+    this.data = this.data.bind(this);
   }
 
-  public data = () => ({
-    includeAtmosphericExtinction: this.includeAtmosphericExtinction,
-    multiplyWithMirrorAreaAndEfficiency:
-      this.multiplyWithMirrorAreaAndEfficiency,
-    calculateFluxInSeeingDisk: this.calculateFluxInSeeingDisk,
-  });
+  public data() {
+    return {
+      includeAtmosphericExtinction: this.includeAtmosphericExtinction,
+      multiplyWithMirrorAreaAndEfficiency:
+        this.multiplyWithMirrorAreaAndEfficiency,
+      calculateFluxInSeeingDisk: this.calculateFluxInSeeingDisk,
+    };
+  }
 }
 
 interface Props {
@@ -43,10 +46,12 @@ export default function SpectrumPlotOptionsPanel({
   } = spectrumPlotOptions;
 
   const updateOption = (option: string, newValue: boolean) => {
-    update({
-      ...spectrumPlotOptions,
-      [option]: newValue,
-    });
+    update(
+      new SpectrumPlotOptions({
+        ...spectrumPlotOptions,
+        [option]: newValue,
+      }),
+    );
   };
 
   return (

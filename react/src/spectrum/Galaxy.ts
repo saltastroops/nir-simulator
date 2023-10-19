@@ -24,9 +24,11 @@ export default class Galaxy implements Spectrum {
     if (parameters) {
       this.parameters = parameters;
     }
+    this.data = this.data.bind(this);
+    this.errors = this.errors.bind(this);
   }
 
-  public errors = () => {
+  public errors() {
     const errors: Record<string, string> = {};
     const data = this.data();
 
@@ -59,12 +61,14 @@ export default class Galaxy implements Spectrum {
     }
 
     return errors;
-  };
+  }
 
-  public data = () => ({
-    magnitude: parseFloat(this.parameters.magnitude),
-    type: this.parameters.type,
-    age: this.parameters.age,
-    redshift: parseFloat(this.parameters.redshift),
-  });
+  public data() {
+    return {
+      magnitude: parseFloat(this.parameters.magnitude),
+      type: this.parameters.type,
+      age: this.parameters.age,
+      redshift: parseFloat(this.parameters.redshift),
+    };
+  }
 }

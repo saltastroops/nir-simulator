@@ -15,9 +15,12 @@ export class Sun {
     if (parameters) {
       this.parameters = parameters;
     }
+    this.data.bind(this);
+    this.errors.bind(this);
+    this.hasErrors.bind(this);
   }
 
-  public errors = () => {
+  public errors() {
     const data = this.data();
     const errors: Record<string, string> = {};
 
@@ -58,17 +61,19 @@ export class Sun {
     }
 
     return errors;
-  };
+  }
 
-  public data = () => ({
-    year: parseInt(this.parameters.year, 10),
-    solarElongation: parseFloat(this.parameters.solarElongation),
-    eclipticLatitude: parseFloat(this.parameters.eclipticLatitude),
-  });
+  public data() {
+    return {
+      year: parseInt(this.parameters.year, 10),
+      solarElongation: parseFloat(this.parameters.solarElongation),
+      eclipticLatitude: parseFloat(this.parameters.eclipticLatitude),
+    };
+  }
 
-  public hasErrors = () => {
+  public hasErrors() {
     return Object.keys(this.errors()).length > 0;
-  };
+  }
 }
 
 interface Props {

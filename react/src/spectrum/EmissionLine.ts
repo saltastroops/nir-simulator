@@ -20,6 +20,8 @@ export default class EmissionLine implements Spectrum {
     if (parameters) {
       this.parameters = parameters;
     }
+    this.data = this.data.bind(this);
+    this.errors = this.errors.bind(this);
   }
 
   public errors = () => {

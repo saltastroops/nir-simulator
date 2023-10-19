@@ -27,12 +27,15 @@ export class InstrumentConfiguration {
       this.modeConfiguration = parameters.modeConfiguration;
       this.filter = parameters.filter;
     }
+    this.data = this.data.bind(this);
   }
 
-  public data = () => ({
-    modeConfiguration: this.modeConfiguration.data(),
-    filter: this.filter,
-  });
+  public data() {
+    return {
+      modeConfiguration: this.modeConfiguration.data(),
+      filter: this.filter,
+    };
+  }
 }
 
 export interface ChartContent {
@@ -105,6 +108,11 @@ export function InstrumentConfigurationPanel({
 
   const updatePlot = () => {
     const data = {
+      configuration_options:
+        setupData.instrumentConfiguration.modeConfiguration.mode ===
+        "Spectroscopy"
+          ? "spectroscopy-mode"
+          : "imaging-mode",
       filter: setupData.instrumentConfiguration.filter,
       slit_type: setupData.instrumentConfiguration.modeConfiguration.slitType,
       slit_width: setupData.instrumentConfiguration.modeConfiguration.slitWidth,
@@ -120,9 +128,6 @@ export function InstrumentConfigurationPanel({
 
     fetch(environment.apiUrl + "/throughput/", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
       body: formData,
     })
       .then((response) => {

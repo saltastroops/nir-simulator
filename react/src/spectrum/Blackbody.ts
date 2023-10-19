@@ -16,9 +16,11 @@ export default class Blackbody implements Spectrum {
     if (parameters) {
       this.parameters = parameters;
     }
+    this.data = this.data.bind(this);
+    this.errors = this.errors.bind(this);
   }
 
-  public errors = () => {
+  public errors() {
     const errors: Record<string, string> = {};
     const data = this.data();
 
@@ -41,10 +43,12 @@ export default class Blackbody implements Spectrum {
     }
 
     return errors;
-  };
+  }
 
-  public data = () => ({
-    magnitude: parseFloat(this.parameters.magnitude),
-    temperature: parseFloat(this.parameters.temperature),
-  });
+  public data() {
+    return {
+      magnitude: parseFloat(this.parameters.magnitude),
+      temperature: parseFloat(this.parameters.temperature),
+    };
+  }
 }
