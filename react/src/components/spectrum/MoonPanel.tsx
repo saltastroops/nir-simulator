@@ -90,31 +90,13 @@ export default function MoonPanel({ moon, update }: Props) {
     );
   };
 
-  const selectDark = () => {
-    const darkParameters: MoonParameters = {
-      zenithDistance: "180",
-      phase: "180",
-      lunarElongation: "180",
-    };
-    update(new Moon(darkParameters));
-  };
-
-  const selectGrey = () => {
-    const greyParameters: MoonParameters = {
-      zenithDistance: "75",
-      phase: "90",
-      lunarElongation: "90",
-    };
-    update(new Moon(greyParameters));
-  };
-
-  const selectBright = () => {
-    const brightParameters: MoonParameters = {
-      zenithDistance: "25",
-      phase: "25",
-      lunarElongation: "25",
-    };
-    update(new Moon(brightParameters));
+  const updateMoon = (
+    zenithDistance: string,
+    phase: string,
+    lunarElongation: string,
+  ) => {
+    let updatedMoon = new Moon({ zenithDistance, phase, lunarElongation });
+    update(updatedMoon);
   };
 
   return (
@@ -169,15 +151,21 @@ export default function MoonPanel({ moon, update }: Props) {
       {/* quick select */}
       <div>
         <span className="mr-3">Quick Select:</span>
-        <span className="text-sky-500 cursor-pointer mr-3" onClick={selectDark}>
+        <span
+          className="text-sky-500 cursor-pointer mr-3"
+          onClick={() => updateMoon("180", "180", "180")}
+        >
           Dark Moon
         </span>
-        <span className="text-sky-500 cursor-pointer mr-3" onClick={selectGrey}>
+        <span
+          className="text-sky-500 cursor-pointer mr-3"
+          onClick={() => updateMoon("75", "90", "90")}
+        >
           Grey Moon
         </span>
         <span
           className="text-sky-500 cursor-pointer mr-3"
-          onClick={selectBright}
+          onClick={() => updateMoon("25", "25", "25")}
         >
           Bright Moon
         </span>
