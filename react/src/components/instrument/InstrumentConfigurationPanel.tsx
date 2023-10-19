@@ -130,7 +130,6 @@ export function InstrumentConfigurationPanel({
         return response.json();
       })
       .then((data) => {
-        console.log({ data });
         setChartContent((previousChartContent) => {
           const updatedChartData = {
             x: data.x,

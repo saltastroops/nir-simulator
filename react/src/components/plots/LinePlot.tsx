@@ -8,7 +8,6 @@ interface Props {
 }
 
 export function LinePlot({ chartContent, isOutdated }: Props) {
-  console.log({ chartContent });
   const plotData = {
     labels: chartContent.chartData.x,
     datasets: [
