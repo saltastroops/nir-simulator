@@ -53,7 +53,7 @@ export default function SpectroscopyConfigurationPanel({
 
   return (
     <div className="tile is-child box mt-2">
-      <div className="title is-6"> Specific Mode Options</div>
+      <div className="title is-6">Spectroscopy</div>
       <div className="field">
         <div className="control">
           <label className="label">Slit Type</label>
