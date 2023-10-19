@@ -75,7 +75,7 @@ export function InstrumentConfigurationPanel({
         update(
           new InstrumentConfiguration({
             modeConfiguration: new ImagingConfiguration(),
-            filter: "Clear Filter",
+            filter,
           }),
         );
         break;
@@ -83,7 +83,7 @@ export function InstrumentConfigurationPanel({
         update(
           new InstrumentConfiguration({
             modeConfiguration: new SpectroscopyConfiguration(),
-            filter: "Clear Filter",
+            filter,
           }),
         );
         break;
