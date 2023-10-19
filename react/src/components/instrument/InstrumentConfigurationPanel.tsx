@@ -4,7 +4,9 @@ import SpectroscopyConfigurationPanel, {
   SpectroscopyConfiguration,
 } from "./SpectroscopyConfigurationPanel.tsx";
 import { InstrumentMode } from "../../types.ts";
-import { ImagingConfiguration } from "./ImagingConfigurationPanel.tsx";
+import ImagingConfigurationPanel, {
+  ImagingConfiguration,
+} from "./ImagingConfigurationPanel.tsx";
 import { environment } from "../../environments/environment.ts";
 import { defaultLinePlotOptions, LineOptions } from "../plots/PlotOptions.ts";
 import { LinePlot } from "../plots/LinePlot.tsx";
@@ -202,6 +204,9 @@ export function InstrumentConfigurationPanel({
                 </select>
               </div>
             </div>
+
+            {/* imaging configuration */}
+            {mode === "Imaging" && <ImagingConfigurationPanel />}
 
             {/* spectroscopy configuration */}
             {mode === "Spectroscopy" && (

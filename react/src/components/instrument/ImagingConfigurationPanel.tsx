@@ -8,6 +8,6 @@ export class ImagingConfiguration {
   });
 }
 
-export default function InstrumentConfigurationPanel() {
+export default function ImagingConfigurationPanel() {
   return <div></div>;
 }
