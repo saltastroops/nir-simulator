@@ -14,21 +14,25 @@ export default class UserDefined implements Spectrum {
     if (parameters) {
       this.parameters = { ...parameters }; // make TypeScript happy
     }
+    this.data.bind(this);
+    this.errors.bind(this);
   }
 
-  public errors = () => {
+  public errors() {
     const errors: Record<string, string> = {};
-    const parameters = this.typedParameters();
+    const data = this.data();
 
     // file
-    if (!parameters.file) {
+    if (!data.file) {
       errors.file = "You need to choose a file.";
     }
 
     return errors;
-  };
+  }
 
-  public typedParameters = () => ({
-    file: this.parameters.file,
-  });
+  public data() {
+    return {
+      file: this.parameters.file,
+    };
+  }
 }

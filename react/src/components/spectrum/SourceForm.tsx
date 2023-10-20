@@ -1,7 +1,7 @@
 import SpectrumSelector from "./SpectrumSelector";
 import SpectrumForm from "./SpectrumForm";
 import { ReactElement } from "react";
-import { Source, SourceType, Spectrum, SpectrumType } from "../../types";
+import { Spectrum, SpectrumType } from "../../types";
 import BlackbodyPanel from "./BlackbodyPanel";
 import Blackbody from "../../spectrum/Blackbody";
 import EmissionLinePanel from "./EmissionLinePanel";
@@ -10,6 +10,33 @@ import UserDefinedPanel from "./UserDefinedPanel.tsx";
 import Galaxy from "../../spectrum/Galaxy";
 import EmissionLine from "../../spectrum/EmissionLine";
 import UserDefined from "../../spectrum/UserDefined.ts";
+
+export type SourceType = "Point" | "Diffuse";
+
+interface SourceParameters {
+  spectrum: Spectrum[];
+  type: SourceType;
+}
+
+export class Source {
+  spectrum: Spectrum[] = [];
+  type: SourceType = "Point";
+
+  public constructor(parameters?: SourceParameters) {
+    if (parameters) {
+      this.spectrum = parameters.spectrum;
+      this.type = parameters.type;
+    }
+    this.data = this.data.bind(this);
+  }
+
+  public data() {
+    return {
+      spectrum: this.spectrum.map((s) => s.data()),
+      type: this.type,
+    };
+  }
+}
 
 function makeSpectrum(type: SpectrumType): Spectrum {
   switch (type) {
@@ -64,35 +91,42 @@ interface Props {
 export default function SourceForm({ source, update }: Props) {
   const addToSourceSpectrum = (type: SpectrumType) => {
     const updatedSpectrum = [...source.spectrum, makeSpectrum(type)];
-    update({
-      ...source,
-      spectrum: updatedSpectrum,
-    });
+    update(
+      new Source({
+        ...source,
+        spectrum: updatedSpectrum,
+      }),
+    );
   };
 
   const removeFromSourceSpectrum = (index: number) => {
     const updatedSourceSpectrum = [...source.spectrum];
     updatedSourceSpectrum.splice(index, 1);
-    update({
-      ...source,
-      spectrum: updatedSourceSpectrum,
-    });
+    update(
+      new Source({
+        ...source,
+        spectrum: updatedSourceSpectrum,
+      }),
+    );
   };
 
   const updateSourceSpectrum = (index: number, spectrum: Spectrum) => {
     const updatedSourceSpectrum = [...source.spectrum];
     updatedSourceSpectrum[index] = spectrum;
-    update({
-      ...source,
+    const updatedSourceParameters: SourceParameters = {
       spectrum: updatedSourceSpectrum,
-    });
+      type: source.type,
+    };
+    update(new Source(updatedSourceParameters));
   };
 
   const updateSourceType = (sourceType: SourceType) => {
-    update({
-      ...source,
-      type: sourceType,
-    });
+    update(
+      new Source({
+        ...source,
+        type: sourceType,
+      }),
+    );
   };
 
   return (

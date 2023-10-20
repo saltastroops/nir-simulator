@@ -5,10 +5,12 @@ Django==4.2.6
 django-browser-reload==1.11.0
 django-cors-headers==4.3.0
 mypy-extensions==1.0.0
+numpy==1.26.1
 packaging==23.2
 pathspec==0.11.2
 platformdirs==3.11.0
 ruff==0.0.292
+scipy==1.11.3
 sqlparse==0.4.4
 tomli==2.0.1
 typing_extensions==4.8.0

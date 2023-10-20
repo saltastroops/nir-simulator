@@ -15,14 +15,17 @@ export class Sun {
     if (parameters) {
       this.parameters = parameters;
     }
+    this.data.bind(this);
+    this.errors.bind(this);
+    this.hasErrors.bind(this);
   }
 
-  public errors = () => {
-    const parameters = this.typedParameters();
+  public errors() {
+    const data = this.data();
     const errors: Record<string, string> = {};
 
     // year
-    const year = parameters.year;
+    const year = data.year;
     // if the string value of the year is a float, the parsed value is nonetheless an
     // integer (as parseInt is used); so we have to explicitly check whether the
     // string value is indeed an integer
@@ -34,7 +37,7 @@ export class Sun {
     }
 
     // solar elongation
-    const solarElongation = parameters.solarElongation;
+    const solarElongation = data.solarElongation;
     const minSolarElongation = 0;
     const maxSolarElongation = 180;
     if (
@@ -46,7 +49,7 @@ export class Sun {
     }
 
     // ecliptic latitude
-    const eclipticLatitude = parameters.eclipticLatitude;
+    const eclipticLatitude = data.eclipticLatitude;
     const minEclipticLatitude = -90;
     const maxEclipticLatitude = 90;
     if (
@@ -58,17 +61,19 @@ export class Sun {
     }
 
     return errors;
-  };
+  }
 
-  public typedParameters = () => ({
-    year: parseInt(this.parameters.year, 10),
-    solarElongation: parseFloat(this.parameters.solarElongation),
-    eclipticLatitude: parseFloat(this.parameters.eclipticLatitude),
-  });
+  public data() {
+    return {
+      year: parseInt(this.parameters.year, 10),
+      solarElongation: parseFloat(this.parameters.solarElongation),
+      eclipticLatitude: parseFloat(this.parameters.eclipticLatitude),
+    };
+  }
 
-  public hasErrors = () => {
+  public hasErrors() {
     return Object.keys(this.errors()).length > 0;
-  };
+  }
 }
 
 interface Props {

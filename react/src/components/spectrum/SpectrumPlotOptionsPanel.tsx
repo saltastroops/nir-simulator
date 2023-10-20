@@ -1,15 +1,33 @@
-export type SpectrumPlotOptions = {
+interface SpectrumPlotOptionsParameters {
   includeAtmosphericExtinction: boolean;
   multiplyWithMirrorAreaAndEfficiency: boolean;
   calculateFluxInSeeingDisk: boolean;
-};
+}
 
-export function makeDefaultSpectrumPlotOptions(): SpectrumPlotOptions {
-  return {
-    includeAtmosphericExtinction: false,
-    multiplyWithMirrorAreaAndEfficiency: false,
-    calculateFluxInSeeingDisk: false,
-  };
+export class SpectrumPlotOptions {
+  public includeAtmosphericExtinction = false;
+  public multiplyWithMirrorAreaAndEfficiency = false;
+  public calculateFluxInSeeingDisk = false;
+
+  public constructor(parameters?: SpectrumPlotOptionsParameters) {
+    if (parameters) {
+      this.includeAtmosphericExtinction =
+        parameters.includeAtmosphericExtinction;
+      this.multiplyWithMirrorAreaAndEfficiency =
+        parameters.multiplyWithMirrorAreaAndEfficiency;
+      this.calculateFluxInSeeingDisk = parameters.calculateFluxInSeeingDisk;
+    }
+    this.data = this.data.bind(this);
+  }
+
+  public data() {
+    return {
+      includeAtmosphericExtinction: this.includeAtmosphericExtinction,
+      multiplyWithMirrorAreaAndEfficiency:
+        this.multiplyWithMirrorAreaAndEfficiency,
+      calculateFluxInSeeingDisk: this.calculateFluxInSeeingDisk,
+    };
+  }
 }
 
 interface Props {
@@ -28,10 +46,12 @@ export default function SpectrumPlotOptionsPanel({
   } = spectrumPlotOptions;
 
   const updateOption = (option: string, newValue: boolean) => {
-    update({
-      ...spectrumPlotOptions,
-      [option]: newValue,
-    });
+    update(
+      new SpectrumPlotOptions({
+        ...spectrumPlotOptions,
+        [option]: newValue,
+      }),
+    );
   };
 
   return (

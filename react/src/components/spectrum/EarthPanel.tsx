@@ -15,14 +15,17 @@ export class Earth {
     if (parameters) {
       this.parameters = parameters;
     }
+    this.data.bind(this);
+    this.errors.bind(this);
+    this.hasErrors.bind(this);
   }
 
-  public errors = () => {
-    const parameters = this.typedParameters();
+  public errors() {
+    const data = this.data();
     const errors: Record<string, string> = {};
 
     // target zenith distance
-    const targetZenithDistance = parameters.targetZenithDistance;
+    const targetZenithDistance = data.targetZenithDistance;
     const minTargetZenithDistance = 31;
     const maxTargetZenithDistance = 43;
     if (
@@ -34,7 +37,7 @@ export class Earth {
     }
 
     // mirror area
-    const mirrorArea = parameters.mirrorArea;
+    const mirrorArea = data.mirrorArea;
     const minMirrorArea = 0;
     const maxMirrorArea = 550000;
     if (
@@ -46,7 +49,7 @@ export class Earth {
     }
 
     // seeing
-    const seeing = parameters.seeing;
+    const seeing = data.seeing;
     const minSeeing = 0.5;
     const maxSeeing = 5;
     if (Number.isNaN(seeing) || seeing < minSeeing || seeing > maxSeeing) {
@@ -54,19 +57,19 @@ export class Earth {
     }
 
     return errors;
-  };
+  }
 
-  public typedParameters = () => {
+  public data() {
     return {
       targetZenithDistance: parseFloat(this.parameters.targetZenithDistance),
       mirrorArea: parseFloat(this.parameters.mirrorArea),
       seeing: parseFloat(this.parameters.seeing),
     };
-  };
+  }
 
-  public hasErrors = () => {
+  public hasErrors() {
     return Object.keys(this.errors()).length > 0;
-  };
+  }
 }
 
 interface Props {

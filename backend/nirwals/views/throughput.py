@@ -20,7 +20,7 @@ def throughput(request):
     # If it's a POST request, update configuration options with POST data
     post_data = request.POST
     for key in default_options:
-        form_data[key] = post_data.get(key, default_options[key])
+        form_data[key] = post_data[key]
 
     # Get plot data based on configuration options
     x, y = get_plot_data(form_data)

@@ -20,16 +20,18 @@ export default class EmissionLine implements Spectrum {
     if (parameters) {
       this.parameters = parameters;
     }
+    this.data = this.data.bind(this);
+    this.errors = this.errors.bind(this);
   }
 
   public errors = () => {
     const errors: Record<string, string> = {};
-    const parameters = this.typedParameters();
+    const data = this.data();
 
     // central wavelength
     const minWavelength = 9000;
     const maxWavelength = 17000;
-    const centralWavelength = parameters.centralWavelength;
+    const centralWavelength = data.centralWavelength;
     if (
       Number.isNaN(centralWavelength) ||
       centralWavelength < minWavelength ||
@@ -40,19 +42,19 @@ export default class EmissionLine implements Spectrum {
 
     // FWHM
     const maxFWHM = 10000;
-    const fwhm = parameters.fwhm;
+    const fwhm = data.fwhm;
     if (Number.isNaN(fwhm) || fwhm <= 0 || fwhm > maxFWHM) {
       errors.fwhm = `The FWHM must be a positive number less than ${maxFWHM}.`;
     }
 
     // flux
-    const flux = parameters.flux;
+    const flux = data.flux;
     if (Number.isNaN(flux) || flux <= 0) {
       errors.flux = "The flux must be a positive number.";
     }
 
     // Redshift
-    const redshift = parameters.redshift;
+    const redshift = data.redshift;
     const minRedshift = -20;
     const maxRedshift = 20;
     if (
@@ -66,7 +68,7 @@ export default class EmissionLine implements Spectrum {
     return errors;
   };
 
-  public typedParameters = () => ({
+  public data = () => ({
     centralWavelength: parseFloat(this.parameters.centralWavelength),
     fwhm: parseFloat(this.parameters.fwhm),
     flux: parseFloat(this.parameters.flux),

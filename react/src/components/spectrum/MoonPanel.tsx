@@ -15,14 +15,17 @@ export class Moon {
     if (parameters) {
       this.parameters = parameters;
     }
+    this.data.bind(this);
+    this.errors.bind(this);
+    this.hasErrors.bind(this);
   }
 
-  public errors = () => {
+  public errors() {
     const errors: Record<string, string> = {};
-    const parameters = this.typedParameters();
+    const data = this.data();
 
     // zenith distance
-    const zenithDistance = parameters.zenithDistance;
+    const zenithDistance = data.zenithDistance;
     const minZenithDistance = 0;
     const maxZenmithDistance = 180;
     if (
@@ -34,7 +37,7 @@ export class Moon {
     }
 
     // phase
-    const phase = parameters.phase;
+    const phase = data.phase;
     const minPhase = 0;
     const maxPhase = 180;
     if (Number.isNaN(phase) || phase < minPhase || phase > maxPhase) {
@@ -42,7 +45,7 @@ export class Moon {
     }
 
     // lunar elongation
-    const lunarElongation = parameters.lunarElongation;
+    const lunarElongation = data.lunarElongation;
     const minLunarElongation = 0;
     const maxLunarElongation = 180;
     if (
@@ -54,15 +57,15 @@ export class Moon {
     }
 
     return errors;
-  };
+  }
 
-  public typedParameters = () => {
+  public data() {
     return {
       zenithDistance: parseFloat(this.parameters.zenithDistance),
       phase: parseFloat(this.parameters.phase),
       lunarElongation: parseFloat(this.parameters.lunarElongation),
     };
-  };
+  }
 
   public hasErrors() {
     return Object.keys(this.errors()).length > 0;
@@ -87,31 +90,13 @@ export default function MoonPanel({ moon, update }: Props) {
     );
   };
 
-  const selectDark = () => {
-    const darkParameters: MoonParameters = {
-      zenithDistance: "180",
-      phase: "180",
-      lunarElongation: "180",
-    };
-    update(new Moon(darkParameters));
-  };
-
-  const selectGrey = () => {
-    const greyParameters: MoonParameters = {
-      zenithDistance: "75",
-      phase: "90",
-      lunarElongation: "90",
-    };
-    update(new Moon(greyParameters));
-  };
-
-  const selectBright = () => {
-    const brightParameters: MoonParameters = {
-      zenithDistance: "25",
-      phase: "25",
-      lunarElongation: "25",
-    };
-    update(new Moon(brightParameters));
+  const updateMoon = (
+    zenithDistance: string,
+    phase: string,
+    lunarElongation: string,
+  ) => {
+    let updatedMoon = new Moon({ zenithDistance, phase, lunarElongation });
+    update(updatedMoon);
   };
 
   return (
@@ -166,15 +151,21 @@ export default function MoonPanel({ moon, update }: Props) {
       {/* quick select */}
       <div>
         <span className="mr-3">Quick Select:</span>
-        <span className="text-sky-500 cursor-pointer mr-3" onClick={selectDark}>
+        <span
+          className="text-sky-500 cursor-pointer mr-3"
+          onClick={() => updateMoon("180", "180", "180")}
+        >
           Dark Moon
         </span>
-        <span className="text-sky-500 cursor-pointer mr-3" onClick={selectGrey}>
+        <span
+          className="text-sky-500 cursor-pointer mr-3"
+          onClick={() => updateMoon("75", "90", "90")}
+        >
           Grey Moon
         </span>
         <span
           className="text-sky-500 cursor-pointer mr-3"
-          onClick={selectBright}
+          onClick={() => updateMoon("25", "25", "25")}
         >
           Bright Moon
         </span>
