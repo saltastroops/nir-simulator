@@ -4,7 +4,7 @@ import { BrightObject } from "./BrightObject.tsx";
 import { CustomObject } from "./CustomObject.tsx";
 import { Gain, GainType } from "../ExposurePanel.tsx";
 
-export function GainSection({ setupData, update }: any) {
+export function GainPanel({ setupData, update }: any) {
   const updateGain = (gainValues: GainType) => {
     update({
       ...setupData,

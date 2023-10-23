@@ -1,5 +1,5 @@
-import { GainSection } from "./gain-section/GainSection.tsx";
-import { SamplingPanel } from "./sampling-section/SamplingPanel.tsx";
+import { GainPanel } from "./gain-panel/GainPanel.tsx";
+import { SamplingPanel } from "./sampling-panel/SamplingPanel.tsx";
 import { SolvingTabs } from "./solve-section/SolvingTabs.tsx";
 
 export interface GainType {
@@ -154,7 +154,7 @@ export function ExposurePanel({ setupData, update }: any) {
         <div className="column is-two-fifths">
           <div className="columns">
             <div className="column pr-0">
-              <GainSection
+              <GainPanel
                 setupData={setupData.exposureConfiguration}
                 update={updateExposureConfiguration}
               />
