@@ -38,17 +38,16 @@ export class SimulationSetup {
       this.spectrumPlotOptions = parameters.spectrumPlotOptions;
       this.instrumentConfiguration = parameters.instrumentConfiguration;
     }
-    this.data = this.data.bind(this);
   }
 
-  public data() {
+  public get data() {
     return {
-      source: this.source.data(),
-      sun: this.sun.data(),
-      moon: this.moon.data(),
-      earth: this.earth.data(),
-      spectrumPlotOptions: this.spectrumPlotOptions.data(),
-      instrumentConfiguration: this.instrumentConfiguration.data(),
+      source: this.source.data,
+      sun: this.sun.data,
+      moon: this.moon.data,
+      earth: this.earth.data,
+      spectrumPlotOptions: this.spectrumPlotOptions.data,
+      instrumentConfiguration: this.instrumentConfiguration.data,
     };
   }
 }
@@ -138,7 +137,7 @@ export function Simulator() {
       <div ref={instrumentConfigDivRef} style={{ display: "none" }}>
         <InstrumentConfigurationPanel
           instrumentConfiguration={setup.instrumentConfiguration}
-          setupData={setup.data()}
+          setupData={setup.data}
           update={(instrumentConfiguration: InstrumentConfiguration) =>
             updateSetup("instrumentConfiguration", instrumentConfiguration)
           }

@@ -5,24 +5,21 @@ interface MoonParameters {
 }
 
 export class Moon {
-  public parameters: MoonParameters = {
-    zenithDistance: "75",
-    phase: "90",
-    lunarElongation: "90",
-  };
+  public zenithDistance = "75";
+  public phase = "90";
+  public lunarElongation = "90";
 
   public constructor(parameters?: MoonParameters) {
     if (parameters) {
-      this.parameters = parameters;
+      this.zenithDistance = parameters.zenithDistance;
+      this.phase = parameters.phase;
+      this.lunarElongation = parameters.lunarElongation;
     }
-    this.data.bind(this);
-    this.errors.bind(this);
-    this.hasErrors.bind(this);
   }
 
-  public errors() {
+  public get errors() {
     const errors: Record<string, string> = {};
-    const data = this.data();
+    const data = this.data;
 
     // zenith distance
     const zenithDistance = data.zenithDistance;
@@ -59,16 +56,16 @@ export class Moon {
     return errors;
   }
 
-  public data() {
+  public get data() {
     return {
-      zenithDistance: parseFloat(this.parameters.zenithDistance),
-      phase: parseFloat(this.parameters.phase),
-      lunarElongation: parseFloat(this.parameters.lunarElongation),
+      zenithDistance: parseFloat(this.zenithDistance),
+      phase: parseFloat(this.phase),
+      lunarElongation: parseFloat(this.lunarElongation),
     };
   }
 
-  public hasErrors() {
-    return Object.keys(this.errors()).length > 0;
+  public get hasErrors() {
+    return Object.keys(this.errors).length > 0;
   }
 }
 
@@ -78,13 +75,15 @@ interface Props {
 }
 
 export default function MoonPanel({ moon, update }: Props) {
-  const parameters = moon.parameters;
-  const errors = moon.errors();
+  const { zenithDistance, phase, lunarElongation } = moon;
+  const errors = moon.errors;
 
   const updateParameter = (parameter: string, newValue: string) => {
     update(
       new Moon({
-        ...parameters,
+        zenithDistance,
+        phase,
+        lunarElongation,
         [parameter]: newValue,
       }),
     );
@@ -107,7 +106,7 @@ export default function MoonPanel({ moon, update }: Props) {
         <input
           id="lunar-zenith-distance"
           className="input w-24"
-          value={parameters.zenithDistance}
+          value={zenithDistance}
           onChange={(event) =>
             updateParameter("zenithDistance", event.target.value)
           }
@@ -118,7 +117,7 @@ export default function MoonPanel({ moon, update }: Props) {
         <input
           id="lunar-phase"
           className="input w-24"
-          value={parameters.phase}
+          value={phase}
           onChange={(event) => updateParameter("phase", event.target.value)}
         />
 
@@ -127,7 +126,7 @@ export default function MoonPanel({ moon, update }: Props) {
         <input
           id="lunar-elongation"
           className="input w-24"
-          value={parameters.lunarElongation}
+          value={lunarElongation}
           onChange={(event) =>
             updateParameter("lunarElongation", event.target.value)
           }
@@ -135,7 +134,7 @@ export default function MoonPanel({ moon, update }: Props) {
       </div>
 
       {/* errors */}
-      {moon.hasErrors() && (
+      {moon.hasErrors && (
         <div>
           {["zenithDistance", "phase", "lunarElongation"].map(
             (key) =>

@@ -1,7 +1,56 @@
 import { Spectrum } from "../../types";
-import Blackbody from "../../spectrum/Blackbody";
 
 let idCounter = 0;
+
+interface BlackbodyParameters {
+  magnitude: string;
+  temperature: string;
+}
+
+export class Blackbody implements Spectrum {
+  public readonly spectrumType = "Blackbody";
+  public magnitude = "18";
+  public temperature = "5000";
+
+  public constructor(parameters?: BlackbodyParameters) {
+    if (parameters) {
+      this.magnitude = parameters.magnitude;
+      this.temperature = parameters.temperature;
+    }
+  }
+
+  public get errors() {
+    const errors: Record<string, string> = {};
+    const data = this.data;
+
+    // magnitude
+    const magnitude = data.magnitude;
+    if (Number.isNaN(magnitude)) {
+      errors.magnitude = "The magnitude must be a number.";
+    }
+
+    // temperature
+    const temperature = data.temperature;
+    const minTemperature = 30;
+    const maxTemperature = 100000;
+    if (
+      isNaN(temperature) ||
+      temperature < minTemperature ||
+      temperature > maxTemperature
+    ) {
+      errors.temperature = `The temperature must be a number between ${minTemperature} and ${maxTemperature}.`;
+    }
+
+    return errors;
+  }
+
+  public get data() {
+    return {
+      magnitude: parseFloat(this.magnitude),
+      temperature: parseFloat(this.temperature),
+    };
+  }
+}
 
 interface Props {
   blackbody: Blackbody;
@@ -9,12 +58,13 @@ interface Props {
 }
 
 export default function BlackbodyPanel({ blackbody, update }: Props) {
-  const parameters = blackbody.parameters;
-  const errors = blackbody.errors();
+  const { magnitude, temperature } = blackbody;
+  const errors = blackbody.errors;
 
   const updateParameter = (parameter: string, newValue: string) => {
     const updatedParameters = {
-      ...parameters,
+      magnitude,
+      temperature,
       [parameter]: newValue,
     };
     update(new Blackbody(updatedParameters));
@@ -36,7 +86,7 @@ export default function BlackbodyPanel({ blackbody, update }: Props) {
             id={magnitudeId}
             className="input"
             type="text"
-            value={parameters.magnitude}
+            value={magnitude}
             onChange={(event) =>
               updateParameter("magnitude", event.target.value)
             }
@@ -57,7 +107,7 @@ export default function BlackbodyPanel({ blackbody, update }: Props) {
             id={temperatureId}
             className="input"
             type="text"
-            value={parameters.temperature}
+            value={temperature}
             onChange={(event) =>
               updateParameter("temperature", event.target.value)
             }

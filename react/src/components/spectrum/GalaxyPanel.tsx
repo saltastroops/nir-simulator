@@ -1,7 +1,78 @@
 import { Spectrum } from "../../types";
-import Galaxy, { GALAXY_AGES, GALAXY_TYPES } from "../../spectrum/Galaxy";
 
 let idCounter = 0;
+
+export const GALAXY_TYPES = ["E", "S0", "Sa", "Sb", "Sc", "Sd"];
+
+export const GALAXY_AGES = ["Young", "Old"];
+
+interface GalaxyParameters {
+  magnitude: string;
+  type: string;
+  age: string;
+  redshift: string;
+}
+
+export class Galaxy implements Spectrum {
+  public readonly spectrumType = "Galaxy";
+  public magnitude = "18";
+  public type = "S0";
+  public age = "Young";
+  public redshift = "0";
+
+  public constructor(parameters?: GalaxyParameters) {
+    if (parameters) {
+      this.magnitude = parameters.magnitude;
+      this.type = parameters.type;
+      this.age = parameters.age;
+      this.redshift = parameters.redshift;
+    }
+  }
+
+  public get errors() {
+    const errors: Record<string, string> = {};
+    const data = this.data;
+
+    // magnitude
+    const magnitude = data.magnitude;
+    if (Number.isNaN(magnitude)) {
+      errors.magnitude = "The magnitude must be a number.";
+    }
+
+    // type
+    if (!GALAXY_TYPES.includes(data.type)) {
+      errors.type = `The type must be one of ${GALAXY_TYPES.join(", ")}.`;
+    }
+
+    // age
+    if (!GALAXY_AGES.includes(data.age)) {
+      errors.age = `The type must be one of ${GALAXY_AGES.join(", ")}.`;
+    }
+
+    // Redshift
+    const redshift = data.redshift;
+    const minRedshift = -20;
+    const maxRedshift = 20;
+    if (
+      Number.isNaN(redshift) ||
+      redshift < minRedshift ||
+      redshift > maxRedshift
+    ) {
+      errors.redshift = `The redshift must be a number between ${minRedshift} and ${maxRedshift}.`;
+    }
+
+    return errors;
+  }
+
+  public get data() {
+    return {
+      magnitude: parseFloat(this.magnitude),
+      type: this.type,
+      age: this.age,
+      redshift: parseFloat(this.redshift),
+    };
+  }
+}
 
 interface Props {
   galaxy: Galaxy;
@@ -9,12 +80,15 @@ interface Props {
 }
 
 export default function GalaxyPanel({ galaxy, update }: Props) {
-  const parameters = galaxy.parameters;
-  const errors = galaxy.errors();
+  const { magnitude, type, age, redshift } = galaxy;
+  const errors = galaxy.errors;
 
   const updateParameter = (parameter: string, newValue: string) => {
     const updatedParameters = {
-      ...parameters,
+      magnitude,
+      type,
+      age,
+      redshift,
       [parameter]: newValue,
     };
     update(new Galaxy(updatedParameters));
@@ -38,7 +112,7 @@ export default function GalaxyPanel({ galaxy, update }: Props) {
             id={magnitudeId}
             className="input"
             type="text"
-            value={parameters.magnitude}
+            value={magnitude}
             onChange={(event) =>
               updateParameter("magnitude", event.target.value)
             }
@@ -57,7 +131,7 @@ export default function GalaxyPanel({ galaxy, update }: Props) {
         <div className="select">
           <select
             id={typeId}
-            value={parameters.type}
+            value={type}
             onChange={(event) => updateParameter("type", event.target.value)}
           >
             {GALAXY_TYPES.map((type) => (
@@ -78,7 +152,7 @@ export default function GalaxyPanel({ galaxy, update }: Props) {
         <div className="select">
           <select
             id={ageId}
-            value={parameters.age}
+            value={age}
             onChange={(event) => updateParameter("age", event.target.value)}
           >
             {GALAXY_AGES.map((age) => (
@@ -101,7 +175,7 @@ export default function GalaxyPanel({ galaxy, update }: Props) {
             id={redshiftId}
             className="input"
             type="text"
-            value={parameters.redshift}
+            value={redshift}
             onChange={(event) =>
               updateParameter("redshift", event.target.value)
             }

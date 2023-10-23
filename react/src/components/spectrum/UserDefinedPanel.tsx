@@ -1,7 +1,39 @@
 import { Spectrum } from "../../types";
-import UserDefined from "../../spectrum/UserDefined.ts";
 
 let idCounter = 0;
+
+interface UserDefinedParameters {
+  file: File | null;
+}
+
+export class UserDefined implements Spectrum {
+  public readonly spectrumType = "User-Defined";
+  public file: File | null = null;
+
+  public constructor(parameters?: UserDefinedParameters) {
+    if (parameters) {
+      this.file = parameters.file;
+    }
+  }
+
+  public get errors() {
+    const errors: Record<string, string> = {};
+    const data = this.data;
+
+    // file
+    if (!data.file) {
+      errors.file = "You need to choose a file.";
+    }
+
+    return errors;
+  }
+
+  public get data() {
+    return {
+      file: this.file,
+    };
+  }
+}
 
 interface Props {
   userDefined: UserDefined;
@@ -9,15 +41,14 @@ interface Props {
 }
 
 export default function UserDefinedPanel({ userDefined, update }: Props) {
-  const parameters = userDefined.parameters;
+  const { file } = userDefined;
   const updateFile = (files: FileList | null) => {
-    let file: File | null = null;
+    let newFile: File | null = null;
     if (files !== null && files.length > 0) {
-      file = files[0];
+      newFile = files[0];
     }
     const updatedParameters = {
-      ...parameters,
-      file,
+      file: newFile,
     };
     update(new UserDefined(updatedParameters));
   };
@@ -41,9 +72,7 @@ export default function UserDefinedPanel({ userDefined, update }: Props) {
             <span className="file-cta">
               <span className="file-label">Choose a file...</span>
             </span>
-            {parameters.file && (
-              <span className="file-name">{parameters.file.name}</span>
-            )}
+            {file && <span className="file-name">{file.name}</span>}
           </label>
         </div>
       </div>

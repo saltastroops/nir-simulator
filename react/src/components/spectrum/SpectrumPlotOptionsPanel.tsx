@@ -17,10 +17,9 @@ export class SpectrumPlotOptions {
         parameters.multiplyWithMirrorAreaAndEfficiency;
       this.calculateFluxInSeeingDisk = parameters.calculateFluxInSeeingDisk;
     }
-    this.data = this.data.bind(this);
   }
 
-  public data() {
+  public get data() {
     return {
       includeAtmosphericExtinction: this.includeAtmosphericExtinction,
       multiplyWithMirrorAreaAndEfficiency:

@@ -27,12 +27,11 @@ export class InstrumentConfiguration {
       this.modeConfiguration = parameters.modeConfiguration;
       this.filter = parameters.filter;
     }
-    this.data = this.data.bind(this);
   }
 
-  public data() {
+  public get data() {
     return {
-      modeConfiguration: this.modeConfiguration.data(),
+      modeConfiguration: this.modeConfiguration.data,
       filter: this.filter,
     };
   }

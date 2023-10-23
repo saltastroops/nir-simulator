@@ -5,23 +5,20 @@ interface EarthParameters {
 }
 
 export class Earth {
-  public parameters: EarthParameters = {
-    targetZenithDistance: "37",
-    mirrorArea: "460000",
-    seeing: "2.1",
-  };
+  public targetZenithDistance = "37";
+  public mirrorArea = "460000";
+  public seeing = "2.1";
 
   public constructor(parameters?: EarthParameters) {
     if (parameters) {
-      this.parameters = parameters;
+      this.targetZenithDistance = parameters.targetZenithDistance;
+      this.mirrorArea = parameters.mirrorArea;
+      this.seeing = parameters.seeing;
     }
-    this.data.bind(this);
-    this.errors.bind(this);
-    this.hasErrors.bind(this);
   }
 
-  public errors() {
-    const data = this.data();
+  public get errors() {
+    const data = this.data;
     const errors: Record<string, string> = {};
 
     // target zenith distance
@@ -59,16 +56,16 @@ export class Earth {
     return errors;
   }
 
-  public data() {
+  public get data() {
     return {
-      targetZenithDistance: parseFloat(this.parameters.targetZenithDistance),
-      mirrorArea: parseFloat(this.parameters.mirrorArea),
-      seeing: parseFloat(this.parameters.seeing),
+      targetZenithDistance: parseFloat(this.targetZenithDistance),
+      mirrorArea: parseFloat(this.mirrorArea),
+      seeing: parseFloat(this.seeing),
     };
   }
 
-  public hasErrors() {
-    return Object.keys(this.errors()).length > 0;
+  public get hasErrors() {
+    return Object.keys(this.errors).length > 0;
   }
 }
 
@@ -78,13 +75,15 @@ interface Props {
 }
 
 export function EarthPanel({ earth, update }: Props) {
-  const parameters = earth.parameters;
-  const errors = earth.errors();
+  const { targetZenithDistance, mirrorArea, seeing } = earth;
+  const errors = earth.errors;
 
   const updateParameter = (parameter: string, newValue: string) => {
     update(
       new Earth({
-        ...parameters,
+        targetZenithDistance,
+        mirrorArea,
+        seeing,
         [parameter]: newValue,
       }),
     );
@@ -98,7 +97,7 @@ export function EarthPanel({ earth, update }: Props) {
         <input
           id="observation-year"
           className="input w-24"
-          value={parameters.targetZenithDistance}
+          value={targetZenithDistance}
           onChange={(event) =>
             updateParameter("targetZenithDistance", event.target.value)
           }
@@ -109,7 +108,7 @@ export function EarthPanel({ earth, update }: Props) {
         <input
           id="mirror-area"
           className="input w-24"
-          value={parameters.mirrorArea}
+          value={mirrorArea}
           onChange={(event) =>
             updateParameter("mirrorArea", event.target.value)
           }
@@ -120,13 +119,13 @@ export function EarthPanel({ earth, update }: Props) {
         <input
           id="seeing"
           className="input w-24"
-          value={parameters.seeing}
+          value={seeing}
           onChange={(event) => updateParameter("seeing", event.target.value)}
         />
       </div>
 
       {/*errors */}
-      {earth.hasErrors() && (
+      {earth.hasErrors && (
         <div>
           {["targetZenithDistance", "mirrorArea", "seeing"].map(
             (key) =>
