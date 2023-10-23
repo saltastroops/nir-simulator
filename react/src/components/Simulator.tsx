@@ -1,6 +1,9 @@
 import { useRef, useState } from "react";
 import { SpectrumGenerationTab } from "./spectrum/SpectrumGenerationTab";
-import { Exposure } from "./exposure/Exposure";
+import {
+  ExposureConfiguration,
+  ExposurePanel,
+} from "./exposure/ExposurePanel.tsx";
 import {
   InstrumentConfiguration,
   InstrumentConfigurationPanel,
@@ -18,6 +21,7 @@ interface SimulationSetupParameters {
   earth: Earth;
   spectrumPlotOptions: SpectrumPlotOptions;
   instrumentConfiguration: InstrumentConfiguration;
+  exposureConfiguration: ExposureConfiguration;
 }
 
 export class SimulationSetup {
@@ -28,6 +32,8 @@ export class SimulationSetup {
   public spectrumPlotOptions: SpectrumPlotOptions = new SpectrumPlotOptions();
   public instrumentConfiguration: InstrumentConfiguration =
     new InstrumentConfiguration();
+  public exposureConfiguration: ExposureConfiguration =
+    new ExposureConfiguration();
 
   public constructor(parameters?: SimulationSetupParameters) {
     if (parameters) {
@@ -37,6 +43,7 @@ export class SimulationSetup {
       this.earth = parameters.earth;
       this.spectrumPlotOptions = parameters.spectrumPlotOptions;
       this.instrumentConfiguration = parameters.instrumentConfiguration;
+      this.exposureConfiguration = parameters.exposureConfiguration;
     }
     this.data = this.data.bind(this);
   }
@@ -45,10 +52,31 @@ export class SimulationSetup {
     return {
       source: this.source.data(),
       sun: this.sun.data(),
-      moon: this.moon.data(),
+      moon: this.moon.data,
       earth: this.earth.data(),
       spectrumPlotOptions: this.spectrumPlotOptions.data(),
       instrumentConfiguration: this.instrumentConfiguration.data(),
+      exposureConfiguration: this.exposureConfiguration.data,
+      // exposureConfiguration: {
+      //   gain: {
+      //     gainType: "Faint Object",
+      //     firstValue: "2.04",
+      //     readNoice: "17",
+      //     fullWell: "6000",
+      //   },
+      //   sampling: {
+      //     numberOfSamples: "10",
+      //     samplingType: "Fowler Sampling",
+      //   },
+      //   solveSNR: {
+      //     exposureTime: "3600",
+      //     detectorIterations: "1",
+      //   },
+      //   solveExposureTime: {
+      //     requestedSNR: "10",
+      //     wavelength: "130000",
+      //   },
+      // },
     };
   }
 }
@@ -62,6 +90,7 @@ export function Simulator() {
       earth: new Earth(),
       spectrumPlotOptions: new SpectrumPlotOptions(),
       instrumentConfiguration: new InstrumentConfiguration(),
+      exposureConfiguration: new ExposureConfiguration(),
     }),
   );
 
@@ -145,7 +174,12 @@ export function Simulator() {
         />
       </div>
       <div ref={exposureDivRef} style={{ display: "none" }}>
-        <Exposure />
+        <ExposurePanel
+          setupData={setup.data()}
+          update={(exposureConfiguration: ExposureConfiguration) =>
+            updateSetup("exposureConfiguration", exposureConfiguration)
+          }
+        />
       </div>
     </>
   );

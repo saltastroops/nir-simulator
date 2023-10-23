@@ -166,7 +166,7 @@ export function InstrumentConfigurationPanel({
   };
 
   return (
-    <div className="container">
+    <div>
       <div className="columns">
         <div className="column is-one-fifth">
           <div className="tile is-parent is-vertical notification">
