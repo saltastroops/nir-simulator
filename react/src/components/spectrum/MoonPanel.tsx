@@ -1,3 +1,6 @@
+import { input, label } from "../utils.ts";
+import Errors from "../Errors.tsx";
+
 interface MoonParameters {
   zenithDistance: string;
   phase: string;
@@ -75,8 +78,7 @@ interface Props {
 }
 
 export default function MoonPanel({ moon, update }: Props) {
-  const { zenithDistance, phase, lunarElongation } = moon;
-  const errors = moon.errors;
+  const { zenithDistance, phase, lunarElongation, errors } = moon;
 
   const updateParameter = (parameter: string, newValue: string) => {
     update(
@@ -102,10 +104,12 @@ export default function MoonPanel({ moon, update }: Props) {
     <div>
       <div className="flex items-center">
         {/* zenith distance */}
-        <label htmlFor="lunar-zenith-distance">Moon ZD</label>
+        <label htmlFor="lunar-zenith-distance" className={label("mr-2")}>
+          Moon ZD
+        </label>
         <input
           id="lunar-zenith-distance"
-          className="input w-24"
+          className={input("w-12")}
           value={zenithDistance}
           onChange={(event) =>
             updateParameter("zenithDistance", event.target.value)
@@ -113,19 +117,23 @@ export default function MoonPanel({ moon, update }: Props) {
         />
 
         {/* phase */}
-        <label htmlFor="lunar-phase">Lunar Phase</label>
+        <label htmlFor="lunar-phase" className={label("ml-5 mr-2")}>
+          Lunar Phase
+        </label>
         <input
           id="lunar-phase"
-          className="input w-24"
+          className={input("w-12")}
           value={phase}
           onChange={(event) => updateParameter("phase", event.target.value)}
         />
 
         {/* lunar elongation */}
-        <label htmlFor="lunar-elongation">Lunar Elongation</label>
+        <label htmlFor="lunar-elongation" className={label("ml-5 mr-2")}>
+          Lunar Elongation
+        </label>
         <input
           id="lunar-elongation"
-          className="input w-24"
+          className={input("w-12")}
           value={lunarElongation}
           onChange={(event) =>
             updateParameter("lunarElongation", event.target.value)
@@ -135,20 +143,14 @@ export default function MoonPanel({ moon, update }: Props) {
 
       {/* errors */}
       {moon.hasErrors && (
-        <div>
-          {["zenithDistance", "phase", "lunarElongation"].map(
-            (key) =>
-              errors[key] && (
-                <div key={key} className="text-red-700">
-                  {errors[key]}
-                </div>
-              ),
-          )}
-        </div>
+        <Errors
+          errors={errors}
+          keys={["zenithDistance", "phase", "lunarElongation"]}
+        />
       )}
 
       {/* quick select */}
-      <div>
+      <div className="mt-2">
         <span className="mr-3">Quick Select:</span>
         <span
           className="text-sky-500 cursor-pointer mr-3"

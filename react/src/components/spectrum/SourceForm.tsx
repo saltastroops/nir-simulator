@@ -134,6 +134,7 @@ export default function SourceForm({ source, update }: Props) {
       />
       {source.spectrum.map((spectrum, index) => (
         <SpectrumForm
+          label={spectrum.spectrumType}
           remove={() => removeFromSourceSpectrum(index)}
           key={index}
         >
@@ -144,26 +145,28 @@ export default function SourceForm({ source, update }: Props) {
       ))}
 
       {/* source type */}
-      <div>
+      <div className="mt-4">
         <label>
           <input
             type="radio"
+            className="cursor-pointer"
             name="source-type"
             value="Point"
             onChange={() => updateSourceType("Point")}
             checked={source.type === "Point"}
           />
-          This is a point source
+          <span className="ml-2">This is a point source</span>
         </label>
         <label>
           <input
             type="radio"
+            className="ml-5 cursor-pointer"
             name="source-type"
             value="Diffuse"
             onChange={() => updateSourceType("Diffuse")}
             checked={source.type === "Diffuse"}
           />
-          This is a diffuse source
+          <span className="ml-2">This is a diffuse source</span>
         </label>
       </div>
     </>

@@ -1,4 +1,5 @@
 import { Spectrum } from "../../types";
+import Errors from "../Errors.tsx";
 
 let idCounter = 0;
 
@@ -33,6 +34,10 @@ export class UserDefined implements Spectrum {
       file: this.file,
     };
   }
+
+  public get hasErrors() {
+    return Object.keys(this.errors).length > 0;
+  }
 }
 
 interface Props {
@@ -41,7 +46,7 @@ interface Props {
 }
 
 export default function UserDefinedPanel({ userDefined, update }: Props) {
-  const { file } = userDefined;
+  const { errors } = userDefined;
   const updateFile = (files: FileList | null) => {
     let newFile: File | null = null;
     if (files !== null && files.length > 0) {
@@ -56,26 +61,23 @@ export default function UserDefinedPanel({ userDefined, update }: Props) {
   idCounter++;
 
   return (
-    <div className="flex flex-wrap items-top p-3">
+    <div>
       {/* file */}
-      <div>
-        <div>
-          <label htmlFor={`file-${idCounter}`}>Data File</label>
-        </div>
-        <div className="file has-name">
-          <label className="file-label">
-            <input
-              type="file"
-              className="file-input"
-              onChange={(event) => updateFile(event.target.files)}
-            />
-            <span className="file-cta">
-              <span className="file-label">Choose a file...</span>
-            </span>
-            {file && <span className="file-name">{file.name}</span>}
-          </label>
-        </div>
+      <div className="flex items-center">
+        <input
+          type="file"
+          className="block w-full text-sm text-slate-500
+        file:mr-6 file:py-1 file:px-2
+        file:rounded-md file:border-0
+        file:font-semibold
+        file:bg-green-600 file:text-white
+        hover:file:bg-green-700"
+          onChange={(event) => updateFile(event.target.files)}
+        />
       </div>
+
+      {/* errors */}
+      {userDefined.hasErrors && <Errors errors={errors} keys={["file"]} />}
     </div>
   );
 }

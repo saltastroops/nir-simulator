@@ -1,5 +1,6 @@
 import { ChangeEvent, useState } from "react";
 import { SpectrumType } from "../../types";
+import { button, select } from "../utils.ts";
 
 interface Props {
   onSelect: (type: SpectrumType) => void;
@@ -24,14 +25,12 @@ export default function SpectrumSelector({ onSelect }: Props) {
   ];
   return (
     <div>
-      <div className="select">
-        <select value={selectedType} onChange={onChange}>
-          {spectrumTypes.map((spectrumType) => (
-            <option key={spectrumType}>{spectrumType}</option>
-          ))}
-        </select>
-      </div>
-      <button className="button ml-4" onClick={onClick}>
+      <select value={selectedType} onChange={onChange} className={select()}>
+        {spectrumTypes.map((spectrumType) => (
+          <option key={spectrumType}>{spectrumType}</option>
+        ))}
+      </select>
+      <button className={button("ml-4")} onClick={onClick}>
         Add
       </button>
     </div>

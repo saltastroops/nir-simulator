@@ -1,3 +1,6 @@
+import { input, label } from "../utils.ts";
+import Errors from "../Errors.tsx";
+
 interface EarthParameters {
   targetZenithDistance: string;
   mirrorArea: string;
@@ -75,8 +78,7 @@ interface Props {
 }
 
 export function EarthPanel({ earth, update }: Props) {
-  const { targetZenithDistance, mirrorArea, seeing } = earth;
-  const errors = earth.errors;
+  const { targetZenithDistance, mirrorArea, seeing, errors } = earth;
 
   const updateParameter = (parameter: string, newValue: string) => {
     update(
@@ -93,10 +95,12 @@ export function EarthPanel({ earth, update }: Props) {
     <div>
       <div className="flex items-center">
         {/* target zenith distance */}
-        <label htmlFor="obsercvation-year">Target ZD</label>
+        <label htmlFor="obsercvation-year" className={label("mr-2")}>
+          Target ZD
+        </label>
         <input
           id="observation-year"
-          className="input w-24"
+          className={input("w-12")}
           value={targetZenithDistance}
           onChange={(event) =>
             updateParameter("targetZenithDistance", event.target.value)
@@ -104,10 +108,12 @@ export function EarthPanel({ earth, update }: Props) {
         />
 
         {/* mirror area */}
-        <label htmlFor="mirror-area">Effective mirror area</label>
+        <label htmlFor="mirror-area" className={label("ml-5 mr-2")}>
+          Effective mirror area
+        </label>
         <input
           id="mirror-area"
-          className="input w-24"
+          className={input("w-24")}
           value={mirrorArea}
           onChange={(event) =>
             updateParameter("mirrorArea", event.target.value)
@@ -115,10 +121,12 @@ export function EarthPanel({ earth, update }: Props) {
         />
 
         {/* seeing */}
-        <label htmlFor="seeing">Seeing</label>
+        <label htmlFor="seeing" className={label("ml-5 mr-2")}>
+          Seeing
+        </label>
         <input
           id="seeing"
-          className="input w-24"
+          className={input("w-12")}
           value={seeing}
           onChange={(event) => updateParameter("seeing", event.target.value)}
         />
@@ -126,12 +134,10 @@ export function EarthPanel({ earth, update }: Props) {
 
       {/*errors */}
       {earth.hasErrors && (
-        <div>
-          {["targetZenithDistance", "mirrorArea", "seeing"].map(
-            (key) =>
-              errors[key] && <div className="text-red-700">{errors[key]}</div>,
-          )}
-        </div>
+        <Errors
+          errors={errors}
+          keys={["targetZenithDistance", "mirrorArea", "seeing"]}
+        />
       )}
     </div>
   );

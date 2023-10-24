@@ -66,7 +66,7 @@ export default function SpectrumPlotOptionsPanel({
               updateOption("includeAtmosphericExtinction", event.target.checked)
             }
           />
-          Include atmospheric extinction
+          <span className="ml-2">Include atmospheric extinction</span>
         </label>
       </div>
 
@@ -84,7 +84,7 @@ export default function SpectrumPlotOptionsPanel({
               )
             }
           />
-          Multiply with mirror area and efficiency
+          <span className="ml-2">Multiply with mirror area and efficiency</span>
         </label>
       </div>
 
@@ -99,7 +99,7 @@ export default function SpectrumPlotOptionsPanel({
               updateOption("calculateFluxInSeeingDisk", event.target.checked)
             }
           />
-          Calculate flux in seeing disk
+          <span className="ml-2">Calculate flux in seeing disk</span>
         </label>
       </div>
     </div>

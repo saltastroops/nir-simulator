@@ -64,9 +64,9 @@ export function Simulator() {
     }),
   );
 
-  const spectrumLIRef = useRef<HTMLLIElement>(null);
-  const instrumentConfigLIRef = useRef<HTMLLIElement>(null);
-  const exposureLIRef = useRef<HTMLLIElement>(null);
+  const spectrumARef = useRef<HTMLAnchorElement>(null);
+  const instrumentConfigARef = useRef<HTMLAnchorElement>(null);
+  const exposureARef = useRef<HTMLAnchorElement>(null);
 
   const spectrumDivRef = useRef<HTMLDivElement>(null);
   const instrumentConfigDivRef = useRef<HTMLDivElement>(null);
@@ -84,17 +84,17 @@ export function Simulator() {
 
   const switchToIndex = (index: number) => {
     // update tab highlighting
-    spectrumLIRef.current!.classList.remove("is-active");
-    instrumentConfigLIRef.current!.classList.remove("is-active");
-    exposureLIRef.current!.classList.remove("is-active");
+    spectrumARef.current!.classList.remove(...isActive);
+    instrumentConfigARef.current!.classList.remove(...isActive);
+    exposureARef.current!.classList.remove(...isActive);
     if (index === 1) {
-      spectrumLIRef.current!.classList.add("is-active");
+      spectrumARef.current!.classList.add(...isActive);
     }
     if (index === 2) {
-      instrumentConfigLIRef.current!.classList.add("is-active");
+      instrumentConfigARef.current!.classList.add(...isActive);
     }
     if (index === 3) {
-      exposureLIRef.current!.classList.add("is-active");
+      exposureARef.current!.classList.add(...isActive);
     }
 
     spectrumDivRef.current!.style.display = index === 1 ? "block" : "none";
@@ -103,22 +103,34 @@ export function Simulator() {
     exposureDivRef.current!.style.display = index === 3 ? "block" : "none";
   };
 
+  const isActive = [
+    "pb-2",
+    "border-b-2",
+    "border-blue-700",
+    "text-blue-700",
+    "hover:text-blue-700",
+  ];
+
   return (
-    <>
-      <div className="tabs is-boxed">
-        <ul>
-          <li ref={spectrumLIRef} className="is-active">
-            <a className="navbar-item" onClick={() => switchToIndex(1)}>
+    <div className="text-md">
+      <div className="mb-8">
+        <ul className="flex items-top mt-2 mb-4">
+          <li className="mx-4">
+            <a
+              ref={spectrumARef}
+              className={`${isActive.join(" ")}`}
+              onClick={() => switchToIndex(1)}
+            >
               Generate Spectrum
             </a>
           </li>
-          <li ref={instrumentConfigLIRef}>
-            <a className="navbar-item" onClick={() => switchToIndex(2)}>
+          <li className="mx-4">
+            <a ref={instrumentConfigARef} onClick={() => switchToIndex(2)}>
               Configure NIRWALS
             </a>
           </li>
-          <li ref={exposureLIRef}>
-            <a className="navbar-item" onClick={() => switchToIndex(3)}>
+          <li className="mx-4">
+            <a ref={exposureARef} onClick={() => switchToIndex(3)}>
               Make an Exposure
             </a>
           </li>
@@ -146,6 +158,6 @@ export function Simulator() {
       <div ref={exposureDivRef} style={{ display: "none" }}>
         <Exposure />
       </div>
-    </>
+    </div>
   );
 }

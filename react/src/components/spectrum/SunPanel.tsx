@@ -1,3 +1,6 @@
+import { input, label } from "../utils.ts";
+import Errors from "../Errors.tsx";
+
 interface SunParameters {
   year: string;
   solarElongation: string;
@@ -79,8 +82,7 @@ interface Props {
 }
 
 export default function SunPanel({ sun, update }: Props) {
-  const { year, solarElongation, eclipticLatitude } = sun;
-  const errors = sun.errors;
+  const { year, solarElongation, eclipticLatitude, errors } = sun;
 
   const updateParameter = (parameter: string, newValue: string) => {
     update(
@@ -97,19 +99,23 @@ export default function SunPanel({ sun, update }: Props) {
     <div>
       <div className="flex items-center">
         {/* year */}
-        <label htmlFor="observation-year">Obs. Year</label>
+        <label htmlFor="observation-year" className={label("mr-2")}>
+          Obs. Year
+        </label>
         <input
           id="observation-year"
-          className="input w-24"
+          className={input("w-16")}
           value={year}
           onChange={(event) => updateParameter("year", event.target.value)}
         />
 
         {/* solar elongation */}
-        <label htmlFor="solar-elongation">Solar Elongation</label>
+        <label htmlFor="solar-elongation" className={label("ml-5 mr-2")}>
+          Solar Elongation
+        </label>
         <input
           id="solar-elongation"
-          className="input w-24"
+          className={input("w-12")}
           value={solarElongation}
           onChange={(event) =>
             updateParameter("solarElongation", event.target.value)
@@ -117,10 +123,12 @@ export default function SunPanel({ sun, update }: Props) {
         />
 
         {/* ecliptic latitude */}
-        <label htmlFor="ecliptioc-latitude">Ecliptic Latitude</label>
+        <label htmlFor="ecliptioc-latitude" className={label("ml-5 mr-2")}>
+          Ecliptic Latitude
+        </label>
         <input
           id="ecliptic-latitude"
-          className="input w-24"
+          className={input("w-12")}
           value={eclipticLatitude}
           onChange={(event) =>
             updateParameter("eclipticLatitude", event.target.value)
@@ -130,16 +138,10 @@ export default function SunPanel({ sun, update }: Props) {
 
       {/* errors */}
       {sun.hasErrors && (
-        <div>
-          {["year", "solarElongation", "eclipticLatitude"].map(
-            (key) =>
-              errors[key] && (
-                <div key={key} className="text-red-700">
-                  {errors[key]}
-                </div>
-              ),
-          )}
-        </div>
+        <Errors
+          errors={errors}
+          keys={["year", "solarElongation", "eclipticLatitude"]}
+        />
       )}
     </div>
   );

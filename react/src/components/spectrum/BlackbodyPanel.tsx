@@ -1,4 +1,6 @@
 import { Spectrum } from "../../types";
+import { input, label } from "../utils.ts";
+import Errors from "../Errors.tsx";
 
 let idCounter = 0;
 
@@ -50,6 +52,10 @@ export class Blackbody implements Spectrum {
       temperature: parseFloat(this.temperature),
     };
   }
+
+  public get hasErrors() {
+    return Object.keys(this.errors).length > 0;
+  }
 }
 
 interface Props {
@@ -58,8 +64,7 @@ interface Props {
 }
 
 export default function BlackbodyPanel({ blackbody, update }: Props) {
-  const { magnitude, temperature } = blackbody;
-  const errors = blackbody.errors;
+  const { magnitude, temperature, errors } = blackbody;
 
   const updateParameter = (parameter: string, newValue: string) => {
     const updatedParameters = {
@@ -75,48 +80,39 @@ export default function BlackbodyPanel({ blackbody, update }: Props) {
   const temperatureId = `temperature-${idCounter}`;
 
   return (
-    <div className="flex flex-wrap items-top p-3">
-      {/* magnitude */}
-      <div className="mr-5 w-48">
-        <div>
-          <label htmlFor={magnitudeId}>Apparent Magnitude</label>
-        </div>
-        <div>
-          <input
-            id={magnitudeId}
-            className="input"
-            type="text"
-            value={magnitude}
-            onChange={(event) =>
-              updateParameter("magnitude", event.target.value)
-            }
-          />
-        </div>
-        {errors.magnitude && (
-          <div className="text-red-700">{errors.magnitude}</div>
-        )}
+    <div>
+      <div className="flex items-center">
+        {/* magnitude */}
+        <label htmlFor={magnitudeId} className={label("mr-2")}>
+          Apparent Magnitude
+        </label>
+        <input
+          id={magnitudeId}
+          className={input("w-12")}
+          type="text"
+          value={magnitude}
+          onChange={(event) => updateParameter("magnitude", event.target.value)}
+        />
+
+        {/* temperature */}
+        <label htmlFor={temperatureId} className={label("ml-5 mr-2")}>
+          Temperature
+        </label>
+        <input
+          id={temperatureId}
+          className={input("w-16")}
+          type="text"
+          value={temperature}
+          onChange={(event) =>
+            updateParameter("temperature", event.target.value)
+          }
+        />
       </div>
 
-      {/* temperature */}
-      <div className="w-48">
-        <div>
-          <label htmlFor={temperatureId}>Temperature</label>
-        </div>
-        <div>
-          <input
-            id={temperatureId}
-            className="input"
-            type="text"
-            value={temperature}
-            onChange={(event) =>
-              updateParameter("temperature", event.target.value)
-            }
-          />
-        </div>
-        {errors.temperature && (
-          <div className="text-red-700">{errors.temperature}</div>
-        )}
-      </div>
+      {/* errors */}
+      {blackbody.hasErrors && (
+        <Errors errors={errors} keys={["magnitude", "temperature"]} />
+      )}
     </div>
   );
 }
