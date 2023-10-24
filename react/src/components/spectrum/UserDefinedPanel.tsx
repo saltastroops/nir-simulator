@@ -66,7 +66,7 @@ export default function UserDefinedPanel({ userDefined, update }: Props) {
       <div className="flex items-center">
         <input
           type="file"
-          className="block w-full text-sm text-slate-500
+          className="block w-full text-slate-500
         file:mr-6 file:py-1 file:px-2
         file:rounded-md file:border-0
         file:font-semibold

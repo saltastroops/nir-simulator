@@ -30,7 +30,10 @@ export default function SpectrumSelector({ onSelect }: Props) {
           <option key={spectrumType}>{spectrumType}</option>
         ))}
       </select>
-      <button className={button("ml-4")} onClick={onClick}>
+      <button
+        className={button("ml-4 bg-green-600 text-white")}
+        onClick={onClick}
+      >
         Add
       </button>
     </div>

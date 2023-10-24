@@ -26,7 +26,7 @@ export function select(extraClasses?: string) {
 
 export function button(extraClasses?: string) {
   let className =
-    "rounded-md border border-gray-300 hover:border-gray-400 shadow-sm px-1.5 py-1";
+    "font-semibold rounded-md border border-gray-300 hover:border-gray-400 shadow-sm px-1.5 py-1";
   if (extraClasses) {
     className += ` ${extraClasses}`;
   }
