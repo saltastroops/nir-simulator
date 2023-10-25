@@ -1,4 +1,5 @@
 from django.http import JsonResponse
+from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from nirwals.configure.data.throughput import get_plot_data
 
@@ -26,9 +27,11 @@ def throughput(request):
     x, y = get_plot_data(form_data)
 
     # Prepare data for response
-    data = {
-        'x': list(x),
-        'y': list(y)
-    }
+    data = {"x": list(x), "y": list(y)}
 
+    return JsonResponse(data)
+
+
+def spectra(request):
+    data = {"x": [9000, 17000], "y": [1, 2]}
     return JsonResponse(data)
