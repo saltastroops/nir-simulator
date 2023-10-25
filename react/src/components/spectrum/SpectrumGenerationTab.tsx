@@ -5,24 +5,23 @@ import { Earth, EarthPanel } from "./EarthPanel.tsx";
 import SpectrumPlotOptionsPanel, {
   SpectrumPlotOptions,
 } from "./SpectrumPlotOptionsPanel.tsx";
+import { button } from "../utils.ts";
+import { SimulationSetup } from "../Simulator.tsx";
+import { spectra } from "../../services.ts";
 
 interface Props {
-  source: Source;
-  sun: Sun;
-  moon: Moon;
-  earth: Earth;
-  spectrumPlotOptions: SpectrumPlotOptions;
+  setup: SimulationSetup;
   updateSetup: (property: string, value: any) => void;
 }
 
-export function SpectrumGenerationTab({
-  source,
-  sun,
-  moon,
-  earth,
-  spectrumPlotOptions,
-  updateSetup,
-}: Props) {
+export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
+  const { source, sun, moon, earth, spectrumPlotOptions } = setup;
+
+  const updatePlots = async () => {
+    const spectraData = await spectra(setup);
+    console.log({ spectraData });
+  };
+
   return (
     <div className="bg-gray-50">
       <fieldset className="border border-solid border-gray-300 p-3">
@@ -59,6 +58,13 @@ export function SpectrumGenerationTab({
           }
         />
       </fieldset>
+
+      <button
+        className={button("mt-6 text-white bg-green-600")}
+        onClick={updatePlots}
+      >
+        Show Spectrum
+      </button>
     </div>
   );
 }

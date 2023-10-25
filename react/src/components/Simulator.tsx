@@ -11,14 +11,16 @@ import { Earth } from "./spectrum/EarthPanel.tsx";
 import { SpectrumPlotOptions } from "./spectrum/SpectrumPlotOptionsPanel.tsx";
 import { Source } from "./spectrum/SourceForm.tsx";
 
-interface SimulationSetupParameters {
+type SimulationSetupParameters = {
   source: Source;
   sun: Sun;
   moon: Moon;
   earth: Earth;
   spectrumPlotOptions: SpectrumPlotOptions;
   instrumentConfiguration: InstrumentConfiguration;
-}
+};
+
+export type SimulationSetupData = Record<keyof SimulationSetup, any>;
 
 export class SimulationSetup {
   public source: Source = new Source();
@@ -137,14 +139,7 @@ export function Simulator() {
         </ul>
       </div>
       <div ref={spectrumDivRef} style={{ display: "block" }}>
-        <SpectrumGenerationTab
-          source={setup.source}
-          sun={setup.sun}
-          moon={setup.moon}
-          earth={setup.earth}
-          spectrumPlotOptions={setup.spectrumPlotOptions}
-          updateSetup={updateSetup}
-        />
+        <SpectrumGenerationTab setup={setup} updateSetup={updateSetup} />
       </div>
       <div ref={instrumentConfigDivRef} style={{ display: "none" }}>
         <InstrumentConfigurationPanel
