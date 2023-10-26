@@ -352,9 +352,6 @@ export function ExposurePanel({ setupData, update }: any) {
               />
             </div>
           </div>
-          <div className="columns">
-            <div className="column">Status Section</div>
-          </div>
         </div>
         {/* Plot Section */}
         <div className="column is-three-fifths">
