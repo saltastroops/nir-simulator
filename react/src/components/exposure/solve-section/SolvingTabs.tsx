@@ -23,7 +23,7 @@ export function SolvingTabs({ setupData, update }: any) {
   };
 
   const [state, setState] = useState({
-    solveFor: "Signal-to-noice",
+    solveFor: "signal-to-noise",
     solveSNR: {
       exposureTime: 3600,
       detectorIterations: 1,
@@ -34,11 +34,11 @@ export function SolvingTabs({ setupData, update }: any) {
     },
   });
 
-  const switchToComponent = (componentNumber: any) => {
+  const switchToComponent = (componentNumber: number) => {
     setActiveTab(componentNumber);
     const solveFor =
       componentNumber === 1
-        ? "Signal To Noice"
+        ? "Signal To Noise"
         : componentNumber === 2
         ? "Exposure Time"
         : "";

@@ -1,6 +1,11 @@
-import { SolveSNR } from "../ExposurePanel.tsx";
+import { ExposureConfigurationType, SolveSNR } from "../ExposurePanel.tsx";
+import { SimulationSetupParameters } from "../../Simulator.tsx";
 
-export function SolveForSNR({ setupData, update }: any) {
+type Params = {
+  setupData: SimulationSetupParameters;
+  update: (newData: ExposureConfigurationType) => void;
+};
+export function SolveForSNR({ setupData, update }: Params) {
   const updateValue = (event: any) => {
     updateSolveSNR(event.target.name, event.target.value);
   };
@@ -19,7 +24,7 @@ export function SolveForSNR({ setupData, update }: any) {
   };
 
   const updatePlot = () => {
-    console.log(setupData);
+    console.log("Update plot method not implement");
   };
 
   return (
@@ -51,7 +56,7 @@ export function SolveForSNR({ setupData, update }: any) {
       <div className="field ">
         <div className="control">
           <button className="button is-link" onClick={updatePlot}>
-            Solve for Signal to Noice
+            Solve for Signal to Noise
           </button>
         </div>
       </div>

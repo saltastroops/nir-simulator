@@ -1,31 +1,40 @@
-export function GainTypeSelector({ updateGain, gainType }: any) {
-  const faintObjectDefaults = {
+import { GainType } from "../ExposurePanel.tsx";
+
+type Params = {
+  updateGain: (newGainValues: GainType) => void;
+  gainType: "Faint Object" | "Bright Object" | "Custom Object";
+};
+
+export function GainTypeSelector({ updateGain, gainType }: Params) {
+  const faintObjectDefaults: GainType = {
     gainType: "Faint Object",
-    firstValue: "2.04",
-    readNoice: "17",
+    adu: "2.04",
+    readNoise: "17",
     fullWell: "60000",
   };
-  const brightObjectDefaults = {
+  const brightObjectDefaults: GainType = {
     gainType: "Bright Object",
-    firstValue: "5.74",
-    readNoice: "20",
+    adu: "5.74",
+    readNoise: "20",
     fullWell: "120000",
   };
 
-  const customObjectDefaults = {
+  const customObjectDefaults: GainType = {
     gainType: "Custom Object",
-    firstValue: "1",
-    readNoice: "10",
+    adu: "1",
+    readNoise: "10",
     fullWell: "100000",
   };
-  const update = (value: any) => {
-    const updateSource =
+  const update = (
+    value: "Faint Object" | "Bright Object" | "Custom Object",
+  ) => {
+    const newGainValues =
       value === "Faint Object"
         ? faintObjectDefaults
         : value === "Bright Object"
         ? brightObjectDefaults
         : customObjectDefaults;
-    updateGain(updateSource);
+    updateGain(newGainValues);
   };
 
   return (

@@ -1,8 +1,18 @@
-export function CustomObject({ gain, update }: any) {
-  const updateGainType = (event: any) => {
+import { GainType } from "../ExposurePanel.tsx";
+
+type Params = {
+  gain: GainType;
+  update: (gain: GainType) => void;
+};
+
+export function CustomObject({ gain, update }: Params) {
+  const updateGain = (
+    name: "adu" | "fullWell" | "readNoise",
+    value: string,
+  ) => {
     update({
       ...gain,
-      [event.target.name]: event.target.value,
+      [name]: value,
     });
   };
   return (
@@ -12,25 +22,25 @@ export function CustomObject({ gain, update }: any) {
           <div className="control">
             <input
               className="input"
-              name={"firstValue"}
+              name={"adu"}
               type="text"
-              value={gain.firstValue}
-              onChange={() => updateGainType}
+              value={gain.adu}
+              onChange={(event) => updateGain("adu", event.target.value)}
             />
           </div>
         </div>
         <div className="column ">e/ADU</div>
       </div>
       <div className="columns">
-        <div className="column">Read Noice: </div>
+        <div className="column">Read Noise: </div>
         <div className="column">
           <div className="control">
             <input
               className="input"
-              name={"readNoice"}
+              name={"readNoise"}
               type="text"
-              value={gain.readNoice}
-              onChange={() => updateGainType}
+              value={gain.readNoise}
+              onChange={(event) => updateGain("readNoise", event.target.value)}
             />
           </div>
         </div>
@@ -44,7 +54,7 @@ export function CustomObject({ gain, update }: any) {
               name={"fullWell"}
               type="text"
               value={gain.fullWell}
-              onChange={() => updateGainType}
+              onChange={(event) => updateGain("fullWell", event.target.value)}
             />
           </div>
         </div>

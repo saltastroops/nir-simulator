@@ -1,8 +1,12 @@
-import { Sampling } from "../ExposurePanel.tsx";
+import { ExposureConfigurationType, Sampling } from "../ExposurePanel.tsx";
 
-export function SamplingPanel({ setupData, update }: any) {
-  const updateSamplesNumber = (event: any) => {
-    updateSamplingSetup("numberOfSamples", event.target.value);
+type Params = {
+  setupData: ExposureConfigurationType;
+  update: (setupData: ExposureConfigurationType) => void;
+};
+export function SamplingPanel({ setupData, update }: Params) {
+  const updateSamplesNumber = (value: string) => {
+    updateSamplingSetup("numberOfSamples", value);
   };
   const updateSamplingSetup = (
     key: "numberOfSamples" | "samplingType",
@@ -69,7 +73,7 @@ export function SamplingPanel({ setupData, update }: any) {
                 type="text"
                 name={"detectorIterations"}
                 value={setupData.sampling.numberOfSamples}
-                onChange={updateSamplesNumber}
+                onChange={(event) => updateSamplesNumber(event.target.value)}
               />
             </div>
           </div>

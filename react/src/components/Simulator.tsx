@@ -14,7 +14,7 @@ import { Earth } from "./spectrum/EarthPanel.tsx";
 import { SpectrumPlotOptions } from "./spectrum/SpectrumPlotOptionsPanel.tsx";
 import { Source } from "./spectrum/SourceForm.tsx";
 
-interface SimulationSetupParameters {
+export interface SimulationSetupParameters {
   source: Source;
   sun: Sun;
   moon: Moon;
@@ -57,26 +57,6 @@ export class SimulationSetup {
       spectrumPlotOptions: this.spectrumPlotOptions.data(),
       instrumentConfiguration: this.instrumentConfiguration.data(),
       exposureConfiguration: this.exposureConfiguration.data,
-      // exposureConfiguration: {
-      //   gain: {
-      //     gainType: "Faint Object",
-      //     firstValue: "2.04",
-      //     readNoice: "17",
-      //     fullWell: "6000",
-      //   },
-      //   sampling: {
-      //     numberOfSamples: "10",
-      //     samplingType: "Fowler Sampling",
-      //   },
-      //   solveSNR: {
-      //     exposureTime: "3600",
-      //     detectorIterations: "1",
-      //   },
-      //   solveExposureTime: {
-      //     requestedSNR: "10",
-      //     wavelength: "130000",
-      //   },
-      // },
     };
   }
 }
@@ -175,7 +155,7 @@ export function Simulator() {
       </div>
       <div ref={exposureDivRef} style={{ display: "none" }}>
         <ExposurePanel
-          setupData={setup.data()}
+          setupData={setup}
           update={(exposureConfiguration: ExposureConfiguration) =>
             updateSetup("exposureConfiguration", exposureConfiguration)
           }

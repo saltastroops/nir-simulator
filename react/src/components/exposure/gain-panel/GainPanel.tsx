@@ -1,10 +1,18 @@
 import { GainTypeSelector } from "./GainTypeSelector.tsx";
-import { FaintObject } from "./FaintObject.tsx";
-import { BrightObject } from "./BrightObject.tsx";
+import { NonEditableGainPanel } from "./NonEditableGainPanel.tsx";
 import { CustomObject } from "./CustomObject.tsx";
-import { Gain, GainType } from "../ExposurePanel.tsx";
+import {
+  ExposureConfigurationType,
+  Gain,
+  GainType,
+} from "../ExposurePanel.tsx";
 
-export function GainPanel({ setupData, update }: any) {
+type Params = {
+  setupData: ExposureConfigurationType;
+  update: (gains: ExposureConfigurationType) => void;
+};
+
+export function GainPanel({ setupData, update }: Params) {
   const updateGain = (gainValues: GainType) => {
     update({
       ...setupData,
@@ -21,10 +29,12 @@ export function GainPanel({ setupData, update }: any) {
           />
         </div>
         <div className="column pl-0">
-          {setupData.gain.gainType === "Faint Object" && <FaintObject />}
-          {setupData.gain.gainType === "Bright Object" && <BrightObject />}
+          {(setupData.gain.gainType === "Bright Object" ||
+            setupData.gain.gainType === "Faint Object") && (
+            <NonEditableGainPanel gain={setupData.gain} />
+          )}
           {setupData.gain.gainType === "Custom Object" && (
-            <CustomObject updateObjectType={updateGain} gain={setupData.gain} />
+            <CustomObject update={updateGain} gain={setupData.gain} />
           )}
         </div>
       </div>

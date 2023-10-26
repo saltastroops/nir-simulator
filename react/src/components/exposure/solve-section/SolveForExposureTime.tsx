@@ -6,14 +6,9 @@ export function SolveForExposureTime({ setupData, update }: any) {
     updateSolveET(event.target.name, event.target.value);
   };
 
-  const updateRequestedSNR = (event: any) => {
-    updateSolveET(event.target.name, event.target.value);
-  };
-
   const [wavelengthType, setWavelengthType] = useState("central");
 
-  const wavelengthTypeChange = (event: any) => {
-    const targetValue = event.target.value;
+  const wavelengthTypeChange = (targetValue: string) => {
     setWavelengthType(targetValue);
     const wavelength =
       targetValue === "central"
@@ -23,7 +18,7 @@ export function SolveForExposureTime({ setupData, update }: any) {
   };
 
   const updatePlot = () => {
-    console.log(setupData);
+    console.log("Update plot method not implement");
   };
 
   const updateSolveET = (key: "wavelength" | "requestedSNR", value: string) => {
@@ -48,7 +43,7 @@ export function SolveForExposureTime({ setupData, update }: any) {
             value={
               setupData.exposureConfiguration.solveExposureTime.requestedSNR
             }
-            onChange={updateRequestedSNR}
+            onChange={updateValue}
           />
         </div>
       </div>
@@ -66,7 +61,7 @@ export function SolveForExposureTime({ setupData, update }: any) {
                 name="wavelength-type"
                 value={"central"}
                 checked={wavelengthType === "central"}
-                onChange={wavelengthTypeChange}
+                onChange={(event) => wavelengthTypeChange(event.target.value)}
               />
               Central Wavelength
             </label>
@@ -93,7 +88,7 @@ export function SolveForExposureTime({ setupData, update }: any) {
                 name="wavelength-type"
                 value={"specified"}
                 checked={wavelengthType === "specified"}
-                onChange={wavelengthTypeChange}
+                onChange={(event) => wavelengthTypeChange(event.target.value)}
               />
               Specified Wavelength
             </label>

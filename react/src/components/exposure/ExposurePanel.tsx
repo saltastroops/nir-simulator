@@ -2,23 +2,24 @@ import { GainPanel } from "./gain-panel/GainPanel.tsx";
 import { SamplingPanel } from "./sampling-panel/SamplingPanel.tsx";
 import { SolvingTabs } from "./solve-section/SolvingTabs.tsx";
 
-export interface GainType {
+export type GainType = {
   gainType: "Faint Object" | "Bright Object" | "Custom Object";
-  firstValue: string;
-  readNoice: string;
+  adu: string;
+  readNoise: string;
   fullWell: string;
-}
+};
 export class Gain {
-  public gainType = "Faint Object";
-  public firstValue = "2.04";
-  public readNoice = "17";
+  public gainType: "Faint Object" | "Bright Object" | "Custom Object" =
+    "Faint Object";
+  public adu = "2.04";
+  public readNoise = "17";
   public fullWell = "60000";
 
   public constructor(gains?: GainType) {
     if (gains) {
       this.gainType = gains.gainType;
-      this.firstValue = gains.firstValue;
-      this.readNoice = gains.readNoice;
+      this.adu = gains.adu;
+      this.readNoise = gains.readNoise;
       this.fullWell = gains.fullWell;
     }
   }
@@ -26,8 +27,8 @@ export class Gain {
   public get data() {
     return {
       gainType: this.gainType,
-      firstValue: parseFloat(this.firstValue),
-      readNoice: parseFloat(this.readNoice),
+      adu: parseFloat(this.adu),
+      readNoise: parseFloat(this.readNoise),
       fullWell: parseFloat(this.fullWell),
     };
   }
@@ -40,7 +41,8 @@ export interface SamplingType {
 
 export class Sampling {
   public numberOfSamples = "15";
-  public samplingType = "Fowler Sampling";
+  public samplingType: "Fowler Sampling" | "Up The Ramp Sampling" =
+    "Fowler Sampling";
 
   public constructor(sampling?: SamplingType) {
     if (sampling) {
@@ -103,7 +105,7 @@ export class SolveExposureTime {
 }
 
 export interface ExposureConfigurationType {
-  solveFor: "Signal To Noice" | "Exposure Time";
+  solveFor: "Signal To Noise" | "Exposure Time";
   gain: GainType;
   sampling: SamplingType;
   solveSNR: SolveSNRType;
@@ -115,7 +117,7 @@ export class ExposureConfiguration {
   public sampling: Sampling = new Sampling();
   public solveSNR: SolveSNR = new SolveSNR();
   public solveExposureTime: SolveExposureTime = new SolveExposureTime();
-  public solveFor: "Signal To Noice" | "Exposure Time" = "Signal To Noice";
+  public solveFor: "Signal To Noise" | "Exposure Time" = "Signal To Noise";
 
   public constructor(configuration?: ExposureConfigurationType) {
     if (configuration) {
