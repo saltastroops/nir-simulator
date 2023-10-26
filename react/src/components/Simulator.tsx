@@ -66,9 +66,9 @@ export function Simulator() {
     }),
   );
 
-  const spectrumARef = useRef<HTMLAnchorElement>(null);
-  const instrumentConfigARef = useRef<HTMLAnchorElement>(null);
-  const exposureARef = useRef<HTMLAnchorElement>(null);
+  const spectrumLIRef = useRef<HTMLLIElement>(null);
+  const instrumentConfigLIRef = useRef<HTMLLIElement>(null);
+  const exposureLIRef = useRef<HTMLLIElement>(null);
 
   const spectrumDivRef = useRef<HTMLDivElement>(null);
   const instrumentConfigDivRef = useRef<HTMLDivElement>(null);
@@ -86,17 +86,17 @@ export function Simulator() {
 
   const switchToIndex = (index: number) => {
     // update tab highlighting
-    spectrumARef.current!.classList.remove(...isActive);
-    instrumentConfigARef.current!.classList.remove(...isActive);
-    exposureARef.current!.classList.remove(...isActive);
+    spectrumLIRef.current!.classList.remove("is-active");
+    instrumentConfigLIRef.current!.classList.remove("is-active");
+    exposureLIRef.current!.classList.remove("is-active");
     if (index === 1) {
-      spectrumARef.current!.classList.add(...isActive);
+      spectrumLIRef.current!.classList.add("is-active");
     }
     if (index === 2) {
-      instrumentConfigARef.current!.classList.add(...isActive);
+      instrumentConfigLIRef.current!.classList.add("is-active");
     }
     if (index === 3) {
-      exposureARef.current!.classList.add(...isActive);
+      exposureLIRef.current!.classList.add("is-active");
     }
 
     spectrumDivRef.current!.style.display = index === 1 ? "block" : "none";
@@ -105,36 +105,18 @@ export function Simulator() {
     exposureDivRef.current!.style.display = index === 3 ? "block" : "none";
   };
 
-  const isActive = [
-    "pb-2",
-    "border-b-2",
-    "border-blue-700",
-    "text-blue-700",
-    "hover:text-blue-700",
-  ];
-
   return (
     <div className="text-md">
-      <div className="mb-8">
-        <ul className="flex items-top mt-2 mb-4">
-          <li className="mx-4">
-            <a
-              ref={spectrumARef}
-              className={`${isActive.join(" ")}`}
-              onClick={() => switchToIndex(1)}
-            >
-              Generate Spectrum
-            </a>
+      <div className="tabs">
+        <ul>
+          <li className="is-active" ref={spectrumLIRef}>
+            <a onClick={() => switchToIndex(1)}>Generate Spectrum</a>
           </li>
-          <li className="mx-4">
-            <a ref={instrumentConfigARef} onClick={() => switchToIndex(2)}>
-              Configure NIRWALS
-            </a>
+          <li ref={instrumentConfigLIRef}>
+            <a onClick={() => switchToIndex(2)}>Configure NIRWALS</a>
           </li>
-          <li className="mx-4">
-            <a ref={exposureARef} onClick={() => switchToIndex(3)}>
-              Make an Exposure
-            </a>
+          <li ref={exposureLIRef}>
+            <a onClick={() => switchToIndex(3)}>Make an Exposure</a>
           </li>
         </ul>
       </div>
