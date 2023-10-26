@@ -58,7 +58,7 @@ def add_galaxy_spectrum(wavelength, gal_type, age, has_emission_line, mag, redsh
         return spectra
 
 
-def add_emission_line(wavelength, line_flux: int | float, lamda: int, line_fwhm: int, redshift: float):
+def add_emission_line(wavelength, line_flux: float, lamda: float, line_fwhm: float, redshift: float):
     spectra = np.zeros(40001)
     central_wavelength = lamda * (1 + redshift)
     line_signal = line_fwhm / 2.35
