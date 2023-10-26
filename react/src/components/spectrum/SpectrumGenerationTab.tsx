@@ -19,7 +19,6 @@ export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
 
   const updatePlots = async () => {
     const spectraData = await spectra(setup);
-    console.log({ spectraData });
   };
 
   return (
