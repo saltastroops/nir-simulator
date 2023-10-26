@@ -12,7 +12,7 @@ function App() {
   ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement);
 
   return (
-    <div className="container">
+    <div className="container is-fluid">
       <Simulator />
     </div>
   );
