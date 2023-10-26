@@ -2,9 +2,7 @@ from django.contrib import admin
 from django.shortcuts import render
 from django.urls import path, include
 
-from nirwals.views import spectra, throughput
-from nirwals.views.throughput import throughput
-from nirwals.views.exposure import solve_for_snr
+from nirwals.views import spectra, throughput, solve_for_snr
 
 
 def home(request):
