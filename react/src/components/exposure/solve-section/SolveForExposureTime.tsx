@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { SolveExposureTime } from "../ExposurePanel.tsx";
 
-export function SolveForExposureTime({ setupData, update }: any) {
+export function SolveForExposureTime({ setupData, update, updatePlot }: any) {
   const updateValue = (event: any) => {
     updateSolveET(event.target.name, event.target.value);
   };
@@ -15,10 +15,6 @@ export function SolveForExposureTime({ setupData, update }: any) {
         ? "13000"
         : setupData.exposureConfiguration.solveExposureTime.wavelength;
     updateSolveET("wavelength", wavelength);
-  };
-
-  const updatePlot = () => {
-    console.log("Update plot method not implement");
   };
 
   const updateSolveET = (key: "wavelength" | "requestedSNR", value: string) => {

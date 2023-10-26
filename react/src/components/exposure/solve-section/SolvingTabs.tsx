@@ -2,7 +2,7 @@ import { useState } from "react";
 import { SolveForSNR } from "./SolveForSNR.tsx";
 import { SolveForExposureTime } from "./SolveForExposureTime.tsx";
 
-export function SolvingTabs({ setupData, update }: any) {
+export function SolvingTabs({ setupData, update, updatePlot }: any) {
   const updateWavelength = (newWavelength: any) => {
     setState({
       ...state,
@@ -66,7 +66,13 @@ export function SolvingTabs({ setupData, update }: any) {
           </li>
         </ul>
       </div>
-      {activeTab === 1 && <SolveForSNR setupData={setupData} update={update} />}
+      {activeTab === 1 && (
+        <SolveForSNR
+          setupData={setupData}
+          update={update}
+          updatePlot={updatePlot}
+        />
+      )}
       {activeTab === 2 && (
         <SolveForExposureTime
           setupData={setupData}
@@ -74,7 +80,7 @@ export function SolvingTabs({ setupData, update }: any) {
           solveExposureTime={state.solveExposureTime}
           updateWavelength={updateWavelength}
           updateSNR={updateSNR}
-          updatePlot={update}
+          updatePlot={updatePlot}
         />
       )}
     </>

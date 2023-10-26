@@ -14,7 +14,7 @@ import { Earth } from "./spectrum/EarthPanel.tsx";
 import { SpectrumPlotOptions } from "./spectrum/SpectrumPlotOptionsPanel.tsx";
 import { Source } from "./spectrum/SourceForm.tsx";
 
-type SimulationSetupParameters = {
+export type SimulationSetupParameters = {
   source: Source;
   sun: Sun;
   moon: Moon;
@@ -57,8 +57,7 @@ export class SimulationSetup {
       earth: this.earth.data,
       spectrumPlotOptions: this.spectrumPlotOptions.data,
       instrumentConfiguration: this.instrumentConfiguration.data,
-        exposureConfiguration: this.exposureConfiguration.data,
-
+      exposureConfiguration: this.exposureConfiguration.data,
     };
   }
 }

@@ -4,8 +4,9 @@ import { SimulationSetupParameters } from "../../Simulator.tsx";
 type Props = {
   setupData: SimulationSetupParameters;
   update: (newData: ExposureConfigurationType) => void;
+  updatePlot: () => void;
 };
-export function SolveForSNR({ setupData, update }: Props) {
+export function SolveForSNR({ setupData, update, updatePlot }: Props) {
   const updateValue = (event: any) => {
     updateSolveSNR(event.target.name, event.target.value);
   };
@@ -21,10 +22,6 @@ export function SolveForSNR({ setupData, update }: Props) {
         [key]: value,
       }),
     });
-  };
-
-  const updatePlot = () => {
-    console.log("Update plot method not implement");
   };
 
   return (

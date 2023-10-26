@@ -288,7 +288,7 @@ export function ExposurePanel({ setupData, update }: any) {
       x: [],
       y: [],
       lineColor: "rgb(75, 192, 192)",
-      options: defaultLinePlotOptions("Wavelength (\u212B)", "Throughput"),
+      options: defaultLinePlotOptions("Wavelength (\u212B)", "Counts"),
     },
     requested: false,
   });
@@ -348,6 +348,7 @@ export function ExposurePanel({ setupData, update }: any) {
               <SolvingTabs
                 setupData={setupData}
                 update={updateExposureConfiguration}
+                updatePlot={updatePlot}
               />
             </div>
           </div>
@@ -358,7 +359,6 @@ export function ExposurePanel({ setupData, update }: any) {
         {/* Plot Section */}
         <div className="column is-three-fifths">
           <LinePlot chartContent={chartContent} isOutdated={false} />
-          <button onClick={() => updatePlot()}>Update</button>
         </div>
       </div>
     </div>
