@@ -11,14 +11,16 @@ import { Earth } from "./spectrum/EarthPanel.tsx";
 import { SpectrumPlotOptions } from "./spectrum/SpectrumPlotOptionsPanel.tsx";
 import { Source } from "./spectrum/SourceForm.tsx";
 
-interface SimulationSetupParameters {
+type SimulationSetupParameters = {
   source: Source;
   sun: Sun;
   moon: Moon;
   earth: Earth;
   spectrumPlotOptions: SpectrumPlotOptions;
   instrumentConfiguration: InstrumentConfiguration;
-}
+};
+
+export type SimulationSetupData = Record<keyof SimulationSetup, any>;
 
 export class SimulationSetup {
   public source: Source = new Source();
@@ -38,17 +40,16 @@ export class SimulationSetup {
       this.spectrumPlotOptions = parameters.spectrumPlotOptions;
       this.instrumentConfiguration = parameters.instrumentConfiguration;
     }
-    this.data = this.data.bind(this);
   }
 
-  public data() {
+  public get data() {
     return {
-      source: this.source.data(),
-      sun: this.sun.data(),
-      moon: this.moon.data(),
-      earth: this.earth.data(),
-      spectrumPlotOptions: this.spectrumPlotOptions.data(),
-      instrumentConfiguration: this.instrumentConfiguration.data(),
+      source: this.source.data,
+      sun: this.sun.data,
+      moon: this.moon.data,
+      earth: this.earth.data,
+      spectrumPlotOptions: this.spectrumPlotOptions.data,
+      instrumentConfiguration: this.instrumentConfiguration.data,
     };
   }
 }
@@ -105,40 +106,27 @@ export function Simulator() {
   };
 
   return (
-    <>
-      <div className="tabs is-boxed">
+    <div className="text-md">
+      <div className="tabs">
         <ul>
-          <li ref={spectrumLIRef} className="is-active">
-            <a className="navbar-item" onClick={() => switchToIndex(1)}>
-              Generate Spectrum
-            </a>
+          <li className="is-active" ref={spectrumLIRef}>
+            <a onClick={() => switchToIndex(1)}>Generate Spectrum</a>
           </li>
           <li ref={instrumentConfigLIRef}>
-            <a className="navbar-item" onClick={() => switchToIndex(2)}>
-              Configure NIRWALS
-            </a>
+            <a onClick={() => switchToIndex(2)}>Configure NIRWALS</a>
           </li>
           <li ref={exposureLIRef}>
-            <a className="navbar-item" onClick={() => switchToIndex(3)}>
-              Make an Exposure
-            </a>
+            <a onClick={() => switchToIndex(3)}>Make an Exposure</a>
           </li>
         </ul>
       </div>
       <div ref={spectrumDivRef} style={{ display: "block" }}>
-        <SpectrumGenerationTab
-          source={setup.source}
-          sun={setup.sun}
-          moon={setup.moon}
-          earth={setup.earth}
-          spectrumPlotOptions={setup.spectrumPlotOptions}
-          updateSetup={updateSetup}
-        />
+        <SpectrumGenerationTab setup={setup} updateSetup={updateSetup} />
       </div>
       <div ref={instrumentConfigDivRef} style={{ display: "none" }}>
         <InstrumentConfigurationPanel
           instrumentConfiguration={setup.instrumentConfiguration}
-          setupData={setup.data()}
+          setupData={setup.data}
           update={(instrumentConfiguration: InstrumentConfiguration) =>
             updateSetup("instrumentConfiguration", instrumentConfiguration)
           }
@@ -147,6 +135,6 @@ export function Simulator() {
       <div ref={exposureDivRef} style={{ display: "none" }}>
         <Exposure />
       </div>
-    </>
+    </div>
   );
 }

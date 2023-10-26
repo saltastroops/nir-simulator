@@ -21,10 +21,9 @@ export class SpectroscopyConfiguration {
       this.grating = parameters.grating;
       this.gratingAngle = parameters.gratingAngle;
     }
-    this.data = this.data.bind(this);
   }
 
-  public data() {
+  public get data() {
     return {
       mode: this.mode,
       slitType: this.slitType,

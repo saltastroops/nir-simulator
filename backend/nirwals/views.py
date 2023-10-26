@@ -1,3 +1,5 @@
+import json
+
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from nirwals.configure.data.throughput import get_plot_data
@@ -26,9 +28,17 @@ def throughput(request):
     x, y = get_plot_data(form_data)
 
     # Prepare data for response
-    data = {
-        'x': list(x),
-        'y': list(y)
-    }
+    data = {"x": list(x), "y": list(y)}
 
+    return JsonResponse(data)
+
+
+@csrf_exempt
+def spectra(request):
+    parameters = json.loads(request.POST.get("data"))
+    seeing = float(parameters["earth"]["seeing"])
+    data = {
+        "source": {"x": [9000, 17000], "y": [1, 3 * seeing]},
+        "background": {"x": [9000, 17000], "y": [1.5 * seeing, 3]},
+    }
     return JsonResponse(data)
