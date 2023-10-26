@@ -1,11 +1,11 @@
 import { GainType } from "../ExposurePanel.tsx";
 
-type Params = {
+type Props = {
   updateGain: (newGainValues: GainType) => void;
   gainType: "Faint Object" | "Bright Object" | "Custom Object";
 };
 
-export function GainTypeSelector({ updateGain, gainType }: Params) {
+export function GainTypeSelector({ updateGain, gainType }: Props) {
   const faintObjectDefaults: GainType = {
     gainType: "Faint Object",
     adu: "2.04",

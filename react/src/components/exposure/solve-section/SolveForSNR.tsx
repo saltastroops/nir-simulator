@@ -1,11 +1,11 @@
 import { ExposureConfigurationType, SolveSNR } from "../ExposurePanel.tsx";
 import { SimulationSetupParameters } from "../../Simulator.tsx";
 
-type Params = {
+type Props = {
   setupData: SimulationSetupParameters;
   update: (newData: ExposureConfigurationType) => void;
 };
-export function SolveForSNR({ setupData, update }: Params) {
+export function SolveForSNR({ setupData, update }: Props) {
   const updateValue = (event: any) => {
     updateSolveSNR(event.target.name, event.target.value);
   };

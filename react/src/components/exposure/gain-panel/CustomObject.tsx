@@ -1,11 +1,11 @@
 import { GainType } from "../ExposurePanel.tsx";
 
-type Params = {
+type Props = {
   gain: GainType;
   update: (gain: GainType) => void;
 };
 
-export function CustomObject({ gain, update }: Params) {
+export function CustomObject({ gain, update }: Props) {
   const updateGain = (
     name: "adu" | "fullWell" | "readNoise",
     value: string,

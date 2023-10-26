@@ -1,10 +1,10 @@
 import { ExposureConfigurationType, Sampling } from "../ExposurePanel.tsx";
 
-type Params = {
+type Props = {
   setupData: ExposureConfigurationType;
   update: (setupData: ExposureConfigurationType) => void;
 };
-export function SamplingPanel({ setupData, update }: Params) {
+export function SamplingPanel({ setupData, update }: Props) {
   const updateSamplesNumber = (value: string) => {
     updateSamplingSetup("numberOfSamples", value);
   };

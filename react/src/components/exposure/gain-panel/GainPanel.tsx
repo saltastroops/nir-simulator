@@ -7,12 +7,12 @@ import {
   GainType,
 } from "../ExposurePanel.tsx";
 
-type Params = {
+type Props = {
   setupData: ExposureConfigurationType;
   update: (gains: ExposureConfigurationType) => void;
 };
 
-export function GainPanel({ setupData, update }: Params) {
+export function GainPanel({ setupData, update }: Props) {
   const updateGain = (gainValues: GainType) => {
     update({
       ...setupData,

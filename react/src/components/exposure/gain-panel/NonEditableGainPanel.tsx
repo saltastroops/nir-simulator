@@ -1,10 +1,10 @@
 import { GainType } from "../ExposurePanel.tsx";
 
-interface Params {
+type Props = {
   gain: GainType;
-}
+};
 
-export function NonEditableGainPanel({ gain }: Params) {
+export function NonEditableGainPanel({ gain }: Props) {
   return (
     <div className="notification">
       <div className="columns">

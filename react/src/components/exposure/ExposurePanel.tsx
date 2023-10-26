@@ -32,6 +32,49 @@ export class Gain {
       fullWell: parseFloat(this.fullWell),
     };
   }
+
+  public get errors() {
+    const errors: Record<string, string> = {};
+    const data = this.data;
+
+    // e/ADU
+    const adu = data.adu;
+    const minAdu = 1;
+    const maxAdu = 7;
+    if (Number.isNaN(adu) || adu < minAdu || adu > maxAdu) {
+      errors.adu = `The electron/ADU must be a number between ${minAdu} and ${maxAdu}.`;
+    }
+
+    // Read Noise
+    const readNoise = data.readNoise;
+    const minReadNoise = 10;
+    const maxReadNoise = 30;
+    if (
+      Number.isNaN(readNoise) ||
+      readNoise < minReadNoise ||
+      readNoise > maxReadNoise
+    ) {
+      errors.readNoise = `The read noise must be a number between ${minReadNoise} and ${maxReadNoise}.`;
+    }
+
+    // Full well
+    const fullWell = data.readNoise;
+    const minFullWell = 50000;
+    const maxFullWell = 130000;
+    if (
+      Number.isNaN(fullWell) ||
+      fullWell < minFullWell ||
+      readNoise > maxFullWell
+    ) {
+      errors.fullWell = `The full well must be a number between ${minFullWell} and ${maxFullWell}.`;
+    }
+
+    return errors;
+  }
+
+  public get hasErrors() {
+    return Object.keys(this.errors).length > 0;
+  }
 }
 
 export interface SamplingType {
@@ -56,6 +99,29 @@ export class Sampling {
       samplingType: this.samplingType,
     };
   }
+
+  public get errors() {
+    const errors: Record<string, string> = {};
+    const data = this.data;
+
+    // Number of samples
+    const numberOfSamples = data.numberOfSamples;
+    const minNumberOfSamples = 1;
+    const maxNumberOfSamples = 10000;
+    if (
+      Number.isNaN(numberOfSamples) ||
+      numberOfSamples < minNumberOfSamples ||
+      numberOfSamples > maxNumberOfSamples
+    ) {
+      errors.numberOfSamples = `The number of samples must be a number between ${minNumberOfSamples} and ${maxNumberOfSamples}.`;
+    }
+
+    return errors;
+  }
+
+  public get hasErrors() {
+    return Object.keys(this.errors).length > 0;
+  }
 }
 
 export interface SolveSNRType {
@@ -79,6 +145,41 @@ export class SolveSNR {
       detectorIterations: parseFloat(this.detectorIterations),
     };
   }
+
+  public get errors() {
+    const errors: Record<string, string> = {};
+    const data = this.data;
+
+    // Detector Iterations
+    const detectorIterations = data.detectorIterations;
+    const minDetectorIterations = 1;
+    const maxDetectorIterations = 1000;
+    if (
+      Number.isNaN(detectorIterations) ||
+      detectorIterations < minDetectorIterations ||
+      detectorIterations > maxDetectorIterations
+    ) {
+      errors.detectorIterations = `The detector iterations must be a number between ${minDetectorIterations} and ${maxDetectorIterations}.`;
+    }
+
+    // Exposure Time
+    const exposureTime = data.exposureTime;
+    const minExposureTime = 1;
+    const maxExposureTime = 1000;
+    if (
+      Number.isNaN(exposureTime) ||
+      exposureTime < minExposureTime ||
+      exposureTime > maxExposureTime
+    ) {
+      errors.exposureTime = `The detector iterations must be a number between ${minExposureTime} and ${maxExposureTime}.`;
+    }
+
+    return errors;
+  }
+
+  public get hasErrors() {
+    return Object.keys(this.errors).length > 0;
+  }
 }
 
 export interface SolveExposureTimeType {
@@ -101,6 +202,40 @@ export class SolveExposureTime {
       requestedSNR: parseFloat(this.requestedSNR),
       wavelength: parseFloat(this.wavelength),
     };
+  }
+  public get errors() {
+    const errors: Record<string, string> = {};
+    const data = this.data;
+
+    // Detector Iterations
+    const wavelength = data.wavelength;
+    const minWavelength = 9000;
+    const maxWavelength = 17000;
+    if (
+      Number.isNaN(wavelength) ||
+      wavelength < minWavelength ||
+      wavelength > maxWavelength
+    ) {
+      errors.wavelength = `The wavelength must be a number between ${minWavelength} and ${maxWavelength}.`;
+    }
+
+    // Exposure Time
+    const requestedSNR = data.requestedSNR;
+    const minRequestedSNR = 1;
+    const maxRequestedSNR = 1000;
+    if (
+      Number.isNaN(requestedSNR) ||
+      requestedSNR < minRequestedSNR ||
+      requestedSNR > maxRequestedSNR
+    ) {
+      errors.requestedSNR = `The requested signal to noise must be a number between ${minRequestedSNR} and ${maxRequestedSNR}.`;
+    }
+
+    return errors;
+  }
+
+  public get hasErrors() {
+    return Object.keys(this.errors).length > 0;
   }
 }
 
