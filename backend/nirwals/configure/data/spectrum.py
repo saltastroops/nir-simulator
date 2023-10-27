@@ -3,14 +3,15 @@ from functools import lru_cache
 
 import numpy as np
 from os import getenv
+from scipy.constants import Planck, speed_of_light, Boltzmann
 
 FILES_BASE_DIR = pathlib.Path(getenv("FILES_BASE_DIR"))
 
 
 # Universal Constants
-h = 6.62607 * 10 ** (-27)  # erg*seconds
-c = 2.99792 * 10**18  # angstrom/second
-kb = 1.38065 * 10 ** (-16)  # erg/kelvin
+h = Planck * 10**7    # joules*seconds -> erg*seconds
+c = speed_of_light * 10**10
+kb = Boltzmann * 10**7  # joules/kelvin -> erg/kelvin
 
 conv = {
     0: lambda x: float(x),  # conversion fn for column 0
