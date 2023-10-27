@@ -107,49 +107,39 @@ def get_sources_spectrum(form_data):
     num_points = 40001
     data = np.empty(num_points, dtype=[
         ('wavelength', float),
-        ('flux', float),
+        ('sources_flux', float),
     ])
+
     data['wavelength'] = np.array([9000 + i / 5 for i in range(num_points)])
-    data['flux'] = np.ones(num_points)
+    data['sources_flux'] = np.ones(num_points)
 
     sources = parameters["source"]["spectrum"]
 
     for source in sources:
         if source["spectrumType"] == "Blackbody":
             star_flux = get_stellar_flux_values(data['wavelength'], float(source["temperature"]), float(source["magnitude"]))
-            data['flux'] = data['flux'] * star_flux
+            data['sources_flux'] = data['sources_flux'] * star_flux
         if source["spectrumType"] == "Galaxy":
             has_emission_line = False
             galaxy_flux = get_galaxy_flux_values(data['wavelength'], source['type'], source["age"], has_emission_line, float(source["magnitude"]), float(source["redshift"]))
-            data['flux'] = data['flux'] * galaxy_flux
+            data['sources_flux'] = data['sources_flux'] * galaxy_flux
         if source["spectrumType"] == "Emission Line":
             emission_line_flux = get_emission_line_values(data['wavelength'], float(source["flux"]), float(source["centralWavelength"]), float(source["fwhm"]), float(source["redshift"]))
-            data['flux'] = data['flux'] * emission_line_flux
+            data['sources_flux'] = data['sources_flux'] * emission_line_flux
 
     if parameters["spectrumPlotOptions"]["includeAtmosphericExtinction"]:
         filename = FILES_BASE_DIR / "data_sheets" / "adjusted_program_datasheets" / "nirskytransmission.csv"
-        wavelength, spectrum = read_csv_file(filename)
-        data['flux'] = data['flux'] * spectrum
+        wavelength, flux = read_csv_file(filename)
+        data['sources_flux'] = data['sources_flux'] * flux
     if parameters["source"]["type"] == "Point":
         if parameters["spectrumPlotOptions"]["calculateFluxInSeeingDisk"]:
             point_spread = 1 / (np.pi * float(parameters["earth"]["seeing"]) ** 2 / 4)
-            data['flux'] = data['flux'] * point_spread
-        else:
-            diffuse = (np.pi * float(parameters["earth"]["seeing"]) ** 2 / 4)
-            # generate_background_modifiers_list.append(diffuse)
+            data['sources_flux'] = data['sources_flux'] * point_spread
     if parameters["spectrumPlotOptions"]["multiplyWithMirrorAreaAndEfficiency"] == "true":
         filename = FILES_BASE_DIR / "data_sheets" / "adjusted_program_datasheets" / "combinedtelescope.csv"
-        wavelength, spectrum = read_csv_file(filename)
-        data['flux'] = data['flux'] * spectrum
-        data['flux'] = data['flux'] * int(parameters["mirror_area"])
+        wavelength, telescope_flux = read_csv_file(filename)
 
-        # generate_spectra_modifiers_list.append(telescope)
-        # generate_spectra_modifiers_list.append(mirror)
-        # generate_background_modifiers_list.append(telescope)
-        # generate_background_modifiers_list.append(mirror)
+        data['sources_flux'] = data['sources_flux'] * telescope_flux
+        data['sources_flux'] = data['sources_flux'] * int(parameters["mirror_area"])
 
-    return data['wavelength'], data['flux']
-
-
-def get_spectrum_data(form_data):
-    return get_modifiers(form_data)
+    return data['wavelength'], data['sources_flux']
