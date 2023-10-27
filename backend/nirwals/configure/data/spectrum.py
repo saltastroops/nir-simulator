@@ -32,7 +32,7 @@ def get_stellar_flux_values(wavelength: float, temperature: float, mag: float):
     return flux
 
 
-def get_galaxy_flux_values(wavelength: float, galaxy_type: str, age: str, has_emission_line: bool, magnitude: float, redshift: float):
+def get_galaxy_flux_values(wavelength: [], galaxy_type: str, age: str, has_emission_line: bool, magnitude: float, redshift: float):
     flux = np.zeros(40001)
     galaxy_types = ["E", "Sb", "Sa", "Sc", "Sd", "S0"]
     age_types = ["Young", "Old"]
@@ -40,11 +40,13 @@ def get_galaxy_flux_values(wavelength: float, galaxy_type: str, age: str, has_em
     if galaxy_type in galaxy_types and age in age_types:
         filename = f"{age}_{galaxy_type}_type_{'emission' if has_emission_line else 'no_emission'}.csv"
         file_path = FILES_BASE_DIR / "data_sheets" / "adjusted_program_datasheets" / filename
-        _, galaxy_flux = read_csv_file(file_path)
+        galaxy_wavelength, galaxy_flux = read_csv_file(file_path)
 
-        starting_wavelength = 9000 / (1 + float(redshift))
-        starting_wavelength = 2 * round(starting_wavelength / 2, 1)
-        starting_index = np.where(wavelength == starting_wavelength)[0][0]
+        galaxy_wavelength = galaxy_wavelength * (1 + redshift)
+        galaxy_flux = galaxy_flux / (1 + redshift)
+
+        starting_index = np.nonzero(np.isin(wavelength, galaxy_wavelength))[0][0]
+
         selected_galaxy_radiation = galaxy_flux[starting_index:starting_index+40001]
         galaxy_magnitude_flux = 3.02 * 10 ** (-10) * 10 ** (-0.4 * magnitude)
         normalizer = selected_galaxy_radiation[18001] / galaxy_magnitude_flux
