@@ -19,7 +19,7 @@ conv = {
 }
 
 
-def add_star_spectrum(wavelength: float, temperature: float, mag: float):
+def get_stellar_flux_values(wavelength: float, temperature: float, mag: float):
     flux = np.zeros(40001)
     star_black_body_radiation = ((2 * np.pi * h * c**2) / wavelength**5) * 1/(np.exp((h*c)/(wavelength*kb*temperature)) - 1)
 
@@ -32,7 +32,7 @@ def add_star_spectrum(wavelength: float, temperature: float, mag: float):
     return flux
 
 
-def add_galaxy_spectrum(wavelength: float, galaxy_type: str, age: str, has_emission_line: bool, magnitude: float, redshift: float):
+def get_galaxy_flux_values(wavelength: float, galaxy_type: str, age: str, has_emission_line: bool, magnitude: float, redshift: float):
     flux = np.zeros(40001)
     galaxy_types = ["E", "Sb", "Sa", "Sc", "Sd", "S0"]
     age_types = ["Young", "Old"]
@@ -55,7 +55,7 @@ def add_galaxy_spectrum(wavelength: float, galaxy_type: str, age: str, has_emiss
         return flux
 
 
-def add_emission_line(wavelength: float, line_flux: float, lamda: float, line_fwhm: float, redshift: float):
+def get_emission_line_values(wavelength: float, line_flux: float, lamda: float, line_fwhm: float, redshift: float):
     flux = np.zeros(40001)
     central_wavelength = lamda * (1 + redshift)
     line_signal = line_fwhm / 2.35
@@ -88,14 +88,14 @@ def get_modifiers(parameters):
 
     for source in sources:
         if source["spectrumType"] == "Blackbody":
-            star_flux = add_star_spectrum(data['wavelength'], float(source["temperature"]), float(source["magnitude"]))
+            star_flux = get_stellar_flux_values(data['wavelength'], float(source["temperature"]), float(source["magnitude"]))
             data['flux'] = data['flux'] * star_flux
         if source["spectrumType"] == "Galaxy":
             has_emission_line = False
-            galaxy_flux = add_galaxy_spectrum(data['wavelength'], source['type'], source["age"], has_emission_line, float(source["magnitude"]), float(source["redshift"]))
+            galaxy_flux = get_galaxy_flux_values(data['wavelength'], source['type'], source["age"], has_emission_line, float(source["magnitude"]), float(source["redshift"]))
             data['flux'] = data['flux'] * galaxy_flux
         if source["spectrumType"] == "Emission Line":
-            emission_line_flux = add_emission_line(data['wavelength'], float(source["flux"]), float(source["centralWavelength"]), float(source["fwhm"]),  float(source["redshift"]))
+            emission_line_flux = get_emission_line_values(data['wavelength'], float(source["flux"]), float(source["centralWavelength"]), float(source["fwhm"]), float(source["redshift"]))
             data['flux'] = data['flux'] * emission_line_flux
 
     if parameters["spectrumPlotOptions"]["includeAtmosphericExtinction"]:
