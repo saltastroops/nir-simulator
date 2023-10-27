@@ -75,7 +75,35 @@ def read_csv_file(filename):
     return wavelength, flux
 
 
-def get_modifiers(parameters):
+def get_sky_spectrum(form_data):
+    parameters = form_data
+    num_points = 40001
+    data = np.empty(num_points, dtype=[
+        ('wavelength', float),
+        ('sky_flux', float)
+    ])
+    filename = "1-1-nirsky.csv"
+    file_path = FILES_BASE_DIR / "data_sheets" / "adjusted_program_datasheets" / filename
+
+    data['wavelength'], data['sky_flux'] = read_csv_file(file_path)
+
+    if parameters["source"]["type"] == "Point":
+        if not parameters["spectrumPlotOptions"]["calculateFluxInSeeingDisk"]:
+            diffuse = (np.pi * float(parameters["earth"]["seeing"]) ** 2 / 4)
+            data['sky_flux'] = data['sky_flux'] * diffuse
+
+    if parameters["spectrumPlotOptions"]["multiplyWithMirrorAreaAndEfficiency"] == "true":
+        filename = FILES_BASE_DIR / "data_sheets" / "adjusted_program_datasheets" / "combinedtelescope.csv"
+        wavelength, telescope_flux = read_csv_file(filename)
+
+        data['sky_flux'] = data['sky_flux'] * telescope_flux
+        data['sky_flux'] = data['sky_flux'] * int(parameters["mirror_area"])
+
+    return data['wavelength'], data['sky_flux']
+
+
+def get_sources_spectrum(form_data):
+    parameters = form_data
     num_points = 40001
     data = np.empty(num_points, dtype=[
         ('wavelength', float),
