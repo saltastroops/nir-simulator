@@ -19,8 +19,8 @@ conv = {
 }
 
 
-def add_star_spectrum(wavelength, temperature: int, mag: int):
-    spectra = np.zeros(40001)
+def add_star_spectrum(wavelength: float, temperature: float, mag: float):
+    flux = np.zeros(40001)
     star_black_body_radiation = ((2 * np.pi * h * c**2) / wavelength**5) * 1/(np.exp((h*c)/(wavelength*kb*temperature)) - 1)
 
     star_magnitude_flux = 3.02 * 10 ** (-10) * 10 ** (-0.4 * mag)
@@ -28,46 +28,42 @@ def add_star_spectrum(wavelength, temperature: int, mag: int):
 
     normalized_star_radiation = star_black_body_radiation/normalizer
     photon_count = (normalized_star_radiation / ((h * c) / wavelength))
-    spectra = spectra + photon_count
-    return spectra
+    flux = flux + photon_count
+    return flux
 
 
-def add_galaxy_spectrum(wavelength, gal_type, age, has_emission_line, mag, redshift):
-    spectra = np.zeros(40001)
+def add_galaxy_spectrum(wavelength: float, galaxy_type: str, age: str, has_emission_line: bool, magnitude: float, redshift: float):
+    flux = np.zeros(40001)
     galaxy_types = ["E", "Sb", "Sa", "Sc", "Sd", "S0"]
     age_types = ["Young", "Old"]
-    # emission_types = [True, False]
 
-    if gal_type in galaxy_types and age in age_types:
-        # galaxy_type = "young_" if age == "Young" else "old_"
-        # galaxy_type += gal_type.lower() + ("_emis" if has_emission_line else "_no_emis")
-
-        filename = f"{age}_{gal_type}_type_{'emission' if has_emission_line else 'no_emission'}.csv"
+    if galaxy_type in galaxy_types and age in age_types:
+        filename = f"{age}_{galaxy_type}_type_{'emission' if has_emission_line else 'no_emission'}.csv"
         file_path = FILES_BASE_DIR / "data_sheets" / "adjusted_program_datasheets" / filename
-        _, spectrum = read_csv_file(file_path)
+        _, galaxy_flux = read_csv_file(file_path)
 
         starting_wavelength = 9000 / (1 + float(redshift))
         starting_wavelength = 2 * round(starting_wavelength / 2, 1)
         starting_index = np.where(wavelength == starting_wavelength)[0][0]
-        selected_galaxy_radiation = spectrum[starting_index:starting_index+40001]
-        galaxy_magnitude_flux = 3.02 * 10 ** (-10) * 10 ** (-0.4 * mag)
+        selected_galaxy_radiation = galaxy_flux[starting_index:starting_index+40001]
+        galaxy_magnitude_flux = 3.02 * 10 ** (-10) * 10 ** (-0.4 * magnitude)
         normalizer = selected_galaxy_radiation[18001] / galaxy_magnitude_flux
 
         normalized_star_radiation = selected_galaxy_radiation/normalizer
         photon_count = (normalized_star_radiation / ((h * c) / wavelength))
-        spectra = spectra + photon_count
-        return spectra
+        flux = flux + photon_count
+        return flux
 
 
-def add_emission_line(wavelength, line_flux: int | float, lamda: int, line_fwhm: int, redshift: float):
-    spectra = np.zeros(40001)
+def add_emission_line(wavelength: float, line_flux: float, lamda: float, line_fwhm: float, redshift: float):
+    flux = np.zeros(40001)
     central_wavelength = lamda * (1 + redshift)
     line_signal = line_fwhm / 2.35
 
     line_profile = line_flux * 1 / (line_signal * np.sqrt(2 * np.pi)) * np.exp(-((wavelength - central_wavelength) ** 2 / (2 * line_signal**2)))
 
-    spectra = spectra + line_profile / ((h * c) / wavelength)
-    return spectra
+    flux = flux + line_profile / ((h * c) / wavelength)
+    return flux
 
 
 #  TODO Caching should be done Correctly
@@ -75,8 +71,8 @@ def add_emission_line(wavelength, line_flux: int | float, lamda: int, line_fwhm:
 def read_csv_file(filename):
     spectra_data = np.loadtxt(filename, delimiter=",",  quotechar="|",  converters=conv)
     wavelength = spectra_data[:, 0]
-    spectra = spectra_data[:, 1]
-    return wavelength, spectra
+    flux = spectra_data[:, 1]
+    return wavelength, flux
 
 
 def get_modifiers(parameters):
@@ -92,11 +88,11 @@ def get_modifiers(parameters):
 
     for source in sources:
         if source["spectrumType"] == "Blackbody":
-            star_flux = add_star_spectrum(data['wavelength'], int(source["temperature"]), int(source["magnitude"]))
+            star_flux = add_star_spectrum(data['wavelength'], float(source["temperature"]), float(source["magnitude"]))
             data['flux'] = data['flux'] * star_flux
         if source["spectrumType"] == "Galaxy":
             has_emission_line = False
-            galaxy_flux = add_galaxy_spectrum(data['wavelength'], source['type'], source["age"], has_emission_line, int(source["magnitude"]), float(source["redshift"]))
+            galaxy_flux = add_galaxy_spectrum(data['wavelength'], source['type'], source["age"], has_emission_line, float(source["magnitude"]), float(source["redshift"]))
             data['flux'] = data['flux'] * galaxy_flux
         if source["spectrumType"] == "Emission Line":
             emission_line_flux = add_emission_line(data['wavelength'], float(source["flux"]), float(source["centralWavelength"]), float(source["fwhm"]),  float(source["redshift"]))
