@@ -1,4 +1,4 @@
-import { GainType } from "../ExposurePanel.tsx";
+import { GainType } from "./GainPanel.tsx";
 
 type Props = {
   updateGain: (newGainValues: GainType) => void;

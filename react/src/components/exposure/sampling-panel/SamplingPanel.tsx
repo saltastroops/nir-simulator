@@ -1,4 +1,49 @@
-import { ExposureConfigurationType, Sampling } from "../ExposurePanel.tsx";
+import { ExposureConfigurationType } from "../ExposurePanel.tsx";
+export interface SamplingType {
+  numberOfSamples: string;
+  samplingType: "Fowler Sampling" | "Up The Ramp Sampling";
+}
+
+export class Sampling {
+  public numberOfSamples = "15";
+  public samplingType: "Fowler Sampling" | "Up The Ramp Sampling" =
+    "Fowler Sampling";
+
+  public constructor(sampling?: SamplingType) {
+    if (sampling) {
+      this.numberOfSamples = sampling.numberOfSamples;
+      this.samplingType = sampling.samplingType;
+    }
+  }
+  public get data() {
+    return {
+      numberOfSamples: parseFloat(this.numberOfSamples),
+      samplingType: this.samplingType,
+    };
+  }
+
+  public get errors() {
+    const errors: Record<string, string> = {};
+    const data = this.data;
+
+    // Number of samples
+    const numberOfSamples = data.numberOfSamples;
+    const minNumberOfSamples = 1;
+    if (
+      Number.isNaN(numberOfSamples) ||
+      numberOfSamples < minNumberOfSamples ||
+      !Number.isInteger(numberOfSamples)
+    ) {
+      errors.numberOfSamples = `The number of samples must be a positive integer greater than or equal to ${minNumberOfSamples}.`;
+    }
+
+    return errors;
+  }
+
+  public get hasErrors() {
+    return Object.keys(this.errors).length > 0;
+  }
+}
 
 type Props = {
   setupData: ExposureConfigurationType;
@@ -64,14 +109,14 @@ export function SamplingPanel({ setupData, update }: Props) {
         </div>
       </div>
       <div className="columns">
-        <div className="column pt-0">
+        <div className="column pt-0 pb-0">
           <div className="field">
             <label className="label">Number of Samples</label>
             <div className="control">
               <input
                 className="input"
                 type="text"
-                name={"detectorIterations"}
+                name={"numberOfSamples"}
                 value={setupData.sampling.numberOfSamples}
                 onChange={(event) => updateSamplesNumber(event.target.value)}
               />
@@ -79,6 +124,13 @@ export function SamplingPanel({ setupData, update }: Props) {
           </div>
         </div>
       </div>
+      {setupData.sampling.errors["numberOfSamples"] && (
+        <div className="columns">
+          <div className="column pt-0 text-red-700">
+            {setupData.sampling.errors["numberOfSamples"]}
+          </div>
+        </div>
+      )}
     </>
   );
 }

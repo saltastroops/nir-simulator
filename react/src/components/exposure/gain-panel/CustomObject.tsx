@@ -1,7 +1,7 @@
-import { GainType } from "../ExposurePanel.tsx";
+import { Gain, GainType } from "./GainPanel.tsx";
 
 type Props = {
-  gain: GainType;
+  gain: Gain;
   update: (gain: GainType) => void;
 };
 
@@ -15,10 +15,11 @@ export function CustomObject({ gain, update }: Props) {
       [name]: value,
     });
   };
+
   return (
     <div className="notification">
       <div className="columns is-gepless">
-        <div className="column">
+        <div className="column pb-0">
           <div className="control">
             <input
               className="input"
@@ -29,11 +30,16 @@ export function CustomObject({ gain, update }: Props) {
             />
           </div>
         </div>
-        <div className="column ">e/ADU</div>
+        <div className="column pb-0">e/ADU</div>
       </div>
+      {gain.errors["adu"] && (
+        <div className="columns">
+          <div className="column pt-0 text-red-700">{gain.errors["adu"]}</div>
+        </div>
+      )}
       <div className="columns">
-        <div className="column">Read Noise: </div>
-        <div className="column">
+        <div className="column pb-0">Read Noise: </div>
+        <div className="column pb-0">
           <div className="control">
             <input
               className="input"
@@ -45,9 +51,18 @@ export function CustomObject({ gain, update }: Props) {
           </div>
         </div>
       </div>
+
+      {gain.errors["readNoise"] && (
+        <div className="columns">
+          <div className="column pt-0 text-red-700">
+            {gain.errors["readNoise"]}
+          </div>
+        </div>
+      )}
+
       <div className="columns">
-        <div className="column">Full Well: </div>
-        <div className="column">
+        <div className="column pb-0">Full Well: </div>
+        <div className="column pb-0">
           <div className="control">
             <input
               className="input"
@@ -59,6 +74,13 @@ export function CustomObject({ gain, update }: Props) {
           </div>
         </div>
       </div>
+      {gain.errors["fullWell"] && (
+        <div className="columns">
+          <div className="column pt-0 text-red-700">
+            {gain.errors["fullWell"]}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
