@@ -1,7 +1,62 @@
 import { Spectrum } from "../../types";
-import Blackbody from "../../spectrum/Blackbody";
+import { input, label } from "../utils.ts";
+import Errors from "../Errors.tsx";
 
 let idCounter = 0;
+
+interface BlackbodyParameters {
+  magnitude: string;
+  temperature: string;
+}
+
+export class Blackbody implements Spectrum {
+  public readonly spectrumType = "Blackbody";
+  public magnitude = "18";
+  public temperature = "5000";
+
+  public constructor(parameters?: BlackbodyParameters) {
+    if (parameters) {
+      this.magnitude = parameters.magnitude;
+      this.temperature = parameters.temperature;
+    }
+  }
+
+  public get errors() {
+    const errors: Record<string, string> = {};
+    const data = this.data;
+
+    // magnitude
+    const magnitude = data.magnitude;
+    if (Number.isNaN(magnitude)) {
+      errors.magnitude = "The magnitude must be a number.";
+    }
+
+    // temperature
+    const temperature = data.temperature;
+    const minTemperature = 30;
+    const maxTemperature = 100000;
+    if (
+      isNaN(temperature) ||
+      temperature < minTemperature ||
+      temperature > maxTemperature
+    ) {
+      errors.temperature = `The temperature must be a number between ${minTemperature} and ${maxTemperature}.`;
+    }
+
+    return errors;
+  }
+
+  public get data() {
+    return {
+      magnitude: parseFloat(this.magnitude),
+      temperature: parseFloat(this.temperature),
+    };
+  }
+
+  public get hasErrors() {
+    return Object.keys(this.errors).length > 0;
+  }
+}
 
 interface Props {
   blackbody: Blackbody;
@@ -9,12 +64,12 @@ interface Props {
 }
 
 export default function BlackbodyPanel({ blackbody, update }: Props) {
-  const parameters = blackbody.parameters;
-  const errors = blackbody.errors();
+  const { magnitude, temperature, errors } = blackbody;
 
   const updateParameter = (parameter: string, newValue: string) => {
     const updatedParameters = {
-      ...parameters,
+      magnitude,
+      temperature,
       [parameter]: newValue,
     };
     update(new Blackbody(updatedParameters));
@@ -25,48 +80,39 @@ export default function BlackbodyPanel({ blackbody, update }: Props) {
   const temperatureId = `temperature-${idCounter}`;
 
   return (
-    <div className="flex flex-wrap items-top p-3">
-      {/* magnitude */}
-      <div className="mr-5 w-48">
-        <div>
-          <label htmlFor={magnitudeId}>Apparent Magnitude</label>
-        </div>
-        <div>
-          <input
-            id={magnitudeId}
-            className="input"
-            type="text"
-            value={parameters.magnitude}
-            onChange={(event) =>
-              updateParameter("magnitude", event.target.value)
-            }
-          />
-        </div>
-        {errors.magnitude && (
-          <div className="text-red-700">{errors.magnitude}</div>
-        )}
+    <div>
+      <div className="flex items-center">
+        {/* magnitude */}
+        <label htmlFor={magnitudeId} className={label("mr-2")}>
+          Apparent Magnitude
+        </label>
+        <input
+          id={magnitudeId}
+          className={input("w-12")}
+          type="text"
+          value={magnitude}
+          onChange={(event) => updateParameter("magnitude", event.target.value)}
+        />
+
+        {/* temperature */}
+        <label htmlFor={temperatureId} className={label("ml-5 mr-2")}>
+          Temperature
+        </label>
+        <input
+          id={temperatureId}
+          className={input("w-16")}
+          type="text"
+          value={temperature}
+          onChange={(event) =>
+            updateParameter("temperature", event.target.value)
+          }
+        />
       </div>
 
-      {/* temperature */}
-      <div className="w-48">
-        <div>
-          <label htmlFor={temperatureId}>Temperature</label>
-        </div>
-        <div>
-          <input
-            id={temperatureId}
-            className="input"
-            type="text"
-            value={parameters.temperature}
-            onChange={(event) =>
-              updateParameter("temperature", event.target.value)
-            }
-          />
-        </div>
-        {errors.temperature && (
-          <div className="text-red-700">{errors.temperature}</div>
-        )}
-      </div>
+      {/* errors */}
+      {blackbody.hasErrors && (
+        <Errors errors={errors} keys={["magnitude", "temperature"]} />
+      )}
     </div>
   );
 }

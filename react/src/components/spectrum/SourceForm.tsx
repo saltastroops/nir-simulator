@@ -2,14 +2,10 @@ import SpectrumSelector from "./SpectrumSelector";
 import SpectrumForm from "./SpectrumForm";
 import { ReactElement } from "react";
 import { Spectrum, SpectrumType } from "../../types";
-import BlackbodyPanel from "./BlackbodyPanel";
-import Blackbody from "../../spectrum/Blackbody";
-import EmissionLinePanel from "./EmissionLinePanel";
-import GalaxyPanel from "./GalaxyPanel";
-import UserDefinedPanel from "./UserDefinedPanel.tsx";
-import Galaxy from "../../spectrum/Galaxy";
-import EmissionLine from "../../spectrum/EmissionLine";
-import UserDefined from "../../spectrum/UserDefined.ts";
+import BlackbodyPanel, { Blackbody } from "./BlackbodyPanel";
+import EmissionLinePanel, { EmissionLine } from "./EmissionLinePanel";
+import GalaxyPanel, { Galaxy } from "./GalaxyPanel";
+import UserDefinedPanel, { UserDefined } from "./UserDefinedPanel.tsx";
 
 export type SourceType = "Point" | "Diffuse";
 
@@ -27,12 +23,11 @@ export class Source {
       this.spectrum = parameters.spectrum;
       this.type = parameters.type;
     }
-    this.data = this.data.bind(this);
   }
 
-  public data() {
+  public get data() {
     return {
-      spectrum: this.spectrum.map((s) => s.data()),
+      spectrum: this.spectrum.map((s) => s.data),
       type: this.type,
     };
   }
@@ -57,7 +52,7 @@ function makeSpectrumForm(
   spectrum: Spectrum,
   update: (spectrum: Spectrum) => void,
 ): ReactElement {
-  switch (spectrum.type) {
+  switch (spectrum.spectrumType) {
     case "Blackbody":
       return (
         <BlackbodyPanel blackbody={spectrum as Blackbody} update={update} />
@@ -79,7 +74,9 @@ function makeSpectrumForm(
         />
       );
     default:
-      throw new Error(`No spectrum form defined for type "${spectrum.type}.`);
+      throw new Error(
+        `No spectrum form defined for type "${spectrum.spectrumType}.`,
+      );
   }
 }
 
@@ -137,6 +134,7 @@ export default function SourceForm({ source, update }: Props) {
       />
       {source.spectrum.map((spectrum, index) => (
         <SpectrumForm
+          label={spectrum.spectrumType}
           remove={() => removeFromSourceSpectrum(index)}
           key={index}
         >
@@ -147,26 +145,28 @@ export default function SourceForm({ source, update }: Props) {
       ))}
 
       {/* source type */}
-      <div>
+      <div className="mt-4">
         <label>
           <input
             type="radio"
+            className="cursor-pointer"
             name="source-type"
             value="Point"
             onChange={() => updateSourceType("Point")}
             checked={source.type === "Point"}
           />
-          This is a point source
+          <span className="ml-2">This is a point source</span>
         </label>
         <label>
           <input
             type="radio"
+            className="ml-5 cursor-pointer"
             name="source-type"
             value="Diffuse"
             onChange={() => updateSourceType("Diffuse")}
             checked={source.type === "Diffuse"}
           />
-          This is a diffuse source
+          <span className="ml-2">This is a diffuse source</span>
         </label>
       </div>
     </>

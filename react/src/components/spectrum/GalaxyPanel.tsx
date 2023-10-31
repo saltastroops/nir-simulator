@@ -1,7 +1,84 @@
 import { Spectrum } from "../../types";
-import Galaxy, { GALAXY_AGES, GALAXY_TYPES } from "../../spectrum/Galaxy";
+import Errors from "../Errors.tsx";
+import { input, label, select } from "../utils.ts";
 
 let idCounter = 0;
+
+export const GALAXY_TYPES = ["E", "S0", "Sa", "Sb", "Sc", "Sd"];
+
+export const GALAXY_AGES = ["Young", "Old"];
+
+interface GalaxyParameters {
+  magnitude: string;
+  type: string;
+  age: string;
+  redshift: string;
+}
+
+export class Galaxy implements Spectrum {
+  public readonly spectrumType = "Galaxy";
+  public magnitude = "18";
+  public type = "S0";
+  public age = "Young";
+  public redshift = "0";
+
+  public constructor(parameters?: GalaxyParameters) {
+    if (parameters) {
+      this.magnitude = parameters.magnitude;
+      this.type = parameters.type;
+      this.age = parameters.age;
+      this.redshift = parameters.redshift;
+    }
+  }
+
+  public get errors() {
+    const errors: Record<string, string> = {};
+    const data = this.data;
+
+    // magnitude
+    const magnitude = data.magnitude;
+    if (Number.isNaN(magnitude)) {
+      errors.magnitude = "The magnitude must be a number.";
+    }
+
+    // type
+    if (!GALAXY_TYPES.includes(data.type)) {
+      errors.type = `The type must be one of ${GALAXY_TYPES.join(", ")}.`;
+    }
+
+    // age
+    if (!GALAXY_AGES.includes(data.age)) {
+      errors.age = `The type must be one of ${GALAXY_AGES.join(", ")}.`;
+    }
+
+    // Redshift
+    const redshift = data.redshift;
+    const minRedshift = -20;
+    const maxRedshift = 20;
+    if (
+      Number.isNaN(redshift) ||
+      redshift < minRedshift ||
+      redshift > maxRedshift
+    ) {
+      errors.redshift = `The redshift must be a number between ${minRedshift} and ${maxRedshift}.`;
+    }
+
+    return errors;
+  }
+
+  public get data() {
+    return {
+      magnitude: parseFloat(this.magnitude),
+      type: this.type,
+      age: this.age,
+      redshift: parseFloat(this.redshift),
+    };
+  }
+
+  public get hasErrors() {
+    return Object.keys(this.errors).length > 0;
+  }
+}
 
 interface Props {
   galaxy: Galaxy;
@@ -9,12 +86,14 @@ interface Props {
 }
 
 export default function GalaxyPanel({ galaxy, update }: Props) {
-  const parameters = galaxy.parameters;
-  const errors = galaxy.errors();
+  const { magnitude, type, age, redshift, errors } = galaxy;
 
   const updateParameter = (parameter: string, newValue: string) => {
     const updatedParameters = {
-      ...parameters,
+      magnitude,
+      type,
+      age,
+      redshift,
       [parameter]: newValue,
     };
     update(new Galaxy(updatedParameters));
@@ -27,90 +106,74 @@ export default function GalaxyPanel({ galaxy, update }: Props) {
   const redshiftId = `redshift-${idCounter}`;
 
   return (
-    <div className="flex flex-wrap items-top p-3">
-      {/* magnitude */}
-      <div className="mr-5 w-48">
-        <div>
-          <label htmlFor={magnitudeId}>Apparent Magnitude</label>
-        </div>
-        <div>
-          <input
-            id={magnitudeId}
-            className="input"
-            type="text"
-            value={parameters.magnitude}
-            onChange={(event) =>
-              updateParameter("magnitude", event.target.value)
-            }
-          />
-        </div>
-        {errors.magnitude && (
-          <div className="text-red-700">{errors.magnitude}</div>
-        )}
+    <div>
+      <div className="flex items-center">
+        {/* magnitude */}
+        <label htmlFor={magnitudeId} className={label("mr-2")}>
+          Apparent Magnitude
+        </label>
+        <input
+          id={magnitudeId}
+          className={input("w-12")}
+          type="text"
+          value={magnitude}
+          onChange={(event) => updateParameter("magnitude", event.target.value)}
+        />
+
+        {/* galaxy type */}
+        <label htmlFor={typeId} className={label("ml-5 mr-2")}>
+          Type
+        </label>
+        <select
+          id={typeId}
+          value={type}
+          className={select("w-16")}
+          onChange={(event) => updateParameter("type", event.target.value)}
+        >
+          {GALAXY_TYPES.map((type) => (
+            <option key={type} value={type}>
+              {type}
+            </option>
+          ))}
+        </select>
+
+        {/* age */}
+        <label htmlFor={ageId} className={label("ml-5 mr-2")}>
+          Age
+        </label>
+        <select
+          id={ageId}
+          value={age}
+          className={select("w-24")}
+          onChange={(event) => updateParameter("age", event.target.value)}
+        >
+          {GALAXY_AGES.map((age) => (
+            <option key={age} value={age}>
+              {age}
+            </option>
+          ))}
+        </select>
+
+        {/* Redshift */}
+        <label htmlFor={redshiftId} className="ml-4 mr-2">
+          Redshift
+        </label>
+        <input
+          id={redshiftId}
+          className={input("w-12")}
+          type="text"
+          value={redshift}
+          onChange={(event) => updateParameter("redshift", event.target.value)}
+        />
       </div>
 
-      {/* galaxy type */}
-      <div className="mr-5">
-        <div>
-          <label htmlFor={typeId}>Type</label>
-        </div>
-        <div className="select">
-          <select
-            id={typeId}
-            value={parameters.type}
-            onChange={(event) => updateParameter("type", event.target.value)}
-          >
-            {GALAXY_TYPES.map((type) => (
-              <option key={type} value={type}>
-                {type}
-              </option>
-            ))}
-          </select>
-        </div>
-        {errors.type && <div className="text-red-700">{errors.type}</div>}
-      </div>
-
-      {/* age */}
-      <div className="mr-5">
-        <div>
-          <label htmlFor={ageId}>Age</label>
-        </div>
-        <div className="select">
-          <select
-            id={ageId}
-            value={parameters.age}
-            onChange={(event) => updateParameter("age", event.target.value)}
-          >
-            {GALAXY_AGES.map((age) => (
-              <option key={age} value={age}>
-                {age}
-              </option>
-            ))}
-          </select>
-        </div>
-        {errors.age && <div className="text-red-700">{errors.age}</div>}
-      </div>
-
-      {/* Redshift */}
-      <div className="w-48">
-        <div>
-          <label htmlFor={redshiftId}>Redshift</label>
-        </div>
-        <div>
-          <input
-            id={redshiftId}
-            className="input"
-            type="text"
-            value={parameters.redshift}
-            onChange={(event) =>
-              updateParameter("redshift", event.target.value)
-            }
-          />
-        </div>
-        {errors.redshift && (
-          <div className="text-red-700">{errors.redshift}</div>
-        )}
-      </div>
+      {/* errors */}
+      {galaxy.hasErrors && (
+        <Errors
+          errors={errors}
+          keys={["magnitude", "type", "age", "redshift"]}
+        />
+      )}
     </div>
   );
 }

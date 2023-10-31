@@ -1,3 +1,6 @@
+import { input, label } from "../utils.ts";
+import Errors from "../Errors.tsx";
+
 interface MoonParameters {
   zenithDistance: string;
   phase: string;
@@ -5,24 +8,21 @@ interface MoonParameters {
 }
 
 export class Moon {
-  public parameters: MoonParameters = {
-    zenithDistance: "75",
-    phase: "90",
-    lunarElongation: "90",
-  };
+  public zenithDistance = "75";
+  public phase = "90";
+  public lunarElongation = "90";
 
   public constructor(parameters?: MoonParameters) {
     if (parameters) {
-      this.parameters = parameters;
+      this.zenithDistance = parameters.zenithDistance;
+      this.phase = parameters.phase;
+      this.lunarElongation = parameters.lunarElongation;
     }
-    this.data.bind(this);
-    this.errors.bind(this);
-    this.hasErrors.bind(this);
   }
 
-  public errors() {
+  public get errors() {
     const errors: Record<string, string> = {};
-    const data = this.data();
+    const data = this.data;
 
     // zenith distance
     const zenithDistance = data.zenithDistance;
@@ -59,16 +59,16 @@ export class Moon {
     return errors;
   }
 
-  public data() {
+  public get data() {
     return {
-      zenithDistance: parseFloat(this.parameters.zenithDistance),
-      phase: parseFloat(this.parameters.phase),
-      lunarElongation: parseFloat(this.parameters.lunarElongation),
+      zenithDistance: parseFloat(this.zenithDistance),
+      phase: parseFloat(this.phase),
+      lunarElongation: parseFloat(this.lunarElongation),
     };
   }
 
-  public hasErrors() {
-    return Object.keys(this.errors()).length > 0;
+  public get hasErrors() {
+    return Object.keys(this.errors).length > 0;
   }
 }
 
@@ -78,13 +78,14 @@ interface Props {
 }
 
 export default function MoonPanel({ moon, update }: Props) {
-  const parameters = moon.parameters;
-  const errors = moon.errors();
+  const { zenithDistance, phase, lunarElongation, errors } = moon;
 
   const updateParameter = (parameter: string, newValue: string) => {
     update(
       new Moon({
-        ...parameters,
+        zenithDistance,
+        phase,
+        lunarElongation,
         [parameter]: newValue,
       }),
     );
@@ -103,31 +104,37 @@ export default function MoonPanel({ moon, update }: Props) {
     <div>
       <div className="flex items-center">
         {/* zenith distance */}
-        <label htmlFor="lunar-zenith-distance">Moon ZD</label>
+        <label htmlFor="lunar-zenith-distance" className={label("mr-2")}>
+          Moon ZD
+        </label>
         <input
           id="lunar-zenith-distance"
-          className="input w-24"
-          value={parameters.zenithDistance}
+          className={input("w-12")}
+          value={zenithDistance}
           onChange={(event) =>
             updateParameter("zenithDistance", event.target.value)
           }
         />
 
         {/* phase */}
-        <label htmlFor="lunar-phase">Lunar Phase</label>
+        <label htmlFor="lunar-phase" className={label("ml-5 mr-2")}>
+          Lunar Phase
+        </label>
         <input
           id="lunar-phase"
-          className="input w-24"
-          value={parameters.phase}
+          className={input("w-12")}
+          value={phase}
           onChange={(event) => updateParameter("phase", event.target.value)}
         />
 
         {/* lunar elongation */}
-        <label htmlFor="lunar-elongation">Lunar Elongation</label>
+        <label htmlFor="lunar-elongation" className={label("ml-5 mr-2")}>
+          Lunar Elongation
+        </label>
         <input
           id="lunar-elongation"
-          className="input w-24"
-          value={parameters.lunarElongation}
+          className={input("w-12")}
+          value={lunarElongation}
           onChange={(event) =>
             updateParameter("lunarElongation", event.target.value)
           }
@@ -135,21 +142,15 @@ export default function MoonPanel({ moon, update }: Props) {
       </div>
 
       {/* errors */}
-      {moon.hasErrors() && (
-        <div>
-          {["zenithDistance", "phase", "lunarElongation"].map(
-            (key) =>
-              errors[key] && (
-                <div key={key} className="text-red-700">
-                  {errors[key]}
-                </div>
-              ),
-          )}
-        </div>
+      {moon.hasErrors && (
+        <Errors
+          errors={errors}
+          keys={["zenithDistance", "phase", "lunarElongation"]}
+        />
       )}
 
       {/* quick select */}
-      <div>
+      <div className="mt-2">
         <span className="mr-3">Quick Select:</span>
         <span
           className="text-sky-500 cursor-pointer mr-3"

@@ -1,3 +1,6 @@
+import { input, label } from "../utils.ts";
+import Errors from "../Errors.tsx";
+
 interface SunParameters {
   year: string;
   solarElongation: string;
@@ -5,23 +8,20 @@ interface SunParameters {
 }
 
 export class Sun {
-  public parameters: SunParameters = {
-    year: "" + new Date().getFullYear(),
-    solarElongation: "180",
-    eclipticLatitude: "-90",
-  };
+  public year = "" + new Date().getFullYear();
+  public solarElongation = "180";
+  public eclipticLatitude = "-90";
 
   public constructor(parameters?: SunParameters) {
     if (parameters) {
-      this.parameters = parameters;
+      this.year = parameters.year;
+      this.solarElongation = parameters.solarElongation;
+      this.eclipticLatitude = parameters.eclipticLatitude;
     }
-    this.data.bind(this);
-    this.errors.bind(this);
-    this.hasErrors.bind(this);
   }
 
-  public errors() {
-    const data = this.data();
+  public get errors() {
+    const data = this.data;
     const errors: Record<string, string> = {};
 
     // year
@@ -29,7 +29,7 @@ export class Sun {
     // if the string value of the year is a float, the parsed value is nonetheless an
     // integer (as parseInt is used); so we have to explicitly check whether the
     // string value is indeed an integer
-    const isYearInteger = Number.isInteger(parseFloat(this.parameters.year));
+    const isYearInteger = Number.isInteger(parseFloat(this.year));
     const minYear = 2005;
     const maxYear = 2100;
     if (!isYearInteger || year < minYear || year > maxYear) {
@@ -63,16 +63,16 @@ export class Sun {
     return errors;
   }
 
-  public data() {
+  public get data() {
     return {
-      year: parseInt(this.parameters.year, 10),
-      solarElongation: parseFloat(this.parameters.solarElongation),
-      eclipticLatitude: parseFloat(this.parameters.eclipticLatitude),
+      year: parseInt(this.year, 10),
+      solarElongation: parseFloat(this.solarElongation),
+      eclipticLatitude: parseFloat(this.eclipticLatitude),
     };
   }
 
-  public hasErrors() {
-    return Object.keys(this.errors()).length > 0;
+  public get hasErrors() {
+    return Object.keys(this.errors).length > 0;
   }
 }
 
@@ -82,13 +82,14 @@ interface Props {
 }
 
 export default function SunPanel({ sun, update }: Props) {
-  const parameters = sun.parameters;
-  const errors = sun.errors();
+  const { year, solarElongation, eclipticLatitude, errors } = sun;
 
   const updateParameter = (parameter: string, newValue: string) => {
     update(
       new Sun({
-        ...parameters,
+        year,
+        solarElongation,
+        eclipticLatitude,
         [parameter]: newValue,
       }),
     );
@@ -98,31 +99,37 @@ export default function SunPanel({ sun, update }: Props) {
     <div>
       <div className="flex items-center">
         {/* year */}
-        <label htmlFor="observation-year">Obs. Year</label>
+        <label htmlFor="observation-year" className={label("mr-2")}>
+          Obs. Year
+        </label>
         <input
           id="observation-year"
-          className="input w-24"
-          value={parameters.year}
+          className={input("w-16")}
+          value={year}
           onChange={(event) => updateParameter("year", event.target.value)}
         />
 
         {/* solar elongation */}
-        <label htmlFor="solar-elongation">Solar Elongation</label>
+        <label htmlFor="solar-elongation" className={label("ml-5 mr-2")}>
+          Solar Elongation
+        </label>
         <input
           id="solar-elongation"
-          className="input w-24"
-          value={parameters.solarElongation}
+          className={input("w-12")}
+          value={solarElongation}
           onChange={(event) =>
             updateParameter("solarElongation", event.target.value)
           }
         />
 
         {/* ecliptic latitude */}
-        <label htmlFor="ecliptioc-latitude">Ecliptic Latitude</label>
+        <label htmlFor="ecliptioc-latitude" className={label("ml-5 mr-2")}>
+          Ecliptic Latitude
+        </label>
         <input
           id="ecliptic-latitude"
-          className="input w-24"
-          value={parameters.eclipticLatitude}
+          className={input("w-12")}
+          value={eclipticLatitude}
           onChange={(event) =>
             updateParameter("eclipticLatitude", event.target.value)
           }
@@ -130,17 +137,11 @@ export default function SunPanel({ sun, update }: Props) {
       </div>
 
       {/* errors */}
-      {sun.hasErrors() && (
-        <div>
-          {["year", "solarElongation", "eclipticLatitude"].map(
-            (key) =>
-              errors[key] && (
-                <div key={key} className="text-red-700">
-                  {errors[key]}
-                </div>
-              ),
-          )}
-        </div>
+      {sun.hasErrors && (
+        <Errors
+          errors={errors}
+          keys={["year", "solarElongation", "eclipticLatitude"]}
+        />
       )}
     </div>
   );
