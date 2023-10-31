@@ -1,25 +1,23 @@
-import { ExposureConfigurationType } from "../ExposurePanel.tsx";
-import { SimulationSetupParameters } from "../../Simulator.tsx";
 import { Error } from "../../Error.tsx";
 
-export interface ExposureTimeType {
-  exposureTime: string;
+interface ExposureTimeParameters {
+  singleExposureTime: string;
   detectorIterations: string;
 }
 
-export class SNRQuery {
-  public exposureTime = "3600";
+export class ExposureTime {
+  public singleExposureTime = "3600";
   public detectorIterations = "1";
 
-  public constructor(solve?: ExposureTimeType) {
-    if (solve) {
-      this.exposureTime = solve.exposureTime;
-      this.detectorIterations = solve.detectorIterations;
+  public constructor(exposureTime?: ExposureTimeParameters) {
+    if (exposureTime) {
+      this.singleExposureTime = exposureTime.singleExposureTime;
+      this.detectorIterations = exposureTime.detectorIterations;
     }
   }
   public get data() {
     return {
-      exposureTime: parseFloat(this.exposureTime),
+      singleExposureTime: parseFloat(this.singleExposureTime),
       detectorIterations: parseInt(this.detectorIterations),
     };
   }
@@ -40,10 +38,10 @@ export class SNRQuery {
     }
 
     // Exposure Time
-    const exposureTime = data.exposureTime;
+    const exposureTime = data.singleExposureTime;
     const minExposureTime = 0;
     if (Number.isNaN(exposureTime) || exposureTime < minExposureTime) {
-      errors.exposureTime = "exposure time must be a positive number.";
+      errors.singleExposureTime = "Exposure time must be a positive number.";
     }
 
     return errors;
@@ -55,29 +53,29 @@ export class SNRQuery {
 }
 
 interface Props {
-  setup: SimulationSetupParameters;
-  update: (exposureConfiguration: ExposureConfigurationType) => void;
+  setupData: ExposureTime;
+  update: (key: "exposureTime" | "snr", exposureTime: ExposureTime) => void;
 }
-export function SolveForSNR({ setup, update }: Props) {
+export function SNRTab({ setupData, update }: Props) {
   const updateValue = (event: any) => {
-    updateSolveSNR(event.target.name, event.target.value);
+    updateExposureTime(event.target.name, event.target.value);
   };
 
-  const updateSolveSNR = (
-    key: "exposureTime" | "detectorIterations",
+  const updateExposureTime = (
+    key: "singleExposureTime" | "detectorIterations",
     value: string,
   ) => {
-    update({
-      ...setup.exposureConfiguration,
-      solveSNR: new SNRQuery({
-        ...setup.exposureConfiguration.solveSNR,
+    update(
+      "exposureTime",
+      new ExposureTime({
+        ...setupData,
         [key]: value,
       }),
-    });
+    );
   };
 
   const updatePlot = () => {
-    console.log("Update plot method not implement");
+    console.log("Update plot method not implement"); // TODO update should come from ExposurePanel
   };
 
   return (
@@ -88,18 +86,14 @@ export function SolveForSNR({ setup, update }: Props) {
           <input
             className="input"
             type="text"
-            name={"exposureTime"}
-            value={setup.exposureConfiguration.solveSNR.exposureTime}
+            name={"singleExposureTime"}
+            value={setupData.singleExposureTime}
             onChange={updateValue}
           />
-          {setup.exposureConfiguration.solveSNR.errors["exposureTime"] && (
+          {setupData.errors["singleExposureTime"] && (
             <div className="columns">
               <div className="column">
-                <Error
-                  error={
-                    setup.exposureConfiguration.solveSNR.errors["exposureTime"]
-                  }
-                />
+                <Error error={setupData.errors["singleExposureTime"]} />
               </div>
             </div>
           )}
@@ -112,21 +106,13 @@ export function SolveForSNR({ setup, update }: Props) {
             className="input"
             type="text"
             name={"detectorIterations"}
-            value={setup.exposureConfiguration.solveSNR.detectorIterations}
+            value={setupData.detectorIterations}
             onChange={updateValue}
           />
-          {setup.exposureConfiguration.solveSNR.errors[
-            "detectorIterations"
-          ] && (
+          {setupData.errors["detectorIterations"] && (
             <div className="columns">
               <div className="column">
-                <Error
-                  error={
-                    setup.exposureConfiguration.solveSNR.errors[
-                      "detectorIterations"
-                    ]
-                  }
-                />
+                <Error error={setupData.errors["detectorIterations"]} />
               </div>
             </div>
           )}

@@ -2,7 +2,6 @@ import { useRef, useState } from "react";
 import { SpectrumGenerationTab } from "./spectrum/SpectrumGenerationTab";
 import {
   ExposureConfiguration,
-  ExposureConfigurationType,
   ExposurePanel,
 } from "./exposure/ExposurePanel.tsx";
 import {
@@ -157,7 +156,7 @@ export function Simulator() {
       <div ref={exposureDivRef} style={{ display: "none" }}>
         <ExposurePanel
           setup={setup}
-          update={(exposureConfiguration: ExposureConfigurationType) =>
+          update={(exposureConfiguration: ExposureConfiguration) =>
             updateSetup("exposureConfiguration", exposureConfiguration)
           }
         />

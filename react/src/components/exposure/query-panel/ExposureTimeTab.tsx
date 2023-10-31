@@ -1,20 +1,18 @@
-import { SimulationSetupParameters } from "../../Simulator.tsx";
-import { ExposureConfigurationType } from "../ExposurePanel.tsx";
 import { Error } from "../../Error.tsx";
 
-export interface SNRType {
+interface SNRParameters {
   snr: string;
   wavelength: string;
 }
 
-export class ExposureTimeQuery {
+export class SNR {
   public snr = "10";
   public wavelength = "13000";
 
-  public constructor(solve?: SNRType) {
-    if (solve) {
-      this.snr = solve.snr;
-      this.wavelength = solve.wavelength;
+  public constructor(snr?: SNRParameters) {
+    if (snr) {
+      this.snr = snr.snr;
+      this.wavelength = snr.wavelength;
     }
   }
   public get data() {
@@ -55,23 +53,23 @@ export class ExposureTimeQuery {
 }
 
 interface Props {
-  setup: SimulationSetupParameters;
-  update: (exposureConfiguration: ExposureConfigurationType) => void;
+  setupData: SNR;
+  update: (key: "exposureTime" | "snr", snr: SNR) => void;
 }
 
-export function SolveForExposureTime({ setup, update }: Props) {
+export function ExposureTimeTab({ setupData, update }: Props) {
   const updatePlot = () => {
-    console.log("Update plot method not implement");
+    console.log("Update plot method not implement"); // TODO update should come from ExposurePanel
   };
 
   const updateSNR = (key: "wavelength" | "snr", value: string) => {
-    update({
-      ...setup.exposureConfiguration,
-      solveExposureTime: new ExposureTimeQuery({
-        ...setup.exposureConfiguration.solveExposureTime,
+    update(
+      "snr",
+      new SNR({
+        ...setupData,
         [key]: value,
       }),
-    });
+    );
   };
 
   return (
@@ -83,16 +81,10 @@ export function SolveForExposureTime({ setup, update }: Props) {
             className="input"
             type="text"
             name={"snr"}
-            value={setup.exposureConfiguration.solveExposureTime.snr}
+            value={setupData.snr}
             onChange={(event) => updateSNR("snr", event.target.value)}
           />
-          {setup.exposureConfiguration.solveExposureTime.errors["snr"] && (
-            <Error
-              error={
-                setup.exposureConfiguration.solveExposureTime.errors["snr"]
-              }
-            />
-          )}
+          {setupData.errors["snr"] && <Error error={setupData.errors["snr"]} />}
         </div>
       </div>
       <div className="field">
@@ -106,7 +98,7 @@ export function SolveForExposureTime({ setup, update }: Props) {
             className="input"
             type="text"
             name={"wavelength"}
-            value={setup.exposureConfiguration.solveExposureTime.wavelength}
+            value={setupData.wavelength}
             onChange={(event) => updateSNR("wavelength", event.target.value)}
           />
         </div>
@@ -118,16 +110,8 @@ export function SolveForExposureTime({ setup, update }: Props) {
           >
             Central Wavelength
           </span>
-          {setup.exposureConfiguration.solveExposureTime.errors[
-            "wavelength"
-          ] && (
-            <Error
-              error={
-                setup.exposureConfiguration.solveExposureTime.errors[
-                  "wavelength"
-                ]
-              }
-            />
+          {setupData.errors["wavelength"] && (
+            <Error error={setupData.errors["wavelength"]} />
           )}
         </div>
       </div>

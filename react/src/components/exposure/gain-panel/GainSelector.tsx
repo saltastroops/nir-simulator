@@ -1,24 +1,24 @@
-import { GainType, GainTypeType } from "./GainPanel.tsx";
+import { Gain, GainParameters, GainType } from "./GainPanel.tsx";
 
 interface Props {
-  updateGain: (newGainValues: GainType) => void;
-  gainType: GainTypeType;
+  updateGain: (newGainValues: Gain) => void;
+  gainType: GainType;
 }
 
-export function GainTypeSelector({ updateGain, gainType }: Props) {
-  const faintGain: GainType = {
+export function GainSelector({ updateGain, gainType }: Props) {
+  const faintGain = {
     gainType: "Faint",
     adu: "2.04",
     readNoise: "17",
     fullWell: "60000",
   };
-  const brightGain: GainType = {
+  const brightGain = {
     gainType: "Bright",
     adu: "5.74",
     readNoise: "20",
     fullWell: "120000",
   };
-  const update = (value: GainTypeType) => {
+  const update = (value: GainType) => {
     let newGainValues = {
       gainType: "Custom",
       adu: "1",
@@ -31,7 +31,7 @@ export function GainTypeSelector({ updateGain, gainType }: Props) {
     if (value === "Bright") {
       newGainValues = brightGain;
     }
-    updateGain(newGainValues as GainType);
+    updateGain(new Gain(newGainValues as GainParameters));
   };
 
   return (

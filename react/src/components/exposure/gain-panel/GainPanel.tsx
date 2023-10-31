@@ -1,26 +1,23 @@
-import { GainTypeSelector } from "./GainTypeSelector.tsx";
+import { GainSelector } from "./GainSelector.tsx";
 import { NonEditableGainPanel } from "./NonEditableGainPanel.tsx";
 import { CustomGainPanel } from "./CustomGainPanel.tsx";
-import {
-  ExposureConfiguration,
-  ExposureConfigurationType,
-} from "../ExposurePanel.tsx";
+import { ExposureConfiguration } from "../ExposurePanel.tsx";
 
-export type GainTypeType = "Faint" | "Bright" | "Custom";
+export type GainType = "Faint" | "Bright" | "Custom";
 
-export interface GainType {
-  gainType: GainTypeType;
+export interface GainParameters {
+  gainType: GainType;
   adu: string;
   readNoise: string;
   fullWell: string;
 }
 export class Gain {
-  public gainType: GainTypeType = "Faint";
+  public gainType: GainType = "Faint";
   public adu = "2.04";
   public readNoise = "17";
   public fullWell = "60000";
 
-  public constructor(gains?: GainType) {
+  public constructor(gains?: GainParameters) {
     if (gains) {
       this.gainType = gains.gainType;
       this.adu = gains.adu;
@@ -76,21 +73,23 @@ export class Gain {
 
 interface Props {
   setupData: ExposureConfiguration;
-  update: (gains: ExposureConfigurationType) => void;
+  update: (gains: ExposureConfiguration) => void;
 }
 
 export function GainPanel({ setupData, update }: Props) {
-  const updateGain = (gainValues: GainType) => {
-    update({
-      ...setupData,
-      gain: new Gain(gainValues),
-    });
+  const updateGain = (newGain: Gain) => {
+    update(
+      new ExposureConfiguration({
+        ...setupData,
+        gain: newGain,
+      }),
+    );
   };
   return (
     <>
       <div className="columns">
         <div className="column pr-0 is-two-fifths">
-          <GainTypeSelector
+          <GainSelector
             updateGain={updateGain}
             gainType={setupData.gain.gainType}
           />

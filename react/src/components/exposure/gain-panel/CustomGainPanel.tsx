@@ -1,9 +1,9 @@
-import { Gain, GainType } from "./GainPanel.tsx";
+import { Gain } from "./GainPanel.tsx";
 import { Error } from "../../Error.tsx";
 
 interface Props {
   gain: Gain;
-  update: (gain: GainType) => void;
+  update: (gain: Gain) => void;
 }
 
 export function CustomGainPanel({ gain, update }: Props) {
@@ -11,10 +11,12 @@ export function CustomGainPanel({ gain, update }: Props) {
     name: "adu" | "fullWell" | "readNoise",
     value: string,
   ) => {
-    update({
-      ...gain,
-      [name]: value,
-    });
+    update(
+      new Gain({
+        ...gain,
+        [name]: value,
+      }),
+    );
   };
 
   return (

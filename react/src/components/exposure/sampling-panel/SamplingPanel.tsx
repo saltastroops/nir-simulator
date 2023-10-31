@@ -1,16 +1,17 @@
-import { ExposureConfigurationType } from "../ExposurePanel.tsx";
+import { ExposureConfiguration } from "../ExposurePanel.tsx";
 import { Error } from "../../Error.tsx";
-export interface SamplingType {
+
+type SamplingType = "Fowler Sampling" | "Up The Ramp Sampling";
+interface SamplingParameters {
   numberOfSamples: string;
-  samplingType: "Fowler Sampling" | "Up The Ramp Sampling";
+  samplingType: SamplingType;
 }
 
 export class Sampling {
   public numberOfSamples = "15";
-  public samplingType: "Fowler Sampling" | "Up The Ramp Sampling" =
-    "Fowler Sampling";
+  public samplingType: SamplingType = "Fowler Sampling";
 
-  public constructor(sampling?: SamplingType) {
+  public constructor(sampling?: SamplingParameters) {
     if (sampling) {
       this.numberOfSamples = sampling.numberOfSamples;
       this.samplingType = sampling.samplingType;
@@ -35,7 +36,7 @@ export class Sampling {
       numberOfSamples < minNumberOfSamples ||
       !Number.isInteger(numberOfSamples)
     ) {
-      errors.numberOfSamples = `The number of samples must be an integer greater than or equal to ${minNumberOfSamples}.`;
+      errors.numberOfSamples = `Must be a positive integer.`;
     }
 
     return errors;
@@ -47,8 +48,8 @@ export class Sampling {
 }
 
 interface Props {
-  setupData: ExposureConfigurationType;
-  update: (setupData: ExposureConfigurationType) => void;
+  setupData: ExposureConfiguration;
+  update: (setupData: ExposureConfiguration) => void;
 }
 export function SamplingPanel({ setupData, update }: Props) {
   const updateSamplesNumber = (value: string) => {
@@ -58,13 +59,15 @@ export function SamplingPanel({ setupData, update }: Props) {
     key: "numberOfSamples" | "samplingType",
     value: string,
   ) => {
-    update({
-      ...setupData,
-      sampling: new Sampling({
-        ...setupData.sampling,
-        [key]: value,
+    update(
+      new ExposureConfiguration({
+        ...setupData,
+        sampling: new Sampling({
+          ...setupData.sampling,
+          [key]: value,
+        }),
       }),
-    });
+    );
   };
   return (
     <>

@@ -1,20 +1,28 @@
 import { useState } from "react";
-import { SolveForSNR } from "./SolveForSNR.tsx";
-import { SolveForExposureTime } from "./SolveForExposureTime.tsx";
-import { SimulationSetupParameters } from "../../Simulator.tsx";
-import { ExposureConfigurationType } from "../ExposurePanel.tsx";
+import { ExposureTime, SNRTab } from "./SNRTab.tsx";
+import { ExposureTimeTab, SNR } from "./ExposureTimeTab.tsx";
+import { ExposureConfiguration } from "../ExposurePanel.tsx";
 
 interface Props {
-  setup: SimulationSetupParameters;
-  update: (newSetup: ExposureConfigurationType) => void;
+  setupData: ExposureConfiguration;
+  update: (newSetup: ExposureConfiguration) => void;
 }
 
-export function QueryTabs({ setup, update }: Props) {
+export function QueryTabs({ setupData, update }: Props) {
   const switchToComponent = (componentNumber: number) => {
     setActiveTab(componentNumber);
   };
 
   const [activeTab, setActiveTab] = useState(1);
+
+  const updateQuery = (key: string, newQuery: ExposureTime | SNR) => {
+    update(
+      new ExposureConfiguration({
+        ...setupData,
+        [key]: newQuery,
+      }),
+    );
+  };
 
   return (
     <>
@@ -32,9 +40,11 @@ export function QueryTabs({ setup, update }: Props) {
           </li>
         </ul>
       </div>
-      {activeTab === 1 && <SolveForSNR setup={setup} update={update} />}
+      {activeTab === 1 && (
+        <SNRTab setupData={setupData.exposureTime} update={updateQuery} />
+      )}
       {activeTab === 2 && (
-        <SolveForExposureTime setup={setup} update={update} />
+        <ExposureTimeTab setupData={setupData.snr} update={updateQuery} />
       )}
     </>
   );

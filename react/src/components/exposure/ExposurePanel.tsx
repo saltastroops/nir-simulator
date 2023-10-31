@@ -1,34 +1,29 @@
 import { Gain, GainPanel } from "./gain-panel/GainPanel.tsx";
 import { Sampling, SamplingPanel } from "./sampling-panel/SamplingPanel.tsx";
-import { QueryTabs } from "./solve-section/QueryTabs.tsx";
-import { SNRQuery, ExposureTimeType } from "./solve-section/SolveForSNR.tsx";
-import {
-  ExposureTimeQuery,
-  SNRType,
-} from "./solve-section/SolveForExposureTime.tsx";
+import { QueryTabs } from "./query-panel/QueryTabs.tsx";
+import { ExposureTime } from "./query-panel/SNRTab.tsx";
+import { SNR } from "./query-panel/ExposureTimeTab.tsx";
 import { SimulationSetup } from "../Simulator.tsx";
 
-export interface ExposureConfigurationType {
+interface ExposureConfigurationParameters {
   gain: Gain;
   sampling: Sampling;
-  solveSNR: ExposureTimeType;
-  solveExposureTime: SNRType;
+  exposureTime: ExposureTime;
+  snr: SNR;
 }
 
 export class ExposureConfiguration {
   public gain: Gain = new Gain();
   public sampling: Sampling = new Sampling();
-  public solveSNR: SNRQuery = new SNRQuery();
-  public solveExposureTime: ExposureTimeQuery = new ExposureTimeQuery();
+  public exposureTime: ExposureTime = new ExposureTime();
+  public snr: SNR = new SNR();
 
-  public constructor(configuration?: ExposureConfigurationType) {
+  public constructor(configuration?: ExposureConfigurationParameters) {
     if (configuration) {
       this.gain = new Gain(configuration.gain);
       this.sampling = new Sampling(configuration.sampling);
-      this.solveSNR = new SNRQuery(configuration.solveSNR);
-      this.solveExposureTime = new ExposureTimeQuery(
-        configuration.solveExposureTime,
-      );
+      this.exposureTime = new ExposureTime(configuration.exposureTime);
+      this.snr = new SNR(configuration.snr);
     }
   }
 
@@ -36,19 +31,20 @@ export class ExposureConfiguration {
     return {
       gain: this.gain.data,
       sampling: this.sampling.data,
-      solveSNR: this.solveSNR.data,
-      solveExposureTime: this.solveExposureTime.data,
+      exposureTime: this.exposureTime.data,
+      snr: this.snr.data,
     };
   }
 }
 
 interface Props {
   setup: SimulationSetup;
-  update: (params: ExposureConfigurationType) => void;
+  update: (params: ExposureConfiguration) => void;
 }
+
 export function ExposurePanel({ setup, update }: Props) {
   const updateExposureConfiguration = (
-    newExposureConfiguration: ExposureConfigurationType,
+    newExposureConfiguration: ExposureConfigurationParameters,
   ) => {
     update(new ExposureConfiguration(newExposureConfiguration));
   };
@@ -75,7 +71,10 @@ export function ExposurePanel({ setup, update }: Props) {
           </div>
           <div className="columns">
             <div className="column is-half">
-              <QueryTabs setup={setup} update={updateExposureConfiguration} />
+              <QueryTabs
+                setupData={setup.exposureConfiguration}
+                update={updateExposureConfiguration}
+              />
             </div>
           </div>
           <div className="columns">
