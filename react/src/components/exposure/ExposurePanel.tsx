@@ -78,7 +78,7 @@ export function ExposurePanel({ setup, update }: Props) {
             </div>
           </div>
           <div className="columns">
-            <div className="column">Status Section</div>
+            <div className="column"></div>
           </div>
         </div>
         {/* Plot Section */}
