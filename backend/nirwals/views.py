@@ -41,6 +41,6 @@ def spectra(request):
     _, sky_flux_values = get_sky_spectrum(parameters)
     data = {
         "source": {"x": wavelength.tolist(), "y": sources_flux_values.tolist()},
-        "background": {"x": wavelength.tolist(), "y": sky_flux_values.tolist()},
+        "sky": {"x": wavelength.tolist(), "y": sky_flux_values.tolist()},
     }
     return JsonResponse(data)
