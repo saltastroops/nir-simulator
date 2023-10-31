@@ -1,31 +1,32 @@
 import { Gain, GainPanel } from "./gain-panel/GainPanel.tsx";
 import { Sampling, SamplingPanel } from "./sampling-panel/SamplingPanel.tsx";
-import { SolvingTabs } from "./solve-section/SolvingTabs.tsx";
-import { SolveSNR, SolveSNRType } from "./solve-section/SolveForSNR.tsx";
+import { QueryTabs } from "./solve-section/QueryTabs.tsx";
+import { SNRQuery, ExposureTimeType } from "./solve-section/SolveForSNR.tsx";
 import {
-  SolveExposureTime,
-  SolveExposureTimeType,
+  ExposureTimeQuery,
+  SNRType,
 } from "./solve-section/SolveForExposureTime.tsx";
+import { SimulationSetup } from "../Simulator.tsx";
 
-export type ExposureConfigurationType = {
+export interface ExposureConfigurationType {
   gain: Gain;
   sampling: Sampling;
-  solveSNR: SolveSNRType;
-  solveExposureTime: SolveExposureTimeType;
-};
+  solveSNR: ExposureTimeType;
+  solveExposureTime: SNRType;
+}
 
 export class ExposureConfiguration {
   public gain: Gain = new Gain();
   public sampling: Sampling = new Sampling();
-  public solveSNR: SolveSNR = new SolveSNR();
-  public solveExposureTime: SolveExposureTime = new SolveExposureTime();
+  public solveSNR: SNRQuery = new SNRQuery();
+  public solveExposureTime: ExposureTimeQuery = new ExposureTimeQuery();
 
   public constructor(configuration?: ExposureConfigurationType) {
     if (configuration) {
       this.gain = new Gain(configuration.gain);
       this.sampling = new Sampling(configuration.sampling);
-      this.solveSNR = new SolveSNR(configuration.solveSNR);
-      this.solveExposureTime = new SolveExposureTime(
+      this.solveSNR = new SNRQuery(configuration.solveSNR);
+      this.solveExposureTime = new ExposureTimeQuery(
         configuration.solveExposureTime,
       );
     }
@@ -41,7 +42,11 @@ export class ExposureConfiguration {
   }
 }
 
-export function ExposurePanel({ setupData, update }: any) {
+interface Props {
+  setup: SimulationSetup;
+  update: (params: ExposureConfigurationType) => void;
+}
+export function ExposurePanel({ setup, update }: Props) {
   const updateExposureConfiguration = (
     newExposureConfiguration: ExposureConfigurationType,
   ) => {
@@ -57,23 +62,20 @@ export function ExposurePanel({ setupData, update }: any) {
           <div className="columns">
             <div className="column pr-0">
               <GainPanel
-                setupData={setupData.exposureConfiguration}
+                setupData={setup.exposureConfiguration}
                 update={updateExposureConfiguration}
               />
             </div>
             <div className="column is-two-fifths">
               <SamplingPanel
-                setupData={setupData.exposureConfiguration}
+                setupData={setup.exposureConfiguration}
                 update={updateExposureConfiguration}
               />
             </div>
           </div>
           <div className="columns">
             <div className="column is-half">
-              <SolvingTabs
-                setup={setupData}
-                update={updateExposureConfiguration}
-              />
+              <QueryTabs setup={setup} update={updateExposureConfiguration} />
             </div>
           </div>
           <div className="columns">

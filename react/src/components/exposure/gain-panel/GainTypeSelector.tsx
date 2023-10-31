@@ -1,40 +1,37 @@
-import { GainType } from "./GainPanel.tsx";
+import { GainType, GainTypeType } from "./GainPanel.tsx";
 
-type Props = {
+interface Props {
   updateGain: (newGainValues: GainType) => void;
-  gainType: "Faint Object" | "Bright Object" | "Custom Object";
-};
+  gainType: GainTypeType;
+}
 
 export function GainTypeSelector({ updateGain, gainType }: Props) {
-  const faintObjectDefaults: GainType = {
-    gainType: "Faint Object",
+  const faintGain: GainType = {
+    gainType: "Faint",
     adu: "2.04",
     readNoise: "17",
     fullWell: "60000",
   };
-  const brightObjectDefaults: GainType = {
-    gainType: "Bright Object",
+  const brightGain: GainType = {
+    gainType: "Bright",
     adu: "5.74",
     readNoise: "20",
     fullWell: "120000",
   };
-
-  const customObjectDefaults: GainType = {
-    gainType: "Custom Object",
-    adu: "1",
-    readNoise: "10",
-    fullWell: "100000",
-  };
-  const update = (
-    value: "Faint Object" | "Bright Object" | "Custom Object",
-  ) => {
-    const newGainValues =
-      value === "Faint Object"
-        ? faintObjectDefaults
-        : value === "Bright Object"
-        ? brightObjectDefaults
-        : customObjectDefaults;
-    updateGain(newGainValues);
+  const update = (value: GainTypeType) => {
+    let newGainValues = {
+      gainType: "Custom",
+      adu: "1",
+      readNoise: "10",
+      fullWell: "100000",
+    };
+    if (value === "Faint") {
+      newGainValues = faintGain;
+    }
+    if (value === "Bright") {
+      newGainValues = brightGain;
+    }
+    updateGain(newGainValues as GainType);
   };
 
   return (
@@ -46,8 +43,8 @@ export function GainTypeSelector({ updateGain, gainType }: Props) {
               className="mr-2"
               type="radio"
               name="gain-type"
-              checked={gainType === "Faint Object"}
-              onChange={() => update("Faint Object")}
+              checked={gainType === "Faint"}
+              onChange={() => update("Faint")}
             />
             Faint Object
           </label>
@@ -60,8 +57,8 @@ export function GainTypeSelector({ updateGain, gainType }: Props) {
               className="mr-2"
               type="radio"
               name="gain-type"
-              checked={gainType === "Bright Object"}
-              onChange={() => update("Bright Object")}
+              checked={gainType === "Bright"}
+              onChange={() => update("Bright")}
             />
             Bright Object
           </label>
@@ -74,8 +71,8 @@ export function GainTypeSelector({ updateGain, gainType }: Props) {
               className="mr-2"
               type="radio"
               name="gain-type"
-              checked={gainType === "Custom Object"}
-              onChange={() => update("Custom Object")}
+              checked={gainType === "Custom"}
+              onChange={() => update("Custom")}
             />
             Custom Object
           </label>

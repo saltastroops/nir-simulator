@@ -1,4 +1,5 @@
 import { ExposureConfigurationType } from "../ExposurePanel.tsx";
+import { Error } from "../../Error.tsx";
 export interface SamplingType {
   numberOfSamples: string;
   samplingType: "Fowler Sampling" | "Up The Ramp Sampling";
@@ -17,7 +18,7 @@ export class Sampling {
   }
   public get data() {
     return {
-      numberOfSamples: parseFloat(this.numberOfSamples),
+      numberOfSamples: parseInt(this.numberOfSamples),
       samplingType: this.samplingType,
     };
   }
@@ -34,7 +35,7 @@ export class Sampling {
       numberOfSamples < minNumberOfSamples ||
       !Number.isInteger(numberOfSamples)
     ) {
-      errors.numberOfSamples = `The number of samples must be a positive integer greater than or equal to ${minNumberOfSamples}.`;
+      errors.numberOfSamples = `The number of samples must be an integer greater than or equal to ${minNumberOfSamples}.`;
     }
 
     return errors;
@@ -45,10 +46,10 @@ export class Sampling {
   }
 }
 
-type Props = {
+interface Props {
   setupData: ExposureConfigurationType;
   update: (setupData: ExposureConfigurationType) => void;
-};
+}
 export function SamplingPanel({ setupData, update }: Props) {
   const updateSamplesNumber = (value: string) => {
     updateSamplingSetup("numberOfSamples", value);
@@ -126,8 +127,8 @@ export function SamplingPanel({ setupData, update }: Props) {
       </div>
       {setupData.sampling.errors["numberOfSamples"] && (
         <div className="columns">
-          <div className="column pt-0 text-red-700">
-            {setupData.sampling.errors["numberOfSamples"]}
+          <div className="column pt-0">
+            <Error error={setupData.sampling.errors["numberOfSamples"]} />
           </div>
         </div>
       )}

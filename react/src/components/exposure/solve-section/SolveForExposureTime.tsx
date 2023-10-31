@@ -1,24 +1,25 @@
 import { SimulationSetupParameters } from "../../Simulator.tsx";
 import { ExposureConfigurationType } from "../ExposurePanel.tsx";
+import { Error } from "../../Error.tsx";
 
-export interface SolveExposureTimeType {
-  requestedSNR: string;
+export interface SNRType {
+  snr: string;
   wavelength: string;
 }
 
-export class SolveExposureTime {
-  public requestedSNR = "10";
+export class ExposureTimeQuery {
+  public snr = "10";
   public wavelength = "13000";
 
-  public constructor(solve?: SolveExposureTimeType) {
+  public constructor(solve?: SNRType) {
     if (solve) {
-      this.requestedSNR = solve.requestedSNR;
+      this.snr = solve.snr;
       this.wavelength = solve.wavelength;
     }
   }
   public get data() {
     return {
-      requestedSNR: parseFloat(this.requestedSNR),
+      snr: parseFloat(this.snr),
       wavelength: parseFloat(this.wavelength),
     };
   }
@@ -39,14 +40,10 @@ export class SolveExposureTime {
     }
 
     // Exposure Time
-    const requestedSNR = data.requestedSNR;
-    const minRequestedSNR = 1;
-    if (
-      Number.isNaN(requestedSNR) ||
-      requestedSNR < minRequestedSNR ||
-      !Number.isInteger(requestedSNR)
-    ) {
-      errors.requestedSNR = `The requested signal to noise must be a positive integer greater than or equal to ${minRequestedSNR}.`;
+    const snr = data.snr;
+    const minSnr = 1;
+    if (Number.isNaN(snr) || snr < minSnr || !Number.isInteger(snr)) {
+      errors.snr = `The requested signal to noise must be a positive integer greater than or equal to ${minSnr}.`;
     }
 
     return errors;
@@ -57,20 +54,20 @@ export class SolveExposureTime {
   }
 }
 
-type Props = {
+interface Props {
   setup: SimulationSetupParameters;
-  update: (newData: ExposureConfigurationType) => void;
-};
+  update: (exposureConfiguration: ExposureConfigurationType) => void;
+}
 
 export function SolveForExposureTime({ setup, update }: Props) {
   const updatePlot = () => {
     console.log("Update plot method not implement");
   };
 
-  const updateSolveET = (key: "wavelength" | "requestedSNR", value: string) => {
+  const updateSNR = (key: "wavelength" | "snr", value: string) => {
     update({
       ...setup.exposureConfiguration,
-      solveExposureTime: new SolveExposureTime({
+      solveExposureTime: new ExposureTimeQuery({
         ...setup.exposureConfiguration.solveExposureTime,
         [key]: value,
       }),
@@ -85,22 +82,16 @@ export function SolveForExposureTime({ setup, update }: Props) {
           <input
             className="input"
             type="text"
-            name={"requestedSNR"}
-            value={setup.exposureConfiguration.solveExposureTime.requestedSNR}
-            onChange={(event) =>
-              updateSolveET("requestedSNR", event.target.value)
-            }
+            name={"snr"}
+            value={setup.exposureConfiguration.solveExposureTime.snr}
+            onChange={(event) => updateSNR("snr", event.target.value)}
           />
-          {setup.exposureConfiguration.solveExposureTime.errors[
-            "requestedSNR"
-          ] && (
-            <div className="text-red-700">
-              {
-                setup.exposureConfiguration.solveExposureTime.errors[
-                  "requestedSNR"
-                ]
+          {setup.exposureConfiguration.solveExposureTime.errors["snr"] && (
+            <Error
+              error={
+                setup.exposureConfiguration.solveExposureTime.errors["snr"]
               }
-            </div>
+            />
           )}
         </div>
       </div>
@@ -116,29 +107,27 @@ export function SolveForExposureTime({ setup, update }: Props) {
             type="text"
             name={"wavelength"}
             value={setup.exposureConfiguration.solveExposureTime.wavelength}
-            onChange={(event) =>
-              updateSolveET("wavelength", event.target.value)
-            }
+            onChange={(event) => updateSNR("wavelength", event.target.value)}
           />
         </div>
         <div className="control">
           <span className="mr-3">Quick Select:</span>
           <span
             className="text-sky-500 cursor-pointer"
-            onClick={() => updateSolveET("wavelength", "13000")}
+            onClick={() => updateSNR("wavelength", "13000")}
           >
             Central Wavelength
           </span>
           {setup.exposureConfiguration.solveExposureTime.errors[
             "wavelength"
           ] && (
-            <div className="text-red-700">
-              {
+            <Error
+              error={
                 setup.exposureConfiguration.solveExposureTime.errors[
                   "wavelength"
                 ]
               }
-            </div>
+            />
           )}
         </div>
       </div>

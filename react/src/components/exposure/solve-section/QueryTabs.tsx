@@ -4,12 +4,12 @@ import { SolveForExposureTime } from "./SolveForExposureTime.tsx";
 import { SimulationSetupParameters } from "../../Simulator.tsx";
 import { ExposureConfigurationType } from "../ExposurePanel.tsx";
 
-type Props = {
+interface Props {
   setup: SimulationSetupParameters;
   update: (newSetup: ExposureConfigurationType) => void;
-};
+}
 
-export function SolvingTabs({ setup, update }: Props) {
+export function QueryTabs({ setup, update }: Props) {
   const switchToComponent = (componentNumber: number) => {
     setActiveTab(componentNumber);
   };

@@ -1,16 +1,17 @@
 import { ExposureConfigurationType } from "../ExposurePanel.tsx";
 import { SimulationSetupParameters } from "../../Simulator.tsx";
+import { Error } from "../../Error.tsx";
 
-export interface SolveSNRType {
+export interface ExposureTimeType {
   exposureTime: string;
   detectorIterations: string;
 }
 
-export class SolveSNR {
+export class SNRQuery {
   public exposureTime = "3600";
   public detectorIterations = "1";
 
-  public constructor(solve?: SolveSNRType) {
+  public constructor(solve?: ExposureTimeType) {
     if (solve) {
       this.exposureTime = solve.exposureTime;
       this.detectorIterations = solve.detectorIterations;
@@ -19,7 +20,7 @@ export class SolveSNR {
   public get data() {
     return {
       exposureTime: parseFloat(this.exposureTime),
-      detectorIterations: parseFloat(this.detectorIterations),
+      detectorIterations: parseInt(this.detectorIterations),
     };
   }
 
@@ -35,18 +36,14 @@ export class SolveSNR {
       detectorIterations < minDetectorIterations ||
       !Number.isInteger(detectorIterations)
     ) {
-      errors.detectorIterations = `The detector iterations must be a positive integer greater than or equal to ${minDetectorIterations}.`;
+      errors.detectorIterations = `The detector iterations must be an integer greater than or equal to ${minDetectorIterations}.`;
     }
 
     // Exposure Time
     const exposureTime = data.exposureTime;
-    const minExposureTime = 1;
-    if (
-      Number.isNaN(exposureTime) ||
-      exposureTime < minExposureTime ||
-      !Number.isInteger(exposureTime)
-    ) {
-      errors.exposureTime = `The detector iterations must be a positive integer greater than or equal to ${minExposureTime}.`;
+    const minExposureTime = 0;
+    if (Number.isNaN(exposureTime) || exposureTime < minExposureTime) {
+      errors.exposureTime = "exposure time must be a positive number.";
     }
 
     return errors;
@@ -57,10 +54,10 @@ export class SolveSNR {
   }
 }
 
-type Props = {
+interface Props {
   setup: SimulationSetupParameters;
-  update: (newSetup: ExposureConfigurationType) => void;
-};
+  update: (exposureConfiguration: ExposureConfigurationType) => void;
+}
 export function SolveForSNR({ setup, update }: Props) {
   const updateValue = (event: any) => {
     updateSolveSNR(event.target.name, event.target.value);
@@ -72,7 +69,7 @@ export function SolveForSNR({ setup, update }: Props) {
   ) => {
     update({
       ...setup.exposureConfiguration,
-      solveSNR: new SolveSNR({
+      solveSNR: new SNRQuery({
         ...setup.exposureConfiguration.solveSNR,
         [key]: value,
       }),
@@ -97,8 +94,12 @@ export function SolveForSNR({ setup, update }: Props) {
           />
           {setup.exposureConfiguration.solveSNR.errors["exposureTime"] && (
             <div className="columns">
-              <div className="column text-red-700">
-                {setup.exposureConfiguration.solveSNR.errors["exposureTime"]}
+              <div className="column">
+                <Error
+                  error={
+                    setup.exposureConfiguration.solveSNR.errors["exposureTime"]
+                  }
+                />
               </div>
             </div>
           )}
@@ -118,12 +119,14 @@ export function SolveForSNR({ setup, update }: Props) {
             "detectorIterations"
           ] && (
             <div className="columns">
-              <div className="column text-red-700">
-                {
-                  setup.exposureConfiguration.solveSNR.errors[
-                    "detectorIterations"
-                  ]
-                }
+              <div className="column">
+                <Error
+                  error={
+                    setup.exposureConfiguration.solveSNR.errors[
+                      "detectorIterations"
+                    ]
+                  }
+                />
               </div>
             </div>
           )}

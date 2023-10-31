@@ -1,8 +1,8 @@
 import { GainType } from "./GainPanel.tsx";
 
-type Props = {
+interface Props {
   gain: GainType;
-};
+}
 
 export function NonEditableGainPanel({ gain }: Props) {
   return (

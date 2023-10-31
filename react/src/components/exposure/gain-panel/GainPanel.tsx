@@ -1,17 +1,21 @@
 import { GainTypeSelector } from "./GainTypeSelector.tsx";
 import { NonEditableGainPanel } from "./NonEditableGainPanel.tsx";
-import { CustomObject } from "./CustomObject.tsx";
-import { ExposureConfigurationType } from "../ExposurePanel.tsx";
+import { CustomGainPanel } from "./CustomGainPanel.tsx";
+import {
+  ExposureConfiguration,
+  ExposureConfigurationType,
+} from "../ExposurePanel.tsx";
 
-export type GainType = {
-  gainType: "Faint Object" | "Bright Object" | "Custom Object";
+export type GainTypeType = "Faint" | "Bright" | "Custom";
+
+export interface GainType {
+  gainType: GainTypeType;
   adu: string;
   readNoise: string;
   fullWell: string;
-};
+}
 export class Gain {
-  public gainType: "Faint Object" | "Bright Object" | "Custom Object" =
-    "Faint Object";
+  public gainType: GainTypeType = "Faint";
   public adu = "2.04";
   public readNoise = "17";
   public fullWell = "60000";
@@ -27,9 +31,9 @@ export class Gain {
 
   public get data() {
     return {
-      adu: parseFloat(this.adu),
+      adu: parseInt(this.adu),
       readNoise: parseFloat(this.readNoise),
-      fullWell: parseFloat(this.fullWell),
+      fullWell: parseInt(this.fullWell),
     };
   }
 
@@ -41,18 +45,14 @@ export class Gain {
     const minAdu = 1;
 
     if (Number.isNaN(adu) || !Number.isInteger(adu) || adu < minAdu) {
-      errors.adu = `The electron/ADU must be a positive integer greater than or equal to ${minAdu}.`;
+      errors.adu = `The ADU must be a positive integer greater than or equal to ${minAdu}.`;
     }
 
     // Read Noise
     const readNoise = data.readNoise;
     const minReadNoise = 1;
-    if (
-      Number.isNaN(readNoise) ||
-      !Number.isInteger(readNoise) ||
-      readNoise < minReadNoise
-    ) {
-      errors.readNoise = `The read noise must be a positive integer greater than or equal to ${minReadNoise}.`;
+    if (Number.isNaN(readNoise) || readNoise < minReadNoise) {
+      errors.readNoise = `The read noise must be a positive number greater than or equal to ${minReadNoise}.`;
     }
 
     // Full well
@@ -63,7 +63,7 @@ export class Gain {
       !Number.isInteger(fullWell) ||
       fullWell < minFullWell
     ) {
-      errors.fullWell = `The full well must be a positive integer greater than or equal to ${minFullWell}.`;
+      errors.fullWell = `The full well must be an integer greater than or equal to ${minFullWell}.`;
     }
 
     return errors;
@@ -74,10 +74,10 @@ export class Gain {
   }
 }
 
-type Props = {
-  setupData: ExposureConfigurationType;
+interface Props {
+  setupData: ExposureConfiguration;
   update: (gains: ExposureConfigurationType) => void;
-};
+}
 
 export function GainPanel({ setupData, update }: Props) {
   const updateGain = (gainValues: GainType) => {
@@ -96,12 +96,12 @@ export function GainPanel({ setupData, update }: Props) {
           />
         </div>
         <div className="column pl-0">
-          {(setupData.gain.gainType === "Bright Object" ||
-            setupData.gain.gainType === "Faint Object") && (
+          {(setupData.gain.gainType === "Bright" ||
+            setupData.gain.gainType === "Faint") && (
             <NonEditableGainPanel gain={setupData.gain} />
           )}
-          {setupData.gain.gainType === "Custom Object" && (
-            <CustomObject update={updateGain} gain={setupData.gain} />
+          {setupData.gain.gainType === "Custom" && (
+            <CustomGainPanel update={updateGain} gain={setupData.gain} />
           )}
         </div>
       </div>

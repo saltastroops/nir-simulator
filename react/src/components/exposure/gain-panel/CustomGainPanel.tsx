@@ -1,11 +1,12 @@
 import { Gain, GainType } from "./GainPanel.tsx";
+import { Error } from "../../Error.tsx";
 
-type Props = {
+interface Props {
   gain: Gain;
   update: (gain: GainType) => void;
-};
+}
 
-export function CustomObject({ gain, update }: Props) {
+export function CustomGainPanel({ gain, update }: Props) {
   const updateGain = (
     name: "adu" | "fullWell" | "readNoise",
     value: string,
@@ -34,7 +35,9 @@ export function CustomObject({ gain, update }: Props) {
       </div>
       {gain.errors["adu"] && (
         <div className="columns">
-          <div className="column pt-0 text-red-700">{gain.errors["adu"]}</div>
+          <div className="column pt-0">
+            <Error error={gain.errors["adu"]} />
+          </div>
         </div>
       )}
       <div className="columns">
@@ -54,8 +57,8 @@ export function CustomObject({ gain, update }: Props) {
 
       {gain.errors["readNoise"] && (
         <div className="columns">
-          <div className="column pt-0 text-red-700">
-            {gain.errors["readNoise"]}
+          <div className="column pt-0">
+            <Error error={gain.errors["readNoise"]} />
           </div>
         </div>
       )}
@@ -76,8 +79,8 @@ export function CustomObject({ gain, update }: Props) {
       </div>
       {gain.errors["fullWell"] && (
         <div className="columns">
-          <div className="column pt-0 text-red-700">
-            {gain.errors["fullWell"]}
+          <div className="column pt-0">
+            <Error error={gain.errors["fullWell"]} />
           </div>
         </div>
       )}
