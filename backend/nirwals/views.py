@@ -37,7 +37,6 @@ def throughput(request):
 @csrf_exempt
 def spectra(request):
     parameters = json.loads(request.POST.get("data"))
-    seeing = float(parameters["earth"]["seeing"])
     wavelength, sources_flux_values = get_sources_spectrum(parameters)
     _, sky_flux_values = get_sky_spectrum(parameters)
     data = {
