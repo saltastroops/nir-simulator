@@ -6,7 +6,7 @@ import numpy as np
 from os import getenv
 from scipy.special import erf
 
-FILES_BASE_DIR = pathlib.Path(getenv("FILES_BASE_URL"))
+FILES_BASE_DIR = pathlib.Path(getenv("FILES_BASE_DIR"))
 
 
 #  TODO Caching should be done Correctly
