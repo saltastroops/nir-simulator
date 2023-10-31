@@ -49,11 +49,11 @@ def get_galaxy_flux_values(wavelength: [], galaxy_type: str, age: str, has_emiss
         input_flux = galaxy_flux * u.Unit('erg cm-2 s-1 AA-1')
         input_spectrum = Spectrum1D(spectral_axis=input_wavelength, flux=input_flux)
 
-        fluxcon = FluxConservingResampler()
+        resampler = FluxConservingResampler()
 
         new_disp_grid = wavelength * u.AA
 
-        new_resampled_spectrum = fluxcon(input_spectrum, new_disp_grid)
+        new_resampled_spectrum = resampler(input_spectrum, new_disp_grid)
 
         galaxy_magnitude_flux = 3.02 * 10 ** (-10) * 10 ** (-0.4 * magnitude)
 
