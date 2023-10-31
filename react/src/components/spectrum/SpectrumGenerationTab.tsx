@@ -30,7 +30,7 @@ export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
         },
         requested: false,
     });
-    const [error, ] = useState<string | null>(null);
+    const [error, setError ] = useState<string | null>(null);
     const Chart = useMemo(
         () => (
             <LinePlot
@@ -42,22 +42,26 @@ export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
     );
 
   const updatePlots = async () => {
-    const spectraData = await spectra(setup);
+    try {
+        const spectraData = await spectra(setup);
+        const data = spectraData.source
 
-    const data = spectraData.source
-
-      setChartContent((previousChartContent) => {
-          const updatedChartData = {
-              x: data.x,
-              y: data.y,
-              lineColor: previousChartContent.chartData.lineColor,
-              options: previousChartContent.chartData.options,
-          };
-          return {
-              chartData: updatedChartData,
-              requested: true,
-          };
-      });
+        setChartContent((previousChartContent) => {
+            const updatedChartData = {
+                x: data.x,
+                y: data.y,
+                lineColor: previousChartContent.chartData.lineColor,
+                options: previousChartContent.chartData.options,
+            };
+            return {
+                chartData: updatedChartData,
+                requested: true,
+            };
+        });
+    } catch (error) {
+        setError("Data request failed.");
+        console.error("Error fetching plot data:", error);
+    }
   };
 
   return (
