@@ -3,6 +3,7 @@ import json
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from nirwals.configure.data.throughput import get_plot_data
+from nirwals.configure.data.spectrum import get_sources_spectrum, get_sky_spectrum
 
 
 @csrf_exempt
@@ -36,9 +37,10 @@ def throughput(request):
 @csrf_exempt
 def spectra(request):
     parameters = json.loads(request.POST.get("data"))
-    seeing = float(parameters["earth"]["seeing"])
+    wavelength, sources_flux_values = get_sources_spectrum(parameters)
+    _, sky_flux_values = get_sky_spectrum(parameters)
     data = {
-        "source": {"x": [9000, 17000], "y": [1, 3 * seeing]},
-        "background": {"x": [9000, 17000], "y": [1.5 * seeing, 3]},
+        "source": {"x": wavelength.tolist(), "y": sources_flux_values.tolist()},
+        "sky": {"x": wavelength.tolist(), "y": sky_flux_values.tolist()},
     }
     return JsonResponse(data)

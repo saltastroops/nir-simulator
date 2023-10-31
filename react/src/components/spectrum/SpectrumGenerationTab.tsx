@@ -8,6 +8,10 @@ import SpectrumPlotOptionsPanel, {
 import { button } from "../utils.ts";
 import { SimulationSetup } from "../Simulator.tsx";
 import { spectra } from "../../services.ts";
+import {useMemo, useState} from "react";
+import {defaultLinePlotOptions} from "../plots/PlotOptions.ts";
+import {LinePlot} from "../plots/LinePlot.tsx";
+import {ChartContent} from "../instrument/InstrumentConfigurationPanel.tsx";
 
 interface Props {
   setup: SimulationSetup;
@@ -17,8 +21,47 @@ interface Props {
 export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
   const { source, sun, moon, earth, spectrumPlotOptions } = setup;
 
+    const [chartContent, setChartContent] = useState<ChartContent>({
+        chartData: {
+            x: [],
+            y: [],
+            lineColor: "rgb(75, 192, 192)",
+            options: defaultLinePlotOptions("Wavelength (\u212B)", "Flux (photons sec\u002D\u00B9 \u212B cm\u002D\u00B2)"),
+        },
+        requested: false,
+    });
+    const [error, setError ] = useState<string | null>(null);
+    const Chart = useMemo(
+        () => (
+            <LinePlot
+                chartContent={chartContent}
+                isOutdated={false && chartContent.requested}
+            />
+        ),
+        [chartContent],
+    );
+
   const updatePlots = async () => {
-    const spectraData = await spectra(setup);
+    try {
+        const spectraData = await spectra(setup);
+        const data = spectraData.source
+
+        setChartContent((previousChartContent) => {
+            const updatedChartData = {
+                x: data.x,
+                y: data.y,
+                lineColor: previousChartContent.chartData.lineColor,
+                options: previousChartContent.chartData.options,
+            };
+            return {
+                chartData: updatedChartData,
+                requested: true,
+            };
+        });
+    } catch (error) {
+        setError("Data request failed.");
+        console.error("Error fetching plot data:", error);
+    }
   };
 
   return (
@@ -64,6 +107,11 @@ export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
       >
         Show Spectrum
       </button>
+        <div className="column notification">
+            <div className={!error ? "tile" : "tile notification is-danger"}>
+                {Chart}
+            </div>
+        </div>
     </div>
   );
 }
