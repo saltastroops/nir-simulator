@@ -57,7 +57,7 @@ export class SimulationSetup {
       earth: this.earth.data,
       spectrumPlotOptions: this.spectrumPlotOptions.data,
       instrumentConfiguration: this.instrumentConfiguration.data,
-        exposureConfiguration: this.exposureConfiguration.data,
+      exposureConfiguration: this.exposureConfiguration.data,
     };
   }
 }
@@ -143,7 +143,7 @@ export function Simulator() {
       </div>
       <div ref={exposureDivRef} style={{ display: "none" }}>
         <ExposurePanel
-          setup={setup}
+          setupData={setup}
           update={(exposureConfiguration: ExposureConfiguration) =>
             updateSetup("exposureConfiguration", exposureConfiguration)
           }

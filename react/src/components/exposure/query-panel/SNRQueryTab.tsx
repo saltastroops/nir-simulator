@@ -1,8 +1,14 @@
 import { Error } from "../../Error.tsx";
+import { input } from "../../utils.ts";
 
 interface ExposureTimeParameters {
   singleExposureTime: string;
   detectorIterations: string;
+}
+
+export interface ExposureTimeDataType {
+  singleExposureTime: number;
+  detectorIterations: number;
 }
 
 export class ExposureTime {
@@ -15,10 +21,10 @@ export class ExposureTime {
       this.detectorIterations = exposureTime.detectorIterations;
     }
   }
-  public get data() {
+  public get data(): ExposureTimeDataType {
     return {
       singleExposureTime: parseFloat(this.singleExposureTime),
-      detectorIterations: parseInt(this.detectorIterations),
+      detectorIterations: parseInt(this.detectorIterations, 10),
     };
   }
 
@@ -41,7 +47,8 @@ export class ExposureTime {
     const exposureTime = data.singleExposureTime;
     const minExposureTime = 0;
     if (Number.isNaN(exposureTime) || exposureTime < minExposureTime) {
-      errors.singleExposureTime = "Exposure time must be a positive number.";
+      errors.singleExposureTime =
+        "The exposure time must be a positive number.";
     }
 
     return errors;
@@ -53,10 +60,10 @@ export class ExposureTime {
 }
 
 interface Props {
-  setupData: ExposureTime;
+  exposureTime: ExposureTime;
   update: (key: "exposureTime" | "snr", exposureTime: ExposureTime) => void;
 }
-export function SNRTab({ setupData, update }: Props) {
+export function SNRQueryTab({ exposureTime, update }: Props) {
   const updateValue = (event: any) => {
     updateExposureTime(event.target.name, event.target.value);
   };
@@ -68,7 +75,7 @@ export function SNRTab({ setupData, update }: Props) {
     update(
       "exposureTime",
       new ExposureTime({
-        ...setupData,
+        ...exposureTime,
         [key]: value,
       }),
     );
@@ -84,16 +91,16 @@ export function SNRTab({ setupData, update }: Props) {
         <label className="label">Exposure Time</label>
         <div className="control">
           <input
-            className="input"
+            className={input("w-52")}
             type="text"
             name={"singleExposureTime"}
-            value={setupData.singleExposureTime}
+            value={exposureTime.singleExposureTime}
             onChange={updateValue}
           />
-          {setupData.errors["singleExposureTime"] && (
+          {exposureTime.errors["singleExposureTime"] && (
             <div className="columns">
               <div className="column">
-                <Error error={setupData.errors["singleExposureTime"]} />
+                <Error error={exposureTime.errors["singleExposureTime"]} />
               </div>
             </div>
           )}
@@ -103,16 +110,16 @@ export function SNRTab({ setupData, update }: Props) {
         <label className="label">Detector Iterations</label>
         <div className="control">
           <input
-            className="input"
+            className={input("w-52")}
             type="text"
             name={"detectorIterations"}
-            value={setupData.detectorIterations}
+            value={exposureTime.detectorIterations}
             onChange={updateValue}
           />
-          {setupData.errors["detectorIterations"] && (
+          {exposureTime.errors["detectorIterations"] && (
             <div className="columns">
               <div className="column">
-                <Error error={setupData.errors["detectorIterations"]} />
+                <Error error={exposureTime.errors["detectorIterations"]} />
               </div>
             </div>
           )}

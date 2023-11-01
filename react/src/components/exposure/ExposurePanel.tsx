@@ -1,8 +1,15 @@
-import { Gain, GainPanel } from "./gain-panel/GainPanel.tsx";
-import { Sampling, SamplingPanel } from "./sampling-panel/SamplingPanel.tsx";
+import { Gain, GainDataType, GainPanel } from "./gain-panel/GainPanel.tsx";
+import {
+  Sampling,
+  SamplingDataType,
+  SamplingPanel,
+} from "./sampling-panel/SamplingPanel.tsx";
 import { QueryTabs } from "./query-panel/QueryTabs.tsx";
-import { ExposureTime } from "./query-panel/SNRTab.tsx";
-import { SNR } from "./query-panel/ExposureTimeTab.tsx";
+import {
+  ExposureTime,
+  ExposureTimeDataType,
+} from "./query-panel/SNRQueryTab.tsx";
+import { SNR, SNRDataType } from "./query-panel/ExposureTimeQueryTab.tsx";
 import { SimulationSetup } from "../Simulator.tsx";
 
 interface ExposureConfigurationParameters {
@@ -11,12 +18,19 @@ interface ExposureConfigurationParameters {
   exposureTime: ExposureTime;
   snr: SNR;
 }
+type ExposureConfigurationData = {
+  gain: GainDataType;
+  sampling: SamplingDataType;
+  exposureTime?: ExposureTimeDataType;
+  snr?: SNRDataType;
+};
 
 export class ExposureConfiguration {
   public gain: Gain = new Gain();
   public sampling: Sampling = new Sampling();
   public exposureTime: ExposureTime = new ExposureTime();
   public snr: SNR = new SNR();
+  public activeQuery: "SNR" | "ExposureTime" = "SNR";
 
   public constructor(configuration?: ExposureConfigurationParameters) {
     if (configuration) {
@@ -28,21 +42,28 @@ export class ExposureConfiguration {
   }
 
   public get data() {
-    return {
+    let data: ExposureConfigurationData = {
       gain: this.gain.data,
       sampling: this.sampling.data,
-      exposureTime: this.exposureTime.data,
-      snr: this.snr.data,
     };
+
+    if (this.activeQuery === "SNR") {
+      data = { ...data, snr: this.snr.data };
+    }
+    if (this.activeQuery === "ExposureTime") {
+      data = { ...data, exposureTime: this.exposureTime.data };
+    }
+
+    return data;
   }
 }
 
 interface Props {
-  setup: SimulationSetup;
+  setupData: SimulationSetup;
   update: (params: ExposureConfiguration) => void;
 }
 
-export function ExposurePanel({ setup, update }: Props) {
+export function ExposurePanel({ setupData, update }: Props) {
   const updateExposureConfiguration = (
     newExposureConfiguration: ExposureConfigurationParameters,
   ) => {
@@ -58,21 +79,21 @@ export function ExposurePanel({ setup, update }: Props) {
           <div className="columns">
             <div className="column pr-0">
               <GainPanel
-                setupData={setup.exposureConfiguration}
+                exposureConfiguration={setupData.exposureConfiguration}
                 update={updateExposureConfiguration}
               />
             </div>
             <div className="column is-two-fifths">
               <SamplingPanel
-                setupData={setup.exposureConfiguration}
+                exposureConfiguration={setupData.exposureConfiguration}
                 update={updateExposureConfiguration}
               />
             </div>
           </div>
           <div className="columns">
-            <div className="column is-half">
+            <div className="column">
               <QueryTabs
-                setupData={setup.exposureConfiguration}
+                exposureConfiguration={setupData.exposureConfiguration}
                 update={updateExposureConfiguration}
               />
             </div>

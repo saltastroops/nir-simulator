@@ -1,9 +1,15 @@
 import { ExposureConfiguration } from "../ExposurePanel.tsx";
 import { Error } from "../../Error.tsx";
+import { input } from "../../utils.ts";
 
 type SamplingType = "Fowler Sampling" | "Up The Ramp Sampling";
 interface SamplingParameters {
   numberOfSamples: string;
+  samplingType: SamplingType;
+}
+
+export interface SamplingDataType {
+  numberOfSamples: number;
   samplingType: SamplingType;
 }
 
@@ -17,9 +23,9 @@ export class Sampling {
       this.samplingType = sampling.samplingType;
     }
   }
-  public get data() {
+  public get data(): SamplingDataType {
     return {
-      numberOfSamples: parseInt(this.numberOfSamples),
+      numberOfSamples: parseInt(this.numberOfSamples, 10),
       samplingType: this.samplingType,
     };
   }
@@ -30,13 +36,12 @@ export class Sampling {
 
     // Number of samples
     const numberOfSamples = data.numberOfSamples;
-    const minNumberOfSamples = 1;
     if (
       Number.isNaN(numberOfSamples) ||
-      numberOfSamples < minNumberOfSamples ||
+      numberOfSamples < 1 ||
       !Number.isInteger(numberOfSamples)
     ) {
-      errors.numberOfSamples = `Must be a positive integer.`;
+      errors.numberOfSamples = `The number of samples must be a positive integer.`;
     }
 
     return errors;
@@ -48,10 +53,10 @@ export class Sampling {
 }
 
 interface Props {
-  setupData: ExposureConfiguration;
+  exposureConfiguration: ExposureConfiguration;
   update: (setupData: ExposureConfiguration) => void;
 }
-export function SamplingPanel({ setupData, update }: Props) {
+export function SamplingPanel({ exposureConfiguration, update }: Props) {
   const updateSamplesNumber = (value: string) => {
     updateSamplingSetup("numberOfSamples", value);
   };
@@ -61,9 +66,9 @@ export function SamplingPanel({ setupData, update }: Props) {
   ) => {
     update(
       new ExposureConfiguration({
-        ...setupData,
+        ...exposureConfiguration,
         sampling: new Sampling({
-          ...setupData.sampling,
+          ...exposureConfiguration.sampling,
           [key]: value,
         }),
       }),
@@ -83,7 +88,10 @@ export function SamplingPanel({ setupData, update }: Props) {
                 onChange={() =>
                   updateSamplingSetup("samplingType", "Fowler Sampling")
                 }
-                checked={setupData.sampling.samplingType === "Fowler Sampling"}
+                checked={
+                  exposureConfiguration.sampling.samplingType ===
+                  "Fowler Sampling"
+                }
               />
               Fowler
             </label>
@@ -102,7 +110,8 @@ export function SamplingPanel({ setupData, update }: Props) {
                   updateSamplingSetup("samplingType", "Up The Ramp Sampling")
                 }
                 checked={
-                  setupData.sampling.samplingType === "Up The Ramp Sampling"
+                  exposureConfiguration.sampling.samplingType ===
+                  "Up The Ramp Sampling"
                 }
               />
               Up the Ramp
@@ -118,20 +127,22 @@ export function SamplingPanel({ setupData, update }: Props) {
             <label className="label">Number of Samples</label>
             <div className="control">
               <input
-                className="input"
+                className={input("w-36")}
                 type="text"
                 name={"numberOfSamples"}
-                value={setupData.sampling.numberOfSamples}
+                value={exposureConfiguration.sampling.numberOfSamples}
                 onChange={(event) => updateSamplesNumber(event.target.value)}
               />
             </div>
           </div>
         </div>
       </div>
-      {setupData.sampling.errors["numberOfSamples"] && (
+      {exposureConfiguration.sampling.errors["numberOfSamples"] && (
         <div className="columns">
           <div className="column pt-0">
-            <Error error={setupData.sampling.errors["numberOfSamples"]} />
+            <Error
+              error={exposureConfiguration.sampling.errors["numberOfSamples"]}
+            />
           </div>
         </div>
       )}

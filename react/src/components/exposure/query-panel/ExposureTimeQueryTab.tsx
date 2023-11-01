@@ -1,8 +1,14 @@
 import { Error } from "../../Error.tsx";
+import { input } from "../../utils.ts";
 
 interface SNRParameters {
   snr: string;
   wavelength: string;
+}
+
+export interface SNRDataType {
+  snr: number;
+  wavelength: number;
 }
 
 export class SNR {
@@ -15,7 +21,7 @@ export class SNR {
       this.wavelength = snr.wavelength;
     }
   }
-  public get data() {
+  public get data(): SNRDataType {
     return {
       snr: parseFloat(this.snr),
       wavelength: parseFloat(this.wavelength),
@@ -25,7 +31,7 @@ export class SNR {
     const errors: Record<string, string> = {};
     const data = this.data;
 
-    // Detector Iterations
+    // Wavelength
     const wavelength = data.wavelength;
     const minWavelength = 9000;
     const maxWavelength = 17000;
@@ -37,11 +43,11 @@ export class SNR {
       errors.wavelength = `The wavelength must be a number between ${minWavelength} and ${maxWavelength}.`;
     }
 
-    // Exposure Time
+    // NR
     const snr = data.snr;
     const minSnr = 1;
     if (Number.isNaN(snr) || snr < minSnr || !Number.isInteger(snr)) {
-      errors.snr = `The requested signal to noise must be a positive integer greater than or equal to ${minSnr}.`;
+      errors.snr = `The signal-to-noise ratio must be a positive integer greater than or equal to ${minSnr}.`;
     }
 
     return errors;
@@ -53,11 +59,11 @@ export class SNR {
 }
 
 interface Props {
-  setupData: SNR;
+  snr: SNR;
   update: (key: "exposureTime" | "snr", snr: SNR) => void;
 }
 
-export function ExposureTimeTab({ setupData, update }: Props) {
+export function ExposureTimeQueryTab({ snr, update }: Props) {
   const updatePlot = () => {
     console.log("Update plot method not implement"); // TODO update should come from ExposurePanel
   };
@@ -66,7 +72,7 @@ export function ExposureTimeTab({ setupData, update }: Props) {
     update(
       "snr",
       new SNR({
-        ...setupData,
+        ...snr,
         [key]: value,
       }),
     );
@@ -78,13 +84,13 @@ export function ExposureTimeTab({ setupData, update }: Props) {
         <label className="label">Requested SNR</label>
         <div className="control">
           <input
-            className="input"
+            className={input("w-52")}
             type="text"
             name={"snr"}
-            value={setupData.snr}
+            value={snr.snr}
             onChange={(event) => updateSNR("snr", event.target.value)}
           />
-          {setupData.errors["snr"] && <Error error={setupData.errors["snr"]} />}
+          {snr.errors["snr"] && <Error error={snr.errors["snr"]} />}
         </div>
       </div>
       <div className="field">
@@ -95,10 +101,10 @@ export function ExposureTimeTab({ setupData, update }: Props) {
         <label className="label">Wavelength</label>
         <div className="control">
           <input
-            className="input"
+            className={input("w-52")}
             type="text"
             name={"wavelength"}
-            value={setupData.wavelength}
+            value={snr.wavelength}
             onChange={(event) => updateSNR("wavelength", event.target.value)}
           />
         </div>
@@ -110,8 +116,8 @@ export function ExposureTimeTab({ setupData, update }: Props) {
           >
             Central Wavelength
           </span>
-          {setupData.errors["wavelength"] && (
-            <Error error={setupData.errors["wavelength"]} />
+          {snr.errors["wavelength"] && (
+            <Error error={snr.errors["wavelength"]} />
           )}
         </div>
       </div>

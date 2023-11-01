@@ -1,5 +1,6 @@
 import { Gain } from "./GainPanel.tsx";
 import { Error } from "../../Error.tsx";
+import { input } from "../../utils.ts";
 
 interface Props {
   gain: Gain;
@@ -25,7 +26,7 @@ export function CustomGainPanel({ gain, update }: Props) {
         <div className="column pb-0">
           <div className="control">
             <input
-              className="input"
+              className={input("w-28")}
               name={"adu"}
               type="text"
               value={gain.adu}
@@ -33,7 +34,7 @@ export function CustomGainPanel({ gain, update }: Props) {
             />
           </div>
         </div>
-        <div className="column pb-0">e/ADU</div>
+        <div className="column pb-0 pl-0">e/ADU</div>
       </div>
       {gain.errors["adu"] && (
         <div className="columns">
@@ -43,11 +44,11 @@ export function CustomGainPanel({ gain, update }: Props) {
         </div>
       )}
       <div className="columns">
-        <div className="column pb-0">Read Noise: </div>
-        <div className="column pb-0">
+        <div className="column pr-0 pb-0">Read Noise: </div>
+        <div className="column pb-0 pl-0">
           <div className="control">
             <input
-              className="input"
+              className={input("w-32")}
               name={"readNoise"}
               type="text"
               value={gain.readNoise}
@@ -66,11 +67,11 @@ export function CustomGainPanel({ gain, update }: Props) {
       )}
 
       <div className="columns">
-        <div className="column pb-0">Full Well: </div>
-        <div className="column pb-0">
+        <div className="column pr-0 pb-0">Full Well: </div>
+        <div className="column pb-0 pl-0">
           <div className="control">
             <input
-              className="input"
+              className={input("w-32")}
               name={"fullWell"}
               type="text"
               value={gain.fullWell}

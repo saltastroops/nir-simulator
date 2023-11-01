@@ -11,6 +11,12 @@ export interface GainParameters {
   readNoise: string;
   fullWell: string;
 }
+
+export interface GainDataType {
+  adu: number;
+  readNoise: number;
+  fullWell: number;
+}
 export class Gain {
   public gainType: GainType = "Faint";
   public adu = "2.04";
@@ -26,11 +32,11 @@ export class Gain {
     }
   }
 
-  public get data() {
+  public get data(): GainDataType {
     return {
-      adu: parseInt(this.adu),
+      adu: parseInt(this.adu, 10),
       readNoise: parseFloat(this.readNoise),
-      fullWell: parseInt(this.fullWell),
+      fullWell: parseInt(this.fullWell, 10),
     };
   }
 
@@ -42,7 +48,7 @@ export class Gain {
     const minAdu = 1;
 
     if (Number.isNaN(adu) || !Number.isInteger(adu) || adu < minAdu) {
-      errors.adu = `The ADU must be a positive integer greater than or equal to ${minAdu}.`;
+      errors.adu = `The ADU must be an integer greater than or equal to ${minAdu}.`;
     }
 
     // Read Noise
@@ -72,15 +78,15 @@ export class Gain {
 }
 
 interface Props {
-  setupData: ExposureConfiguration;
+  exposureConfiguration: ExposureConfiguration;
   update: (gains: ExposureConfiguration) => void;
 }
 
-export function GainPanel({ setupData, update }: Props) {
+export function GainPanel({ exposureConfiguration, update }: Props) {
   const updateGain = (newGain: Gain) => {
     update(
       new ExposureConfiguration({
-        ...setupData,
+        ...exposureConfiguration,
         gain: newGain,
       }),
     );
@@ -91,16 +97,19 @@ export function GainPanel({ setupData, update }: Props) {
         <div className="column pr-0 is-two-fifths">
           <GainSelector
             updateGain={updateGain}
-            gainType={setupData.gain.gainType}
+            gain={exposureConfiguration.gain}
           />
         </div>
         <div className="column pl-0">
-          {(setupData.gain.gainType === "Bright" ||
-            setupData.gain.gainType === "Faint") && (
-            <NonEditableGainPanel gain={setupData.gain} />
+          {(exposureConfiguration.gain.gainType === "Bright" ||
+            exposureConfiguration.gain.gainType === "Faint") && (
+            <NonEditableGainPanel gain={exposureConfiguration.gain} />
           )}
-          {setupData.gain.gainType === "Custom" && (
-            <CustomGainPanel update={updateGain} gain={setupData.gain} />
+          {exposureConfiguration.gain.gainType === "Custom" && (
+            <CustomGainPanel
+              update={updateGain}
+              gain={exposureConfiguration.gain}
+            />
           )}
         </div>
       </div>
