@@ -1,6 +1,9 @@
 import { useRef, useState } from "react";
 import { SpectrumGenerationTab } from "./spectrum/SpectrumGenerationTab";
-import { Exposure } from "./exposure/Exposure";
+import {
+  ExposureConfiguration,
+  ExposurePanel,
+} from "./exposure/ExposurePanel.tsx";
 import {
   InstrumentConfiguration,
   InstrumentConfigurationPanel,
@@ -18,6 +21,7 @@ type SimulationSetupParameters = {
   earth: Earth;
   spectrumPlotOptions: SpectrumPlotOptions;
   instrumentConfiguration: InstrumentConfiguration;
+  exposureConfiguration: ExposureConfiguration;
 };
 
 export type SimulationSetupData = Record<keyof SimulationSetup, any>;
@@ -30,6 +34,8 @@ export class SimulationSetup {
   public spectrumPlotOptions: SpectrumPlotOptions = new SpectrumPlotOptions();
   public instrumentConfiguration: InstrumentConfiguration =
     new InstrumentConfiguration();
+  public exposureConfiguration: ExposureConfiguration =
+    new ExposureConfiguration();
 
   public constructor(parameters?: SimulationSetupParameters) {
     if (parameters) {
@@ -39,6 +45,7 @@ export class SimulationSetup {
       this.earth = parameters.earth;
       this.spectrumPlotOptions = parameters.spectrumPlotOptions;
       this.instrumentConfiguration = parameters.instrumentConfiguration;
+      this.exposureConfiguration = parameters.exposureConfiguration;
     }
   }
 
@@ -50,6 +57,7 @@ export class SimulationSetup {
       earth: this.earth.data,
       spectrumPlotOptions: this.spectrumPlotOptions.data,
       instrumentConfiguration: this.instrumentConfiguration.data,
+      exposureConfiguration: this.exposureConfiguration.data,
     };
   }
 }
@@ -63,6 +71,7 @@ export function Simulator() {
       earth: new Earth(),
       spectrumPlotOptions: new SpectrumPlotOptions(),
       instrumentConfiguration: new InstrumentConfiguration(),
+      exposureConfiguration: new ExposureConfiguration(),
     }),
   );
 
@@ -133,7 +142,12 @@ export function Simulator() {
         />
       </div>
       <div ref={exposureDivRef} style={{ display: "none" }}>
-        <Exposure />
+        <ExposurePanel
+          setup={setup}
+          update={(exposureConfiguration: ExposureConfiguration) =>
+            updateSetup("exposureConfiguration", exposureConfiguration)
+          }
+        />
       </div>
     </div>
   );
