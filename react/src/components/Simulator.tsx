@@ -143,7 +143,7 @@ export function Simulator() {
       </div>
       <div ref={exposureDivRef} style={{ display: "none" }}>
         <ExposurePanel
-          setupData={setup}
+          setup={setup}
           update={(exposureConfiguration: ExposureConfiguration) =>
             updateSetup("exposureConfiguration", exposureConfiguration)
           }

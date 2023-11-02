@@ -48,10 +48,10 @@ export class ExposureConfiguration {
     };
 
     if (this.activeQuery === "SNR") {
-      data = { ...data, snr: this.snr.data };
+      data.snr = this.snr.data;
     }
     if (this.activeQuery === "ExposureTime") {
-      data = { ...data, exposureTime: this.exposureTime.data };
+      data.exposureTime = this.exposureTime.data;
     }
 
     return data;
@@ -59,11 +59,11 @@ export class ExposureConfiguration {
 }
 
 interface Props {
-  setupData: SimulationSetup;
+  setup: SimulationSetup;
   update: (params: ExposureConfiguration) => void;
 }
 
-export function ExposurePanel({ setupData, update }: Props) {
+export function ExposurePanel({ setup, update }: Props) {
   const updateExposureConfiguration = (
     newExposureConfiguration: ExposureConfigurationParameters,
   ) => {
@@ -75,35 +75,28 @@ export function ExposurePanel({ setupData, update }: Props) {
       <h1 className="title is-1">Make An Exposure</h1>
       <div className="columns">
         {/* Controls Section */}
-        <div className="column is-two-fifths">
-          <div className="columns">
-            <div className="column pr-0">
-              <GainPanel
-                exposureConfiguration={setupData.exposureConfiguration}
-                update={updateExposureConfiguration}
-              />
-            </div>
-            <div className="column is-two-fifths">
-              <SamplingPanel
-                exposureConfiguration={setupData.exposureConfiguration}
-                update={updateExposureConfiguration}
-              />
-            </div>
+        <div className="column is-one-quarter">
+          <div className="notification m-2">
+            <GainPanel
+              exposureConfiguration={setup.exposureConfiguration}
+              update={updateExposureConfiguration}
+            />
           </div>
-          <div className="columns">
-            <div className="column">
-              <QueryTabs
-                exposureConfiguration={setupData.exposureConfiguration}
-                update={updateExposureConfiguration}
-              />
-            </div>
+          <div className="notification m-2">
+            <SamplingPanel
+              exposureConfiguration={setup.exposureConfiguration}
+              update={updateExposureConfiguration}
+            />
           </div>
-          <div className="columns">
-            <div className="column"></div>
+          <div className={"bg-gray-100 p-4 m-2 mt-7"}>
+            <QueryTabs
+              exposureConfiguration={setup.exposureConfiguration}
+              update={updateExposureConfiguration}
+            />
           </div>
         </div>
         {/* Plot Section */}
-        <div className="column is-three-fifths">
+        <div className="column">
           {/*<div className="field chart-contain">*/}
           {/*  <LinePlot*/}
           {/*    chartContent={chartData}*/}

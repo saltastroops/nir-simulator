@@ -21,7 +21,7 @@ export function CustomGainPanel({ gain, update }: Props) {
   };
 
   return (
-    <div className="notification">
+    <div>
       <div className="columns is-gepless">
         <div className="column pb-0">
           <div className="control">

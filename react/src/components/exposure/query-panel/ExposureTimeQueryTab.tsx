@@ -43,11 +43,11 @@ export class SNR {
       errors.wavelength = `The wavelength must be a number between ${minWavelength} and ${maxWavelength}.`;
     }
 
-    // NR
+    // SNR
     const snr = data.snr;
     const minSnr = 1;
     if (Number.isNaN(snr) || snr < minSnr || !Number.isInteger(snr)) {
-      errors.snr = `The signal-to-noise ratio must be a positive integer greater than or equal to ${minSnr}.`;
+      errors.snr = `The signal-to-noise ratio must be an integer greater than or equal to ${minSnr}.`;
     }
 
     return errors;
@@ -81,7 +81,7 @@ export function ExposureTimeQueryTab({ snr, update }: Props) {
   return (
     <>
       <div className="field">
-        <label className="label">Requested SNR</label>
+        <label>Requested SNR</label>
         <div className="control">
           <input
             className={input("w-52")}
@@ -93,12 +93,9 @@ export function ExposureTimeQueryTab({ snr, update }: Props) {
           {snr.errors["snr"] && <Error error={snr.errors["snr"]} />}
         </div>
       </div>
-      <div className="field">
-        <label className="label">SNR Requested at Which Wavelength?</label>
-      </div>
 
       <div className="field">
-        <label className="label">Wavelength</label>
+        <label>SNR Requested at Which Wavelength?</label>
         <div className="control">
           <input
             className={input("w-52")}

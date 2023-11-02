@@ -45,8 +45,7 @@ export class ExposureTime {
 
     // Exposure Time
     const exposureTime = data.singleExposureTime;
-    const minExposureTime = 0;
-    if (Number.isNaN(exposureTime) || exposureTime < minExposureTime) {
+    if (Number.isNaN(exposureTime) || exposureTime < 0) {
       errors.singleExposureTime =
         "The exposure time must be a positive number.";
     }
@@ -88,7 +87,7 @@ export function SNRQueryTab({ exposureTime, update }: Props) {
   return (
     <>
       <div className="field">
-        <label className="label">Exposure Time</label>
+        <label>Exposure Time</label>
         <div className="control">
           <input
             className={input("w-52")}
@@ -107,7 +106,7 @@ export function SNRQueryTab({ exposureTime, update }: Props) {
         </div>
       </div>
       <div className="field">
-        <label className="label">Detector Iterations</label>
+        <label>Detector Iterations</label>
         <div className="control">
           <input
             className={input("w-52")}

@@ -6,7 +6,7 @@ interface Props {
 
 export function NonEditableGainPanel({ gain }: Props) {
   return (
-    <div className="notification">
+    <div>
       <div className="columns">
         <div className="column ">{gain.adu} e/ADU</div>
       </div>
