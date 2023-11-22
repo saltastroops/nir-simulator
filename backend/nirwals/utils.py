@@ -1,7 +1,7 @@
 from functools import lru_cache
 
 import numpy as np
-from specutils.manipulation import FluxConservingResampler
+from specutils.manipulation import SplineInterpolatedResampler
 from astropy import units as u
 from specutils import Spectrum1D
 
@@ -36,6 +36,5 @@ def resample_spectrum(
         number_of_points=NUMBER_OF_POINTS
 ):
     wavelength_range = np.linspace(minimum_wavelength, maximum_wavelength, number_of_points) * u.AA
-    resampler = FluxConservingResampler()
+    resampler = SplineInterpolatedResampler()
     return resampler(input_spectrum, wavelength_range)
-
