@@ -14,12 +14,13 @@ def get_redshifted_spectrum(wavelength, flux, redshift: float):
     return wavelength, flux
 
 
-def wavelength_point():
-    return np.linspace(9000, 15000, NUMBER_OF_POINTS)
-
-
-def resample_spectrum(input_spectrum: Spectrum1D, wavelength: []):
-    new_disp_grid = wavelength * u.AA
+def resample_spectrum(
+        input_spectrum: Spectrum1D,
+        disp_grid_min=9000,
+        disp_grid_max=17000,
+        number_of_points=NUMBER_OF_POINTS
+):
+    disp_grid = np.linspace(disp_grid_min, disp_grid_max, number_of_points) * u.AA
     resampler = FluxConservingResampler()
-    return resampler(input_spectrum, new_disp_grid)
+    return resampler(input_spectrum, disp_grid)
 
