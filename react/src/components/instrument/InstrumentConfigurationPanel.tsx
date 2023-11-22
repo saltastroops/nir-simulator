@@ -10,6 +10,7 @@ import ImagingConfigurationPanel, {
 import { environment } from "../../environments/environment.ts";
 import { defaultLinePlotOptions, LineOptions } from "../plots/PlotOptions.ts";
 import { LinePlot } from "../plots/LinePlot.tsx";
+import { button, select } from "../utils.ts";
 
 type ModeConfiguration = ImagingConfiguration | SpectroscopyConfiguration;
 
@@ -131,7 +132,7 @@ export function InstrumentConfigurationPanel({
     };
     const formData = new FormData();
     Object.keys(data).forEach((key) =>
-      formData.append(key, data[key as keyof typeof data].toString()),
+      formData.append(key, data[key as keyof typeof data]?.toString()),
     );
 
     fetch(environment.apiUrl + "/throughput/", {
@@ -157,6 +158,7 @@ export function InstrumentConfigurationPanel({
             requested: true,
           };
         });
+        setError(null);
       })
       .catch((err) => {
         setError("Failed to fetch plot data.");
@@ -170,8 +172,9 @@ export function InstrumentConfigurationPanel({
         <div className="column is-one-fifth">
           <div className="tile is-parent is-vertical notification">
             {/* instrument mode */}
-            <div className="tile is-child box has-margin-top">
-              <div className="field">
+            <div>
+              <fieldset className="border border-solid border-gray-300 p-3">
+                <legend>Instrument Configuration</legend>
                 <div className="control">
                   <label className="radio">
                     <input
@@ -198,24 +201,27 @@ export function InstrumentConfigurationPanel({
                     Spectroscopy Mode
                   </label>
                 </div>
-              </div>
+              </fieldset>
             </div>
 
             {/* filter */}
             <div className="control">
-              <label className="label">Filter</label>
-              <div className="select">
-                <select
-                  value={filter}
-                  onChange={(event) =>
-                    updateParameter("filter", event.target.value)
-                  }
-                  name="filter"
-                >
-                  <option value={"clear-filter"}>Clear Filter</option>
-                  <option value={"lwbf"}>LWBF</option>
-                </select>
-              </div>
+              <fieldset className="border border-solid border-gray-300 p-3">
+                <legend>Filter</legend>
+                <div>
+                  <select
+                    className={select("w-32")}
+                    value={filter}
+                    onChange={(event) =>
+                      updateParameter("filter", event.target.value)
+                    }
+                    name="filter"
+                  >
+                    <option value={"clear-filter"}>Clear Filter</option>
+                    <option value={"lwbf"}>LWBF</option>
+                  </select>
+                </div>
+              </fieldset>
             </div>
 
             {/* imaging configuration */}
@@ -240,9 +246,13 @@ export function InstrumentConfigurationPanel({
 
             {/* update the plot */}
             <div>
-              <div className="tile">
+              <div className="mt-2">
                 <button
-                  className={!error ? "button" : "button is-danger"}
+                  className={
+                    !error
+                      ? button("mt-6 text-white bg-green-600")
+                      : button("mt-6 text-white bg-red-600")
+                  }
                   onClick={updatePlot}
                 >
                   Update Throughput
@@ -257,9 +267,14 @@ export function InstrumentConfigurationPanel({
           </div>
         </div>
 
-        <div className="column notification">
-          <div className={!error ? "tile" : "tile notification is-danger"}>
-            {Chart}
+        <div className="column">
+          <div className="tile is-parent is-vertical notification">
+            <fieldset className="border border-solid border-gray-300 p-3">
+              <legend>Throughput Plot</legend>
+              <div className={!error ? "tile" : "tile notification is-danger"}>
+                {Chart}
+              </div>
+            </fieldset>
           </div>
         </div>
       </div>
