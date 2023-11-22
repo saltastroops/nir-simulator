@@ -7,7 +7,6 @@ import { InstrumentMode } from "../../types.ts";
 import ImagingConfigurationPanel, {
   ImagingConfiguration,
 } from "./ImagingConfigurationPanel.tsx";
-// import { environment } from "../../environments/environment.ts";
 import { defaultLinePlotOptions, LineOptions } from "../plots/PlotOptions.ts";
 import { LinePlot } from "../plots/LinePlot.tsx";
 import { instrument } from "../../services.ts";
