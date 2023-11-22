@@ -1,3 +1,5 @@
+import { SimulationSetupData } from "./Simulator.tsx";
+
 export function label(extraClasses?: string) {
   let className = "";
   if (extraClasses) {
@@ -31,4 +33,17 @@ export function button(extraClasses?: string) {
     className += ` ${extraClasses}`;
   }
   return className;
+}
+
+export function instrumentFormData(setupData: SimulationSetupData) {
+  return {
+    mode: setupData.instrumentConfiguration.modeConfiguration.mode,
+    filter: setupData.instrumentConfiguration.filter,
+    slit_type: setupData.instrumentConfiguration.modeConfiguration.slitType,
+    slit_width: setupData.instrumentConfiguration.modeConfiguration.slitWidth,
+    grating: setupData.instrumentConfiguration.modeConfiguration.grating,
+    grating_angle:
+      setupData.instrumentConfiguration.modeConfiguration.gratingAngle,
+    target_zd: setupData.earth.targetZenithDistance,
+  };
 }

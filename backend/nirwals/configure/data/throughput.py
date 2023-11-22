@@ -31,12 +31,12 @@ def get_affected_filenames(form_data):
         FILES_BASE_DIR / "data_sheets" / "adjusted_program_datasheets" / "detectorqe.csv",
         FILES_BASE_DIR / "data_sheets" / "adjusted_program_datasheets" / "combinedtelescope.csv"
     ]
-    if form_data["configuration_options"] == "imaging-mode":
+    if form_data["mode"] == "Imaging":
         if form_data["filter"] == "clear-filter":
             filenames.append(FILES_BASE_DIR  / "data_sheets" /"adjusted_program_datasheets"/"clearfiltertransmission.csv")
         elif form_data["filter"] == "lwbf":
             filenames.append(FILES_BASE_DIR / "data_sheets" / "adjusted_program_datasheets" / "lwbftransmission.csv")
-    elif form_data["configuration_options"] == "spectroscopy-mode":
+    elif form_data["mode"] == "Spectroscopy":
         if form_data["filter"] == "clear-filter":
             filenames.append(FILES_BASE_DIR / "data_sheets" / "adjusted_program_datasheets" / "clearfiltertransmission.csv")
         elif form_data["filter"] == "lwbf":
@@ -58,7 +58,7 @@ def get_modifiers(form_data):
     data['wavelength'] = np.arange(1, num_points + 1)
     data['throughput'] = np.ones(num_points)
 
-    if form_data["configuration_options"] == "spectroscopy-mode":
+    if form_data["mode"] == "Spectroscopy":
         slit_width = float(form_data["slit_width"])
         target_zd = float(form_data["target_zd"])
         slit_losses = erf(
