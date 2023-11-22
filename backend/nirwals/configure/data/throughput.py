@@ -11,15 +11,6 @@ from nirwals.utils import resample_spectrum, NUMBER_OF_POINTS, read_csv_file
 FILES_BASE_DIR = pathlib.Path(getenv("FILES_BASE_DIR"))
 
 
-def get_slit_modifier(constant):
-    input_spectrum = Spectrum1D(
-        spectral_axis=[9000, 17000] * u.AA,
-        flux=[constant, constant] * u.Unit('erg cm-2 s-1 AA-1')
-    )
-    resampled_spectrum = resample_spectrum(input_spectrum)
-    return resampled_spectrum.spectral_axis, resampled_spectrum.flux
-
-
 def get_affected_filenames(form_data):
     filenames = [
         FILES_BASE_DIR / "data_sheets" / "adjusted_program_datasheets" / "detectorqe.csv",
