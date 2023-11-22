@@ -1,5 +1,4 @@
 import pathlib
-from functools import lru_cache
 
 import numpy as np
 from os import getenv
@@ -7,7 +6,8 @@ from scipy.constants import Planck, speed_of_light, Boltzmann
 from specutils import Spectrum1D
 from specutils.manipulation import FluxConservingResampler
 from astropy import units as u
-from nirwals.utils import get_redshifted_spectrum
+from nirwals.utils import get_redshifted_spectrum, read_csv_file
+
 
 FILES_BASE_DIR = pathlib.Path(getenv("FILES_BASE_DIR"))
 
@@ -16,11 +16,6 @@ FILES_BASE_DIR = pathlib.Path(getenv("FILES_BASE_DIR"))
 h = Planck * 10**7    # joules*seconds -> erg*seconds
 c = speed_of_light * 10**10
 kb = Boltzmann * 10**7  # joules/kelvin -> erg/kelvin
-
-conv = {
-    0: lambda x: float(x),  # conversion fn for column 0
-    1: lambda x: float(x),  # conversion fn for column 1
-}
 
 
 def get_stellar_flux_values(wavelength: float, temperature: float, mag: float):
@@ -73,15 +68,6 @@ def get_emission_line_values(wavelength: [], line_flux: float, lamda: float, lin
 
     photon_count = line_profile / ((h * c) / wavelength)
     return photon_count
-
-
-#  TODO Caching should be done Correctly
-@lru_cache
-def read_csv_file(filename):
-    spectra_data = np.loadtxt(filename, delimiter=",",  quotechar="|",  converters=conv)
-    wavelength = spectra_data[:, 0]
-    flux = spectra_data[:, 1]
-    return wavelength, flux
 
 
 def get_sky_spectrum(form_data):
