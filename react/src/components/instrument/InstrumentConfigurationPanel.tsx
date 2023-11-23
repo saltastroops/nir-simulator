@@ -9,7 +9,7 @@ import ImagingConfigurationPanel, {
 } from "./ImagingConfigurationPanel.tsx";
 import { defaultLinePlotOptions, LineOptions } from "../plots/PlotOptions.ts";
 import { LinePlot } from "../plots/LinePlot.tsx";
-import { instrument } from "../../services.ts";
+import { throughput } from "../../services.ts";
 import { SimulationSetup } from "../Simulator.tsx";
 
 type ModeConfiguration = ImagingConfiguration | SpectroscopyConfiguration;
@@ -117,12 +117,11 @@ export function InstrumentConfigurationPanel({
 
   const updatePlot = async () => {
     try {
-      const spectraData = await instrument(setupData);
-      const data = spectraData.throughput;
+      const throughputData = await throughput(setupData);
       setChartContent((previousChartContent) => {
         const updatedChartData = {
-          x: data.x,
-          y: data.y,
+          x: throughputData.wavelengths,
+          y: throughputData.throughputs,
           lineColor: previousChartContent.chartData.lineColor,
           options: previousChartContent.chartData.options,
         };

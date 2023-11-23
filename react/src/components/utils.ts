@@ -35,7 +35,7 @@ export function button(extraClasses?: string) {
   return className;
 }
 
-export function instrumentFormData(setupData: SimulationSetupData) {
+export function throughputFormData(setupData: SimulationSetupData) {
   return {
     mode: setupData.instrumentConfiguration.modeConfiguration.mode,
     filter: setupData.instrumentConfiguration.filter,

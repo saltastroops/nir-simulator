@@ -1,6 +1,6 @@
 import { SimulationSetupData } from "./components/Simulator.tsx";
 import { environment } from "./environments/environment.ts";
-import { instrumentFormData } from "./components/utils.ts";
+import { throughputFormData } from "./components/utils.ts";
 
 export async function spectra(setupData: SimulationSetupData) {
   const data = {
@@ -20,8 +20,8 @@ export async function spectra(setupData: SimulationSetupData) {
   return response.json();
 }
 
-export async function instrument(setupData: SimulationSetupData) {
-  const data = instrumentFormData(setupData);
+export async function throughput(setupData: SimulationSetupData) {
+  const data = throughputFormData(setupData);
   const formData = new FormData();
   formData.append("data", JSON.stringify(data));
 

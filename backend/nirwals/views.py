@@ -2,18 +2,19 @@ import json
 
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from nirwals.configure.data.throughput import get_plot_data
+from nirwals.configure.data.throughput import get_throughput_plot_data
 from nirwals.configure.data.spectrum import get_sources_spectrum, get_sky_spectrum
 
 
 @csrf_exempt
 def throughput(request):
-    form_data = json.loads(request.POST.get("data"))
+    configuration = json.loads(request.POST.get("data"))
     # Get plot data based on configuration options
-    wavelength, flux = get_plot_data(form_data)
+    wavelengths, throughputs = get_throughput_plot_data(configuration)
     # Prepare data for response
     data = {
-        "throughput": {"x": wavelength.tolist(), "y": flux.tolist()},
+        "wavelengths": wavelengths.tolist(),
+        "throughputs": throughputs.tolist(),
     }
     return JsonResponse(data)
 
