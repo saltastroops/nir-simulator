@@ -2,8 +2,10 @@ import pathlib
 import numpy as np
 from astropy import units as u
 from specutils import Spectrum1D
+from specutils.manipulation import SplineInterpolatedResampler
 from os import getenv
 from scipy.special import erf
+
 
 from nirwals.utils import resample_spectrum, NUMBER_OF_POINTS, read_csv_file
 
@@ -67,7 +69,8 @@ def get_modifiers(form_data):
             spectral_axis=file_wavelength * u.AA,
             flux=file_flux * u.Unit('erg cm-2 s-1 AA-1')
         )
-        resampled_spectrum = resample_spectrum(input_spectrum)
+        resampler = SplineInterpolatedResampler()
+        resampled_spectrum = resample_spectrum(input_spectrum, resampler)
         data['modifier'] = resampled_spectrum.flux
         data['throughput'] = data['modifier'] * data['throughput']
 
