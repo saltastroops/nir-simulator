@@ -1,17 +1,17 @@
 import pathlib
-from functools import lru_cache
-
+from synphot import SpectralElement
 import numpy as np
 from os import getenv
 from scipy.constants import Planck, speed_of_light, Boltzmann, Stefan_Boltzmann
 from specutils import Spectrum1D
-from specutils.manipulation import FluxConservingResampler
+from specutils.manipulation import FluxConservingResampler, convolution_smooth
 from specutils.analysis import line_flux
 from astropy import units as u
 from nirwals.utils import get_redshifted_spectrum, read_csv_file
 
-from astropy.modeling.models import BlackBody, Gaussian1D
-from nirwals.utils import get_redshifted_spectrum
+from synphot import SourceSpectrum
+from synphot.models import BlackBodyNorm1D, GaussianFlux1D
+from nirwals.utils import get_redshifted_spectrum, resample_spectrum
 
 FILES_BASE_DIR = pathlib.Path(getenv("FILES_BASE_DIR"))
 
@@ -22,34 +22,31 @@ c = speed_of_light * 10**10
 kb = Boltzmann * 10**7  # joules/kelvin -> erg/kelvin
 sigma = Stefan_Boltzmann * 10**3    # watts/metres^2/Kelvin^4 -> erg/cm^2/seconds/Kelvin^4
 
+# J Bandpass constants
+zero_magnitude_flux = 3.02 * 10 ** (-10) * u.erg / (u.cm ** 2 * u.s)
+j_bandpass = SpectralElement.from_filter('johnson_j')
 
-def apparent_magnitude_to_flux(magnitude, reference_flux=1.0):
-    return reference_flux * 10**(-0.4 * magnitude)
+def apparent_magnitude_to_flux(magnitude, zero_mag_flux=1.0):
+    return zero_mag_flux * 10**(-0.4 * magnitude)
 
 
 def get_stellar_flux_values(wavelength: [], temperature: float, mag: float):
 
-    blackbody = BlackBody(temperature=temperature*u.K, scale=1.0 * u.erg / (u.cm ** 2 * u.AA * u.s * u.sr))
+    bb = SourceSpectrum(BlackBodyNorm1D, temperature=temperature)
 
-    star_blackbody_flux = blackbody(wavelength * u.AA)
+    star_blackbody_flux = bb(wavelength * u.AA)
 
-    star_blackbody_flux *= np.pi * u.sr
+    star_magnitude_flux = apparent_magnitude_to_flux(mag, zero_magnitude_flux.value) * u.Unit('erg cm-2 s-1')
 
-    reference_flux = 3.02 * 10 ** (-10)
+    stellar_spectrum = Spectrum1D(spectral_axis=wavelength * u.AA, flux=star_blackbody_flux)
 
-    star_magnitude_flux = apparent_magnitude_to_flux(mag, reference_flux) * u.Unit('erg cm-2 s-1')
+    convolved_stellar_spectrum = convolution_smooth(stellar_spectrum, j_bandpass.waveset)
 
-    input_wavelength = wavelength * u.AA
+    normalizer = star_magnitude_flux/line_flux(convolved_stellar_spectrum)
 
-    stellar_spectrum = Spectrum1D(spectral_axis=input_wavelength, flux=star_blackbody_flux)
+    normalized_star_radiation = stellar_spectrum.multiply(normalizer)
 
-    normalizer = line_flux(stellar_spectrum) / star_magnitude_flux
-
-    normalized_star_radiation = stellar_spectrum.divide(normalizer)
-
-    photon_count = normalized_star_radiation.photon_flux
-
-    return photon_count.value
+    return normalized_star_radiation.photon_flux.value
 
 
 def get_galaxy_flux_values(wavelength: [], galaxy_type: str, age: str, has_emission_line: bool, magnitude: float, redshift: float):
@@ -64,7 +61,7 @@ def get_galaxy_flux_values(wavelength: [], galaxy_type: str, age: str, has_emiss
         galaxy_wavelength, galaxy_flux = get_redshifted_spectrum(galaxy_wavelength, galaxy_flux, redshift)
 
         input_wavelength = galaxy_wavelength * u.AA
-        input_flux = galaxy_flux * u.Unit('erg cm-2 s-1 AA-1')
+        input_flux = galaxy_flux * u.Unit('erg cm-2 s-1')
         input_spectrum = Spectrum1D(spectral_axis=input_wavelength, flux=input_flux)
 
         resampler = FluxConservingResampler()
@@ -73,38 +70,26 @@ def get_galaxy_flux_values(wavelength: [], galaxy_type: str, age: str, has_emiss
 
         new_resampled_spectrum = resampler(input_spectrum, new_disp_grid)
 
-        reference_flux = 3.02 * 10 ** (-10)
+        galaxy_magnitude_flux = apparent_magnitude_to_flux(magnitude, zero_magnitude_flux.value) * u.Unit('erg cm-2 s-1')
 
-        galaxy_magnitude_flux = apparent_magnitude_to_flux(magnitude, reference_flux) * u.Unit('erg cm-2 s-1')
+        convolved_galaxy_spectrum = convolution_smooth(new_resampled_spectrum, j_bandpass.waveset)
 
-        normalizer = line_flux(new_resampled_spectrum)/galaxy_magnitude_flux
+        normalizer = galaxy_magnitude_flux/line_flux(convolved_galaxy_spectrum)
 
-        normalized_galaxy_radiation = new_resampled_spectrum.divide(normalizer)
+        normalized_galaxy_radiation = new_resampled_spectrum.multiply(normalizer)
 
-        photon_count = normalized_galaxy_radiation.photon_flux
-
-        return photon_count.value
+        return normalized_galaxy_radiation.photon_flux.value
 
 
-def get_emission_line_values(wavelength: [], line_flux: float, lamda: float, line_fwhm: float, redshift: float):
+def get_emission_line_values(wavelength: [], flux: float, lamda: float, line_fwhm: float, redshift: float):
 
-    redshifted_central_wavelength, redshifted_line_flux = get_redshifted_spectrum(lamda, line_flux, redshift)
+    emission_line_spectrum = SourceSpectrum(GaussianFlux1D, total_flux=flux*u.erg/(u.cm**2 * u.s), mean=lamda*u.AA, fwhm=line_fwhm*u.AA)
 
-    line_signal = line_fwhm / (2 * np.sqrt(2 * np.log(2)))
+    redshifted_emission_line_spectrum = SourceSpectrum(emission_line_spectrum.model, z=redshift, z_type='conserve_flux')
 
-    line_amplitude = redshifted_line_flux * 1 / (line_signal * np.sqrt(2 * np.pi))
+    spectrum = redshifted_emission_line_spectrum.to_spectrum1d(wavelength*u.AA)
 
-    spectral_model = Gaussian1D(amplitude=line_amplitude*u.Unit('erg cm-2 s-1 AA-1'), mean=redshifted_central_wavelength*u.AA, stddev=line_signal*u.AA)
-
-    line_profile = spectral_model(wavelength*u.AA)
-
-    normalized_line_profile = line_profile / (np.sqrt(2 * np.pi * line_signal**2))
-
-    line_spectrum = Spectrum1D(spectral_axis=wavelength*u.AA, flux=normalized_line_profile)
-
-    photon_count = line_spectrum.photon_flux
-
-    return photon_count.value
+    return spectrum.photon_flux.value
 
 
 def get_sky_spectrum(form_data):
