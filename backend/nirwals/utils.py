@@ -29,12 +29,11 @@ def read_csv_file(filename):
     return wavelength, flux
 
 
-def resample_spectrum(
+def resampler(
         input_spectrum: Spectrum1D,
         minimum_wavelength=9000,
         maximum_wavelength=17000,
         number_of_points=NUMBER_OF_POINTS
 ):
     wavelength_range = np.linspace(minimum_wavelength, maximum_wavelength, number_of_points) * u.AA
-    resampler = SplineInterpolatedResampler()
-    return resampler(input_spectrum, wavelength_range)
+    return SplineInterpolatedResampler()(input_spectrum, wavelength_range)
