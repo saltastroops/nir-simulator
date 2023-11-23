@@ -25,7 +25,7 @@ export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
     chartData: {
       x: [],
       y: [],
-      lineColor: "rgb(75, 192, 192)",
+      lineColor: "rgb(255, 0, 0)",
       options: defaultLinePlotOptions(
         "Wavelength (\u212B)",
         "Flux (photons sec\u002D\u00B9 \u212B cm\u002D\u00B2)",
@@ -34,7 +34,7 @@ export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
     requested: false,
   });
   const [error, setError] = useState<string | null>(null);
-  const Chart = useMemo(
+  const sourceChart = useMemo(
     () => (
       <LinePlot
         chartContent={chartContent}
@@ -44,15 +44,51 @@ export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
     [chartContent],
   );
 
+  const [secondChartContent, setSecondChartContent] = useState<ChartContent>({
+    chartData: {
+      x: [],
+      y: [],
+      lineColor: "rgb(75,100,192)" ,
+      options: defaultLinePlotOptions(
+          "Wavelength (\u212B)",
+          "Flux (photons sec\u002D\u00B9 \u212B cm\u002D\u00B2)",
+      ),
+    },
+    requested: false,
+  });
+  const skyChart = useMemo(
+      () => (
+          <LinePlot
+              chartContent={secondChartContent}
+              isOutdated={false && secondChartContent.requested}
+          />
+      ),
+      [secondChartContent],
+  );
+
   const updatePlots = async () => {
     try {
       const spectraData = await spectra(setup);
-      const data = spectraData.source;
+      const sourceData = spectraData.source;
+      const skyData = spectraData.sky;
 
       setChartContent((previousChartContent) => {
         const updatedChartData = {
-          x: data.x,
-          y: data.y,
+          x: sourceData.x,
+          y: sourceData.y,
+          lineColor: previousChartContent.chartData.lineColor,
+          options: previousChartContent.chartData.options,
+        };
+        return {
+          chartData: updatedChartData,
+          requested: true,
+        };
+      });
+
+      setSecondChartContent((previousChartContent) => {
+        const updatedChartData = {
+          x: skyData.x,
+          y: skyData.y,
           lineColor: previousChartContent.chartData.lineColor,
           options: previousChartContent.chartData.options,
         };
@@ -120,14 +156,13 @@ export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
       <div className="column">
         <div className="bg-gray-50">
           <div className={!error ? "tile" : "tile notification is-danger"}>
-            {Chart}
+            {sourceChart}
           </div>
         </div>
         <div className="bg-gray-50 mt-2">
-          {/*TODO: Second plot goes here*/}
-          {/*<div className={!error ? "tile" : "tile notification is-danger"}>*/}
-          {/*  {Chart}*/}
-          {/*</div>*/}
+          <div className={!error ? "tile" : "tile notification is-danger"}>
+            {skyChart}
+          </div>
         </div>
       </div>
     </div>
