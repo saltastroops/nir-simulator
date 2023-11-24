@@ -17,12 +17,21 @@ interface ScalesOptions {
   y: ScaleOptions;
 }
 
+interface PluginsOptions {
+  title: {
+    display: boolean,
+    text: string,
+  },
+}
+
 export interface LineOptions {
   scales: ScalesOptions;
+  plugins: PluginsOptions
 }
 export function defaultLinePlotOptions(
   xLabel: string,
   yLabel: string,
+  title: string,
 ): LineOptions {
   return {
     scales: {
@@ -45,6 +54,12 @@ export function defaultLinePlotOptions(
           text: yLabel,
         },
         ticks: undefined,
+      },
+    },
+    plugins: {
+      title: {
+        display: true,
+        text: title,
       },
     },
   };
