@@ -29,6 +29,7 @@ export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
       options: defaultLinePlotOptions(
         "Wavelength (\u212B)",
         "Flux (photons sec\u002D\u00B9 \u212B cm\u002D\u00B2)",
+          "Source Spectrum"
       ),
     },
     requested: false,
@@ -52,6 +53,7 @@ export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
       options: defaultLinePlotOptions(
           "Wavelength (\u212B)",
           "Flux (photons sec\u002D\u00B9 \u212B cm\u002D\u00B2)",
+          "Sky Background Spectrum"
       ),
     },
     requested: false,
