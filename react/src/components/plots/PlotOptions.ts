@@ -11,7 +11,7 @@ interface ScaleOptions {
         stepSize: number;
       }
     | {
-        callback: (value: number) => string;
+        callback: (value: number) => number;
       };
 }
 interface ScalesOptions {
@@ -21,9 +21,9 @@ interface ScalesOptions {
 
 interface PluginsOptions {
   title: {
-    display: boolean,
-    text: string,
-  },
+    display: boolean;
+    text: string;
+  };
 }
 
 function getExponent(value: string) {
@@ -34,7 +34,7 @@ function getExponent(value: string) {
 
 export interface LineOptions {
   scales: ScalesOptions;
-  plugins: PluginsOptions
+  plugins: PluginsOptions;
 }
 export function defaultLinePlotOptions(
   xLabel: string,
@@ -67,7 +67,7 @@ export function defaultLinePlotOptions(
             const disp_value = Number(value).toExponential(1);
             const exponent = getExponent(Number(value).toExponential(1));
 
-            return Math.abs(exponent) >= 2 ? disp_value : String(value);
+            return Math.abs(exponent) >= 2 ? Number(disp_value) : value;
           },
         },
       },
