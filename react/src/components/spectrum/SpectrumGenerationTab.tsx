@@ -61,11 +61,11 @@ export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
   const skyChart = useMemo(
       () => (
           <LinePlot
-              chartContent={secondChartContent}
-              isOutdated={false && secondChartContent.requested}
+              chartContent={skyChartContent}
+              isOutdated={false && skyChartContent.requested}
           />
       ),
-      [secondChartContent],
+      [skyChartContent],
   );
 
   const updatePlots = async () => {
