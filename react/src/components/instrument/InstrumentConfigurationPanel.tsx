@@ -7,7 +7,6 @@ import { InstrumentMode } from "../../types.ts";
 import ImagingConfigurationPanel, {
   ImagingConfiguration,
 } from "./ImagingConfigurationPanel.tsx";
-import { environment } from "../../environments/environment.ts";
 import { defaultLinePlotOptions, LineOptions } from "../plots/PlotOptions.ts";
 import { LinePlot } from "../plots/LinePlot.tsx";
 import { throughput } from "../../services.ts";
@@ -116,8 +115,7 @@ export function InstrumentConfigurationPanel({
     update(new InstrumentConfiguration(updatedParameters));
   };
 
-  const updatePlot = () => {
-    setError(null);
+  const updatePlot = async () => {
     try {
       const throughputData = await throughput(setupData);
       setChartContent((previousChartContent) => {
@@ -127,6 +125,7 @@ export function InstrumentConfigurationPanel({
           lineColor: previousChartContent.chartData.lineColor,
           options: previousChartContent.chartData.options,
         };
+        setError(null);
         return {
           chartData: updatedChartData,
           requested: true,

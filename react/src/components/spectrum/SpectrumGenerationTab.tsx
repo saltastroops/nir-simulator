@@ -70,7 +70,6 @@ export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
 
   const updatePlots = async () => {
     try {
-      setError(null);
       const spectraData = await spectra(setup);
       const sourceData = spectraData.source;
       const skyData = spectraData.sky;
@@ -82,6 +81,7 @@ export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
           lineColor: previousChartContent.chartData.lineColor,
           options: previousChartContent.chartData.options,
         };
+        setError(null);
         return {
           chartData: updatedChartData,
           requested: true,
