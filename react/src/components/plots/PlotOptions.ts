@@ -10,11 +10,19 @@ interface ScaleOptions {
         max: number;
         stepSize: number;
       }
-    | undefined;
+    | {
+        callback: (value: number) => string;
+      };
 }
 interface ScalesOptions {
   x: ScaleOptions;
   y: ScaleOptions;
+}
+
+function getExponent(value: string) {
+  // Extract the exponent from the scientific notation
+  const match = value.match(/e([+-]?\d+)/);
+  return match ? parseInt(match[1], 10) : 0;
 }
 
 export interface LineOptions {
@@ -44,7 +52,15 @@ export function defaultLinePlotOptions(
           display: true,
           text: yLabel,
         },
-        ticks: undefined,
+        ticks: {
+          callback: (value: number) => {
+            // Format the tick value to scientific notation
+            const disp_value = Number(value).toExponential(1);
+            const exponent = getExponent(Number(value).toExponential(1));
+
+            return Math.abs(exponent) >= 2 ? disp_value : String(value);
+          },
+        },
       },
     },
   };
