@@ -11,7 +11,7 @@ interface ScaleOptions {
         stepSize: number;
       }
     | {
-        callback: (value: number) => number;
+        callback: (value: number) => string;
       };
 }
 interface ScalesOptions {
@@ -67,7 +67,7 @@ export function defaultLinePlotOptions(
             const disp_value = Number(value).toExponential(1);
             const exponent = getExponent(Number(value).toExponential(1));
 
-            return Math.abs(exponent) >= 2 ? Number(disp_value) : value;
+            return Math.abs(exponent) >= 2 ? disp_value : String(value);
           },
         },
       },
