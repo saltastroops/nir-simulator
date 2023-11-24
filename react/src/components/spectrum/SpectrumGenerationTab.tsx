@@ -21,7 +21,7 @@ interface Props {
 export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
   const { source, sun, moon, earth, spectrumPlotOptions } = setup;
 
-  const [chartContent, setChartContent] = useState<ChartContent>({
+  const [sourceChartContent, setSourceChartContent] = useState<ChartContent>({
     chartData: {
       x: [],
       y: [],
@@ -38,14 +38,14 @@ export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
   const sourceChart = useMemo(
     () => (
       <LinePlot
-        chartContent={chartContent}
-        isOutdated={false && chartContent.requested}
+        chartContent={sourceChartContent}
+        isOutdated={false && sourceChartContent.requested}
       />
     ),
-    [chartContent],
+    [sourceChartContent],
   );
 
-  const [secondChartContent, setSecondChartContent] = useState<ChartContent>({
+  const [skyChartContent, setSkyChartContent] = useState<ChartContent>({
     chartData: {
       x: [],
       y: [],
@@ -74,7 +74,7 @@ export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
       const sourceData = spectraData.source;
       const skyData = spectraData.sky;
 
-      setChartContent((previousChartContent) => {
+      setSourceChartContent((previousChartContent) => {
         const updatedChartData = {
           x: sourceData.x,
           y: sourceData.y,
@@ -87,7 +87,7 @@ export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
         };
       });
 
-      setSecondChartContent((previousChartContent) => {
+      setSkyChartContent((previousChartContent) => {
         const updatedChartData = {
           x: skyData.x,
           y: skyData.y,
