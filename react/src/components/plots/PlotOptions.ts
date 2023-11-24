@@ -19,6 +19,13 @@ interface ScalesOptions {
   y: ScaleOptions;
 }
 
+interface PluginsOptions {
+  title: {
+    display: boolean,
+    text: string,
+  },
+}
+
 function getExponent(value: string) {
   // Extract the exponent from the scientific notation
   const match = value.match(/e([+-]?\d+)/);
@@ -27,10 +34,12 @@ function getExponent(value: string) {
 
 export interface LineOptions {
   scales: ScalesOptions;
+  plugins: PluginsOptions
 }
 export function defaultLinePlotOptions(
   xLabel: string,
   yLabel: string,
+  title: string,
 ): LineOptions {
   return {
     scales: {
@@ -61,6 +70,12 @@ export function defaultLinePlotOptions(
             return Math.abs(exponent) >= 2 ? disp_value : String(value);
           },
         },
+      },
+    },
+    plugins: {
+      title: {
+        display: true,
+        text: title,
       },
     },
   };

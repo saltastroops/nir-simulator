@@ -64,7 +64,7 @@ export function InstrumentConfigurationPanel({
       x: [],
       y: [],
       lineColor: "rgb(75, 192, 192)",
-      options: defaultLinePlotOptions("Wavelength (\u212B)", "Throughput"),
+      options: defaultLinePlotOptions("Wavelength (\u212B)", "Throughput", "Throughput"),
     },
     requested: false,
   });
@@ -125,6 +125,7 @@ export function InstrumentConfigurationPanel({
           lineColor: previousChartContent.chartData.lineColor,
           options: previousChartContent.chartData.options,
         };
+        setError(null);
         return {
           chartData: updatedChartData,
           requested: true,
