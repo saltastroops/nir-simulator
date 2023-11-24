@@ -10,6 +10,8 @@ import ImagingConfigurationPanel, {
 import { environment } from "../../environments/environment.ts";
 import { defaultLinePlotOptions, LineOptions } from "../plots/PlotOptions.ts";
 import { LinePlot } from "../plots/LinePlot.tsx";
+import { throughput } from "../../services.ts";
+import { SimulationSetup } from "../Simulator.tsx";
 
 type ModeConfiguration = ImagingConfiguration | SpectroscopyConfiguration;
 
@@ -49,7 +51,7 @@ export interface ChartContent {
 
 interface Props {
   instrumentConfiguration: InstrumentConfiguration;
-  setupData: Record<string, any>;
+  setupData: SimulationSetup;
   update: (instrumentConfiguration: InstrumentConfiguration) => void;
 }
 
@@ -116,53 +118,24 @@ export function InstrumentConfigurationPanel({
 
   const updatePlot = () => {
     setError(null);
-    const data = {
-      configuration_options:
-        setupData.instrumentConfiguration.modeConfiguration.mode ===
-        "Spectroscopy"
-          ? "spectroscopy-mode"
-          : "imaging-mode",
-      filter: setupData.instrumentConfiguration.filter,
-      slit_type: setupData.instrumentConfiguration.modeConfiguration.slitType,
-      slit_width: setupData.instrumentConfiguration.modeConfiguration.slitWidth,
-      grating: setupData.instrumentConfiguration.modeConfiguration.grating,
-      grating_angle:
-        setupData.instrumentConfiguration.modeConfiguration.gratingAngle,
-      target_zd: setupData.earth.targetZenithDistance,
-    };
-    const formData = new FormData();
-    Object.keys(data).forEach((key) =>
-      formData.append(key, data[key as keyof typeof data].toString()),
-    );
-
-    fetch(environment.apiUrl + "/throughput/", {
-      method: "POST",
-      body: formData,
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Opps, Something went wrong.");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        setChartContent((previousChartContent) => {
-          const updatedChartData = {
-            x: data.x,
-            y: data.y,
-            lineColor: previousChartContent.chartData.lineColor,
-            options: previousChartContent.chartData.options,
-          };
-          return {
-            chartData: updatedChartData,
-            requested: true,
-          };
-        });
-      })
-      .catch((err) => {
-        setError("Failed to fetch plot data.");
-        console.error("Error fetching plot data:", err);
+    try {
+      const throughputData = await throughput(setupData);
+      setChartContent((previousChartContent) => {
+        const updatedChartData = {
+          x: throughputData.wavelengths,
+          y: throughputData.throughputs,
+          lineColor: previousChartContent.chartData.lineColor,
+          options: previousChartContent.chartData.options,
+        };
+        return {
+          chartData: updatedChartData,
+          requested: true,
+        };
       });
+    } catch (error) {
+      setError("Failed to fetch plot data.");
+      console.error("Error fetching plot data:", error);
+    }
   };
 
   return (
