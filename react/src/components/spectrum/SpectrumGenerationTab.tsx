@@ -167,6 +167,11 @@ export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
             {skyChart}
           </div>
         </div>
+        {error && (
+            <div className="tile">
+              <p className={"has-text-danger"}>{error}</p>
+            </div>
+        )}
       </div>
     </div>
   );
