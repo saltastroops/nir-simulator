@@ -70,6 +70,7 @@ export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
 
   const updatePlots = async () => {
     try {
+      setError(null);
       const spectraData = await spectra(setup);
       const sourceData = spectraData.source;
       const skyData = spectraData.sky;

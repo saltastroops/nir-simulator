@@ -115,6 +115,7 @@ export function InstrumentConfigurationPanel({
   };
 
   const updatePlot = () => {
+    setError(null);
     const data = {
       configuration_options:
         setupData.instrumentConfiguration.modeConfiguration.mode ===
