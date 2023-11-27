@@ -44,6 +44,7 @@ semantic-version==2.10.0
 six==1.16.0
 specutils==1.12.0
 sqlparse==0.4.4
+synphot==1.2.1
 tomli==2.0.1
 tornado==6.3.3
 typing_extensions==4.8.0
