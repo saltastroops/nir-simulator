@@ -26,6 +26,7 @@ sigma = Stefan_Boltzmann * 10**3    # watts/metres^2/Kelvin^4 -> erg/cm^2/second
 zero_magnitude_flux = 3.02 * 10 ** (-10) * u.erg / (u.cm ** 2 * u.s)
 j_bandpass = SpectralElement.from_filter('johnson_j')
 
+
 def apparent_magnitude_to_flux(magnitude, zero_mag_flux=1.0):
     return zero_mag_flux * 10**(-0.4 * magnitude)
 
@@ -92,8 +93,7 @@ def get_emission_line_values(wavelength: [], flux: float, lamda: float, line_fwh
     return spectrum.photon_flux.value
 
 
-def get_sky_spectrum(form_data):
-    parameters = form_data
+def get_configured_sky_spectrum(parameters):
     num_points = 40001
     data = np.empty(num_points, dtype=[
         ('wavelength', float),
@@ -119,8 +119,7 @@ def get_sky_spectrum(form_data):
     return data['wavelength'], data['sky_flux']
 
 
-def get_sources_spectrum(form_data):
-    parameters = form_data
+def get_configured_sources_spectrum(parameters):
     num_points = 40001
     data = np.empty(num_points, dtype=[
         ('wavelength', float),
