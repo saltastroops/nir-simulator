@@ -7,7 +7,7 @@ from specutils import Spectrum1D
 from specutils.manipulation import FluxConservingResampler, convolution_smooth
 from specutils.analysis import line_flux
 from astropy import units as u
-from nirwals.utils import get_redshifted_spectrum, read_csv_file
+from nirwals.utils import read_csv_file
 
 from synphot import SourceSpectrum
 from synphot.models import BlackBodyNorm1D, GaussianFlux1D
@@ -59,17 +59,15 @@ def get_galaxy_flux_values(wavelength: [], galaxy_type: str, age: str, has_emiss
         file_path = FILES_BASE_DIR / "data_sheets" / "adjusted_program_datasheets" / filename
         galaxy_wavelength, galaxy_flux = read_csv_file(file_path)
 
-        galaxy_wavelength, galaxy_flux = get_redshifted_spectrum(galaxy_wavelength, galaxy_flux, redshift)
+        galaxy_spectrum = Spectrum1D(spectral_axis=galaxy_wavelength * u.AA, flux=galaxy_flux*u.erg/(u.cm**2 * u.s))
 
-        input_wavelength = galaxy_wavelength * u.AA
-        input_flux = galaxy_flux * u.Unit('erg cm-2 s-1')
-        input_spectrum = Spectrum1D(spectral_axis=input_wavelength, flux=input_flux)
+        galaxy_spectrum = SourceSpectrum.from_spectrum1d(galaxy_spectrum)
 
-        resampler = FluxConservingResampler()
+        redshifted_galaxy_spectrum = SourceSpectrum(galaxy_spectrum.model, z=redshift, z_type='conserve_flux')
 
-        new_disp_grid = wavelength * u.AA
+        input_spectrum = redshifted_galaxy_spectrum.to_spectrum1d(galaxy_wavelength * u.AA)
 
-        new_resampled_spectrum = resampler(input_spectrum, new_disp_grid)
+        new_resampled_spectrum = resample_spectrum(input_spectrum)
 
         galaxy_magnitude_flux = apparent_magnitude_to_flux(magnitude, zero_magnitude_flux.value) * u.Unit('erg cm-2 s-1')
 
@@ -93,7 +91,7 @@ def get_emission_line_values(wavelength: [], flux: float, lamda: float, line_fwh
     return spectrum.photon_flux.value
 
 
-def get_configured_sky_spectrum(parameters):
+def get_configured_background_sky_spectrum(parameters):
     num_points = 40001
     data = np.empty(num_points, dtype=[
         ('wavelength', float),
