@@ -67,7 +67,7 @@ export function defaultLinePlotOptions(
             const disp_value = Number(value).toExponential(1);
             const exponent = getExponent(Number(value).toExponential(1));
 
-            return Math.abs(exponent) >= 2 ? disp_value : String(value);
+            return exponent >= 2 || exponent <= -3 ? disp_value : String(value);
           },
         },
       },
