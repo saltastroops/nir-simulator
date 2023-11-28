@@ -59,7 +59,7 @@ def get_galaxy_flux_values(wavelength: [], galaxy_type: str, age: str, has_emiss
         file_path = FILES_BASE_DIR / "data_sheets" / "adjusted_program_datasheets" / filename
         galaxy_wavelength, galaxy_flux = read_csv_file(file_path)
 
-        galaxy_spectrum = Spectrum1D(spectral_axis=galaxy_wavelength * u.AA, flux=galaxy_flux*u.erg/(u.cm**2 * u.s))
+        galaxy_spectrum = Spectrum1D(spectral_axis=galaxy_wavelength * u.AA, flux=galaxy_flux*u.erg/(u.cm**2 * u.s * u.AA))
 
         galaxy_spectrum = SourceSpectrum.from_spectrum1d(galaxy_spectrum)
 
