@@ -115,8 +115,7 @@ def get_sources_spectrum(form_data):
             star_flux = get_stellar_flux_values(data['wavelength'], float(source["temperature"]), float(source["magnitude"]))
             data['sources_flux'] = data['sources_flux'] + star_flux
         elif source["spectrumType"] == "Galaxy":
-            has_emission_line = False
-            galaxy_flux = get_galaxy_flux_values(data['wavelength'], source['type'], source["age"], has_emission_line, float(source["magnitude"]), float(source["redshift"]))
+            galaxy_flux = get_galaxy_flux_values(data['wavelength'], source['type'], source["age"], source['hasEmissionLines'], float(source["magnitude"]), float(source["redshift"]))
             data['sources_flux'] = data['sources_flux'] + galaxy_flux
         elif source["spectrumType"] == "Emission Line":
             emission_line_flux = get_emission_line_values(data['wavelength'], float(source["flux"]), float(source["centralWavelength"]), float(source["fwhm"]), float(source["redshift"]))

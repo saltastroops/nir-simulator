@@ -13,6 +13,8 @@ interface GalaxyParameters {
   type: string;
   age: string;
   redshift: string;
+  hasEmissionLines: boolean;
+
 }
 
 export class Galaxy implements Spectrum {
@@ -21,6 +23,7 @@ export class Galaxy implements Spectrum {
   public type = "S0";
   public age = "Young";
   public redshift = "0";
+  public hasEmissionLines = true;
 
   public constructor(parameters?: GalaxyParameters) {
     if (parameters) {
@@ -28,6 +31,7 @@ export class Galaxy implements Spectrum {
       this.type = parameters.type;
       this.age = parameters.age;
       this.redshift = parameters.redshift;
+      this.hasEmissionLines = parameters.hasEmissionLines
     }
   }
 
@@ -72,6 +76,7 @@ export class Galaxy implements Spectrum {
       type: this.type,
       age: this.age,
       redshift: parseFloat(this.redshift),
+      hasEmissionLines: this.hasEmissionLines,
     };
   }
 
@@ -86,14 +91,15 @@ interface Props {
 }
 
 export default function GalaxyPanel({ galaxy, update }: Props) {
-  const { magnitude, type, age, redshift, errors } = galaxy;
+  const { magnitude, type, age, redshift, hasEmissionLines, errors } = galaxy;
 
-  const updateParameter = (parameter: string, newValue: string) => {
+  const updateParameter = (parameter: string, newValue: string | boolean) => {
     const updatedParameters = {
       magnitude,
       type,
       age,
       redshift,
+      hasEmissionLines,
       [parameter]: newValue,
     };
     update(new Galaxy(updatedParameters));
@@ -104,6 +110,7 @@ export default function GalaxyPanel({ galaxy, update }: Props) {
   const typeId = `fwhm-${idCounter}`;
   const ageId = `flux-${idCounter}`;
   const redshiftId = `redshift-${idCounter}`;
+  const hasEmissionLinesId = `hasEmissionLines-${idCounter}`;
 
   return (
     <div>
@@ -165,6 +172,21 @@ export default function GalaxyPanel({ galaxy, update }: Props) {
           value={redshift}
           onChange={(event) => updateParameter("redshift", event.target.value)}
         />
+      </div>
+
+      {/* Has emission lines? */}
+      <div>
+        <label htmlFor={hasEmissionLinesId} className="pt-6">
+          <input
+              id={hasEmissionLinesId}
+              type="checkbox"
+              checked={hasEmissionLines}
+              onChange={(event) =>
+                  updateParameter("hasEmissionLines", event.target.checked)
+              }
+          />
+          <span className="ml-2">Automatically add emission lines</span>
+        </label>
       </div>
 
       {/* errors */}
