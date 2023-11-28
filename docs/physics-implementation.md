@@ -99,11 +99,11 @@ Hence atmospheric extinction can be described with a modification factor
 $$
 \epsilon_{\rm atm}(\lambda) = 10^{-0.4\kappa(\lambda)\sec z}
 $$
- The extinction coefficient $\kappa$ is provided by means of a csv file.
+The extinction coefficient $\kappa$ is provided by means of a csv file.
 
 ## Background
 
-TBD
+The background is read from a file. Currently solar and lunar properties are not taken into consideration.
 
 ## Propagation through the telescope
 
@@ -228,6 +228,108 @@ $$
 
 For a diffuse flux we assume that the flux is constant and that the source is "infinite". Then each fibre loses flux due to seeing. But it also gains flux from its surroundings, and the two effects cancel exactly. Hence in this case seeing has no effect on the flux.
 
+This in particular means that seeing does not affect the sky background.
+
 #### Realistic extended source
 
 TBD.
+
+## Signal-to-noise ratio
+
+Strictly speaking, defining a signal-to-noise ratio (SNR) for a specific wavelength is impossible, as the number of photons for a particular wavelength is 0. We thus have to define the SNR for a wavelength interval. A reasonable choice (and the one adopted for the simulator) is to calculate the SNR for the resolution element.Formally,  if $\Delta\lambda$ is the wavelength resolution and $\sigma$ denotes the SNR, we define
+$$
+\sigma(\lambda) \equiv \sigma([\lambda - \frac{\Delta\lambda}{2}, \lambda + \frac{\Delta\lambda}{2})
+$$
+The wavelength resolution is given by (see Section 11.4 of F. R. Chromey, To Measure the Sky: An Introduction to Observational Astronomy (second edition))
+$$
+\Delta\lambda = r_{\rm an}\phi_{\rm fibre}\frac{D_{\rm tel}}{D_{\rm col}}\frac{\sigma\cos\theta}{m}
+$$
+with the telescope aperture $D_{\rm tel}$, the diameter $D_{\rm col}$ of the collimator lens, the groove spacing $\sigma$ of the grating, the outgoing angle $\theta$ from the grating and the dispersion order $m$. The anamorphic magnification is
+$$
+r_{\rm an} = \frac{\cos\alpha}{\cos\theta}
+$$
+where $\alpha$ is the grating angle. The angular size of the fibre on the sky is
+$$
+\phi_{\rm fibre} = \frac{w_{\rm fibre}}{f_{\rm tel}}
+$$
+where $w_{\rm fibre}$ and $f_{\rm tel}$ are the width of the fibre and the focal length of the primary mirror, respectively. Assuming Littrow diffraction, we have $\theta = -\alpha$, and hence $\cos\theta = \cos\alpha$ and $r_{\rm an} = 1$, so that the equation for the resolution can be simplified:
+$$
+\Delta\lambda = \phi_{\rm fibre}\frac{D_{\rm tel}}{D_{\rm col
+}}\sigma\cos\alpha
+$$
+But with the focal length $f_{\rm col}$ of the collimator we also have
+$$
+\frac{f_{\rm tel}}{D_{\rm tel}} = \frac{f_{\rm col}}{D_{\rm col}}
+$$
+and hence finally arrive at
+$$
+\Delta\lambda = \phi_{\rm fibre}\frac{f_{\rm tel}}{f_{\rm col}}\sigma\cos\alpha
+$$
+In an actual calculation, the photon rate is represented by an array of discrete values at different wavelengths, and these wavelengths are equidistant. Let $l$ be the distance between neighbouring wavelengths. Then we make two simplifying assumptions. First, we assume the (photon) rate is constant on a wavelength scale of $l$. In other words, we can integrate over the rate by adding up discrete rate values.
+
+Second, we assume the wavelength resolution can be approximated by $\Delta\lambda^{\prime}$ defined by
+$$
+\Delta\lambda^{\prime} = l \left(1 + 2\,{\rm ceil}\left(\frac{\Delta\lambda - l}{2l}\right)\right)
+$$
+where ${\rm ceil}(x)$ is the smallest integer which is greater than or equal to $x$. This assumption simply means that the wavelength resolution element around $\lambda$ can be exactly covered by wavelength bins.
+
+In order to calculate the SNR, we need to calculate the number $N(\lambda, e, T)$ of photons between $\lambda - \Delta\lambda^{\prime} / 2$ and $\lambda + \Delta\lambda^{\prime} / 2$ for $e$ exposures with an exposure time $T$ per exposure. With  
+$$
+k \equiv \frac{\Delta\lambda^{\prime} - l}{2l} = {\rm ceil}\left(\frac{\Delta\lambda}{2} - \frac{l}{2}\right)
+$$
+we can write this number as
+$$
+N(\lambda, e, T) = \sum_{i=-k}^{k}\dot{n}\left(\lambda + \frac{il}{2}\right) \cdot e\cdot T
+$$
+Now let $R$ be the readout noise per exposure. Then for Fowler sampling
+$$
+R_{\rm Fowler} = \frac{r^{2}}{s / 2}
+$$
+
+and for up-the-ramp sampling
+$$
+R_{\rm UpTheRamp} = \frac{r^{2}}{s / 12}
+$$
+In both cases $r$ and $s$ denote the read noise and number of samplings, respectively. *Note: These formulae will change.*
+
+The SNR is given by 
+$$
+\sigma(\lambda) = \frac{N_{\rm target}(\lambda, e, T)}{\sqrt{N_{\rm target}(\lambda, e, T) + N_{\rm sky}(\lambda, e, T) + eR}}
+$$
+
+We may also be interested in the exposure time required to achieve a given SNR. To calculate this, we first define
+$$
+C_{\rm target}(\lambda) \equiv \frac{N_{\rm target}(\lambda, e, T)}{e\,T}
+$$
+and
+$$
+C_{\rm sky} \equiv \frac{N_{\rm sky}(\lambda, e, T)}{e\,T}
+$$
+so that
+$$
+\sigma(\lambda) = \frac{C_{\rm target}(\lambda)\,e\,T}{\sqrt{C_{\rm target}(\lambda)\,e\,T +C_{\rm sky}(\lambda)\,e\,T + eR}}
+$$
+For simplicitly, wavelength dependence will not be explicitlymentioned in the following. Rearranging and squaring both sides gives
+$$
+\sigma^{2}(C_{\rm target}\,e\,T + C_{\rm sky}\,e\,T + eR) = C_{\rm target}^{2}e^{2}T^{2}
+$$
+and after some further rearranging we get
+$$
+T^{2} - \frac{\sigma^{2}(C_{\rm target} + C_{\rm sky})e}{C_{\rm target}^{2}e^{2}}T - \frac{\sigma^{2}eR}{C_{\rm target}^{2}e^{2}} = T^{2} - \frac{\sigma^{2}(C_{\rm target} + C_{\rm sky})}{C_{\rm target}^{2}e}T - \frac{\sigma^{2}R}{C_{\rm target}^{2}e} = 0
+$$
+With
+$$
+p \equiv -\frac{\sigma^{2}(C_{\rm target} + C_{\rm sky})}{C_{\rm target}^{2}e}
+$$
+and
+$$
+q \equiv -\frac{\sigma^{2}R}{C_{\rm target}^{2}e}
+$$
+the equation simplifies to
+$$
+T^{2} + p\,T + q = 0
+$$
+This is a quadratic equation, and its positive solution is
+$$
+T = -\frac{p}{2} + \sqrt{\left(\frac{p}{2}\right)^{2} - q}
+$$
