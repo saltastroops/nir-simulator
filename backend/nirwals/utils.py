@@ -2,6 +2,7 @@ from functools import lru_cache
 
 import numpy as np
 from specutils.manipulation import FluxConservingResampler
+from scipy.constants import Planck, speed_of_light, Boltzmann
 from astropy import units as u
 from specutils import Spectrum1D
 
@@ -11,6 +12,11 @@ conv = {
     0: lambda x: float(x),  # conversion fn for column 0
     1: lambda x: float(x),  # conversion fn for column 1
 }
+
+# Universal Constants
+h = Planck * 10**7    # joules*seconds -> erg*seconds
+c = speed_of_light
+kb = Boltzmann * 10**7  # joules/kelvin -> erg/kelvin
 
 
 def get_redshifted_spectrum(wavelength, flux, redshift: float):
@@ -38,4 +44,10 @@ def resample_spectrum(
     wavelength_range = np.linspace(minimum_wavelength, maximum_wavelength, number_of_points) * u.AA
     resampler = FluxConservingResampler()
     return resampler(input_spectrum, wavelength_range)
+
+
+def blackbody_spectrum(wavelength, temperature):
+    exponent = h * c / (wavelength * kb * temperature)
+    intensity = 2 * h * c**2 / wavelength**5 / (np.exp(exponent) - 1)
+    return intensity
 

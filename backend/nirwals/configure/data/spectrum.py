@@ -2,7 +2,6 @@ import pathlib
 from synphot import SpectralElement
 import numpy as np
 from os import getenv
-from scipy.constants import Planck, speed_of_light, Boltzmann, Stefan_Boltzmann
 from specutils import Spectrum1D
 from astropy import units as u
 from nirwals.utils import read_csv_file
@@ -12,13 +11,6 @@ from synphot.models import BlackBodyNorm1D, GaussianFlux1D
 from nirwals.utils import get_redshifted_spectrum, resample_spectrum
 
 FILES_BASE_DIR = pathlib.Path(getenv("FILES_BASE_DIR"))
-
-
-# Universal Constants
-h = Planck * 10**7    # joules*seconds -> erg*seconds
-c = speed_of_light * 10**10
-kb = Boltzmann * 10**7  # joules/kelvin -> erg/kelvin
-sigma = Stefan_Boltzmann * 10**3    # watts/metres^2/Kelvin^4 -> erg/cm^2/seconds/Kelvin^4
 
 # J Bandpass constants
 zero_magnitude_flux = 3.40 * 10 ** (-10) * u.erg / (u.cm ** 2 * u.s)
