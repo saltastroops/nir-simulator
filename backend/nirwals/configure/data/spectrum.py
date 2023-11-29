@@ -4,8 +4,6 @@ import numpy as np
 from os import getenv
 from scipy.constants import Planck, speed_of_light, Boltzmann, Stefan_Boltzmann
 from specutils import Spectrum1D
-from specutils.manipulation import FluxConservingResampler, convolution_smooth
-from specutils.analysis import line_flux
 from astropy import units as u
 from nirwals.utils import read_csv_file
 
