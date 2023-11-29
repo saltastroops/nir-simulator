@@ -27,7 +27,7 @@ zero_magnitude_flux = 3.40 * 10 ** (-10) * u.erg / (u.cm ** 2 * u.s)
 j_bandpass = SpectralElement.from_filter('johnson_j')
 
 
-def apparent_magnitude_to_flux(magnitude, zero_mag_flux=1.0):
+def apparent_magnitude_to_flux(magnitude, zero_mag_flux):
     return zero_mag_flux * 10**(-0.4 * magnitude)
 
 
@@ -37,17 +37,15 @@ def get_stellar_flux_values(wavelength: [], temperature: float, mag: float):
 
     star_blackbody_flux = bb(wavelength * u.AA)
 
-    star_magnitude_flux = apparent_magnitude_to_flux(mag, zero_magnitude_flux.value) * u.Unit('erg cm-2 s-1')
+    star_magnitude_flux = apparent_magnitude_to_flux(mag, zero_magnitude_flux.value) * u.erg/(u.cm**2 * u.s * u.AA)
 
     stellar_spectrum = Spectrum1D(spectral_axis=wavelength * u.AA, flux=star_blackbody_flux)
 
-    convolved_stellar_spectrum = convolution_smooth(stellar_spectrum, j_bandpass.waveset)
+    normalized_stellar_spectrum = SourceSpectrum.from_spectrum1d(stellar_spectrum).normalize(star_magnitude_flux, j_bandpass)
 
-    normalizer = star_magnitude_flux/line_flux(convolved_stellar_spectrum)
+    normalized_stellar_spectrum = normalized_stellar_spectrum.to_spectrum1d()
 
-    normalized_star_radiation = stellar_spectrum.multiply(normalizer)
-
-    return normalized_star_radiation.photon_flux.value
+    return normalized_stellar_spectrum.photon_flux.value
 
 
 def get_galaxy_flux_values(wavelength: [], galaxy_type: str, age: str, has_emission_line: bool, magnitude: float, redshift: float):
@@ -69,15 +67,13 @@ def get_galaxy_flux_values(wavelength: [], galaxy_type: str, age: str, has_emiss
 
         new_resampled_spectrum = resample_spectrum(input_spectrum)
 
-        galaxy_magnitude_flux = apparent_magnitude_to_flux(magnitude, zero_magnitude_flux.value) * u.Unit('erg cm-2 s-1')
+        galaxy_magnitude_flux = apparent_magnitude_to_flux(magnitude, zero_magnitude_flux.value) * u.erg/(u.cm**2 * u.s * u.AA)
 
-        convolved_galaxy_spectrum = convolution_smooth(new_resampled_spectrum, j_bandpass.waveset)
+        normalized_galaxy_spectrum = SourceSpectrum.from_spectrum1d(new_resampled_spectrum).normalize(galaxy_magnitude_flux, j_bandpass)
 
-        normalizer = galaxy_magnitude_flux/line_flux(convolved_galaxy_spectrum)
+        normalized_galaxy_spectrum = normalized_galaxy_spectrum.to_spectrum1d()
 
-        normalized_galaxy_radiation = new_resampled_spectrum.multiply(normalizer)
-
-        return normalized_galaxy_radiation.photon_flux.value
+        return normalized_galaxy_spectrum.photon_flux.value
 
 
 def get_emission_line_values(wavelength: [], flux: float, lamda: float, line_fwhm: float, redshift: float):
