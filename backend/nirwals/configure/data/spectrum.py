@@ -23,7 +23,7 @@ kb = Boltzmann * 10**7  # joules/kelvin -> erg/kelvin
 sigma = Stefan_Boltzmann * 10**3    # watts/metres^2/Kelvin^4 -> erg/cm^2/seconds/Kelvin^4
 
 # J Bandpass constants
-zero_magnitude_flux = 3.02 * 10 ** (-10) * u.erg / (u.cm ** 2 * u.s)
+zero_magnitude_flux = 3.40 * 10 ** (-10) * u.erg / (u.cm ** 2 * u.s)
 j_bandpass = SpectralElement.from_filter('johnson_j')
 
 
