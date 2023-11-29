@@ -7,8 +7,8 @@ from astropy import units as u
 from nirwals.utils import read_csv_file
 
 from synphot import SourceSpectrum
-from synphot.models import BlackBodyNorm1D, GaussianFlux1D
-from nirwals.utils import get_redshifted_spectrum, resample_spectrum
+from synphot.models import GaussianFlux1D
+from nirwals.utils import get_redshifted_spectrum, resample_spectrum, blackbody_spectrum
 
 FILES_BASE_DIR = pathlib.Path(getenv("FILES_BASE_DIR"))
 
@@ -23,9 +23,7 @@ def apparent_magnitude_to_flux(magnitude, zero_mag_flux):
 
 def get_stellar_flux_values(wavelength: [], temperature: float, mag: float):
 
-    bb = SourceSpectrum(BlackBodyNorm1D, temperature=temperature)
-
-    star_blackbody_flux = bb(wavelength * u.AA)
+    star_blackbody_flux = blackbody_spectrum(wavelength * 1e-10, temperature) * u.erg/(u.cm**2 * u.s * u.AA)
 
     star_magnitude_flux = apparent_magnitude_to_flux(mag, zero_magnitude_flux.value) * u.erg/(u.cm**2 * u.s * u.AA)
 
@@ -38,7 +36,7 @@ def get_stellar_flux_values(wavelength: [], temperature: float, mag: float):
     return normalized_stellar_spectrum.photon_flux.value
 
 
-def get_galaxy_flux_values(wavelength: [], galaxy_type: str, age: str, has_emission_line: bool, magnitude: float, redshift: float):
+def get_galaxy_flux_values(galaxy_type: str, age: str, has_emission_line: bool, magnitude: float, redshift: float):
     galaxy_types = ["E", "Sb", "Sa", "Sc", "Sd", "S0"]
     age_types = ["Young", "Old"]
 
@@ -121,7 +119,7 @@ def get_configured_sources_spectrum(parameters):
             data['sources_flux'] = data['sources_flux'] + star_flux
         elif source["spectrumType"] == "Galaxy":
             has_emission_line = False
-            galaxy_flux = get_galaxy_flux_values(data['wavelength'], source['type'], source["age"], has_emission_line, float(source["magnitude"]), float(source["redshift"]))
+            galaxy_flux = get_galaxy_flux_values(source['type'], source["age"], has_emission_line, float(source["magnitude"]), float(source["redshift"]))
             data['sources_flux'] = data['sources_flux'] + galaxy_flux
         elif source["spectrumType"] == "Emission Line":
             emission_line_flux = get_emission_line_values(data['wavelength'], float(source["flux"]), float(source["centralWavelength"]), float(source["fwhm"]), float(source["redshift"]))
