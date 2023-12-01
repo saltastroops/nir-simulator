@@ -44,6 +44,7 @@ export function throughputFormData(setupData: SimulationSetupData) {
     grating: setupData.instrumentConfiguration.modeConfiguration.grating,
     grating_angle:
       setupData.instrumentConfiguration.modeConfiguration.gratingAngle,
+    seeing: setupData.earth.seeing,
     target_zd: setupData.earth.targetZenithDistance,
   };
 }
