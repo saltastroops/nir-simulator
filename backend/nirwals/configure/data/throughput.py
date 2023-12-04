@@ -40,6 +40,8 @@ def get_configured_throughput_spectrum(configuration):
 
     throughput_spectrum = SourceSpectrum(Const1D, amplitude=1 * units.THROUGHPUT)
 
+    data['throughput'] = throughput_spectrum(data['wavelength'])
+
     if configuration["mode"] == "Spectroscopy":
         slit_width = float(configuration["slit_width"])
         target_zd = float(configuration["target_zd"])
@@ -47,13 +49,15 @@ def get_configured_throughput_spectrum(configuration):
         sigma_squared = (1 / (8*np.log(2))) * (seeing**2 * (1 / np.cos(target_zd * np.pi / 180))**(6/5) + 0.6**2)
         slit_losses = 1 - np.exp(-(slit_width/2)**2/sigma_squared)
 
-        throughput_spectrum = SourceSpectrum(Const1D, amplitude=slit_losses * units.THROUGHPUT)
+        spectroscopy_mode_spectrum = SourceSpectrum(Const1D, amplitude=slit_losses * units.THROUGHPUT)
+
+        data['throughput'] = data['throughput'] * spectroscopy_mode_spectrum(data['wavelength'])
 
     for filename in get_configuration_filenames(configuration):
         wavelength, modifier = read_csv_file(filename)
         modifier_spectrum = SourceSpectrum(Const1D, amplitude=modifier * units.THROUGHPUT)
 
         data['wavelength'] = wavelength
-        data['throughput'] = throughput_spectrum(wavelength) * modifier_spectrum(wavelength)
+        data['throughput'] = data['throughput'] * modifier_spectrum(wavelength)
 
     return data['wavelength'], data['throughput']
