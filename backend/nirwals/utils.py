@@ -32,7 +32,7 @@ def read_csv_file(filename):
 
 def resample_spectrum(
         input_spectrum: Spectrum1D,
-        resampler: Union[FluxConservingResampler, LinearInterpolatedResampler, SplineInterpolatedResampler],
+        resampler:  FluxConservingResampler | LinearInterpolatedResampler | SplineInterpolatedResampler,
         minimum_wavelength=9000,
         maximum_wavelength=17000,
         number_of_points=NUMBER_OF_POINTS
