@@ -135,7 +135,7 @@ export function Simulator() {
       <div ref={instrumentConfigDivRef} style={{ display: "none" }}>
         <InstrumentConfigurationPanel
           instrumentConfiguration={setup.instrumentConfiguration}
-          setupData={setup.data}
+          setupData={setup}
           update={(instrumentConfiguration: InstrumentConfiguration) =>
             updateSetup("instrumentConfiguration", instrumentConfiguration)
           }
