@@ -9,35 +9,28 @@ from nirwals.utils import read_csv_file
 FILES_BASE_DIR = pathlib.Path(getenv("FILES_BASE_DIR"))
 
 
-def get_slit_modifier(constant):
-    num_points = 40001
-    wavelength = np.linspace(9000, 17000, 40001)
-    modifier = np.full(num_points, constant, dtype=float)
-    return wavelength, modifier
-
-
-def get_affected_filenames(form_data):
+def get_configuration_filenames(configuration):
     filenames = [
         FILES_BASE_DIR / "data_sheets" / "adjusted_program_datasheets" / "detectorqe.csv",
         FILES_BASE_DIR / "data_sheets" / "adjusted_program_datasheets" / "combinedtelescope.csv"
     ]
-    if form_data["mode"] == "Imaging":
-        if form_data["filter"] == "clear-filter":
+    if configuration["mode"] == "Imaging":
+        if configuration["filter"] == "clear-filter":
             filenames.append(FILES_BASE_DIR  / "data_sheets" /"adjusted_program_datasheets"/"clearfiltertransmission.csv")
-        elif form_data["filter"] == "lwbf":
+        elif configuration["filter"] == "lwbf":
             filenames.append(FILES_BASE_DIR / "data_sheets" / "adjusted_program_datasheets" / "lwbftransmission.csv")
-    elif form_data["mode"] == "Spectroscopy":
-        if form_data["filter"] == "clear-filter":
+    elif configuration["mode"] == "Spectroscopy":
+        if configuration["filter"] == "clear-filter":
             filenames.append(FILES_BASE_DIR / "data_sheets" / "adjusted_program_datasheets" / "clearfiltertransmission.csv")
-        elif form_data["filter"] == "lwbf":
+        elif configuration["filter"] == "lwbf":
             filenames.append(FILES_BASE_DIR / "data_sheets" / "adjusted_program_datasheets" / "lwbftransmission.csv")
-        if form_data["grating"] == "950":
+        if configuration["grating"] == "950":
             filenames.append(
-                FILES_BASE_DIR / "data_sheets" / "adjusted_program_datasheets" / f"tempVPH{form_data['grating_angle']}.csv")
+                FILES_BASE_DIR / "data_sheets" / "adjusted_program_datasheets" / f"tempVPH{configuration['grating_angle']}.csv")
     return list(set(filenames))
 
 
-def get_modifiers(configuration):
+def get_configured_throughput_spectrum(configuration):
     num_points = 40001
     data = np.empty(num_points, dtype=[
         ('wavelength', float),
@@ -56,7 +49,7 @@ def get_modifiers(configuration):
 
         throughput_spectrum = SourceSpectrum(Const1D, amplitude=slit_losses * units.THROUGHPUT)
 
-    for filename in get_affected_filenames(configuration):
+    for filename in get_configuration_filenames(configuration):
         wavelength, modifier = read_csv_file(filename)
         modifier_spectrum = SourceSpectrum(Const1D, amplitude=modifier * units.THROUGHPUT)
 
@@ -67,4 +60,4 @@ def get_modifiers(configuration):
 
 
 def get_throughput_plot_data(configuration):
-    return get_modifiers(configuration)
+    return get_configured_throughput_spectrum(configuration)
