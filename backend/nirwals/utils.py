@@ -1,7 +1,7 @@
 from functools import lru_cache
 
 import numpy as np
-from specutils.manipulation import FluxConservingResampler
+from specutils.manipulation import FluxConservingResampler, LinearInterpolatedResampler, SplineInterpolatedResampler
 from astropy import units as u
 from specutils import Spectrum1D
 
@@ -31,11 +31,11 @@ def read_csv_file(filename):
 
 def resample_spectrum(
         input_spectrum: Spectrum1D,
+        resampler:  FluxConservingResampler | LinearInterpolatedResampler | SplineInterpolatedResampler,
         minimum_wavelength=9000,
         maximum_wavelength=17000,
         number_of_points=NUMBER_OF_POINTS
 ):
     wavelength_range = np.linspace(minimum_wavelength, maximum_wavelength, number_of_points) * u.AA
-    resampler = FluxConservingResampler()
-    return resampler(input_spectrum, wavelength_range)
 
+    return resampler(input_spectrum, wavelength_range)
