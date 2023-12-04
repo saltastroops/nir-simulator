@@ -249,7 +249,7 @@ Let us start with the first question. The wavelength resolution is given by (see
 $$
 \Delta\lambda = r_{\rm an}\phi_{\rm fibre}\frac{D_{\rm tel}}{D_{\rm col}}\frac{\sigma\cos\theta}{m}
 $$
-with the telescope aperture $D_{\rm tel}$, the diameter $D_{\rm col}$ of the collimator lens, the groove spacing $\sigma$ of the grating, the outgoing angle $\theta$ from the grating and the dispersion order $m$. The anamorphic magnification is
+with the telescope aperture $D_{\rm tel}$, the diameter $D_{\rm col}$ of the collimator lens, the grating constant (groove spacing) $\sigma$ of the grating, the outgoing angle $\theta$ from the grating and the dispersion order $m$. The anamorphic magnification is
 $$
 r_{\rm an} = \frac{\cos\alpha}{\cos\theta}
 $$
@@ -331,7 +331,7 @@ Let us also define
 $$
 N(\lambda, e, T) \equiv \int_{\lambda - i\cdot\lambda/2}^{\lambda+i\cdot\lambda/2}\dot{n}(\lambda){\rm d}\lambda \cdot e\,T \equiv C(\lambda)\cdot e\,T
 $$
-Then the SNR is given by 
+with the number of exposures $e%$ and the exposure time $T$ for a single exposure. Then the SNR is given by 
 $$
 \sigma(\lambda) = \frac{N_{\rm target}(\lambda, e, T)}{\sqrt{N_{\rm target}(\lambda, e, T) + N_{\rm sky}(\lambda, e, T) + eR}}
 $$
