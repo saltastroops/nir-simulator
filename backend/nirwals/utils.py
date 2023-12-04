@@ -1,5 +1,4 @@
 from functools import lru_cache
-from typing import Union
 
 import numpy as np
 from specutils.manipulation import FluxConservingResampler, LinearInterpolatedResampler, SplineInterpolatedResampler
