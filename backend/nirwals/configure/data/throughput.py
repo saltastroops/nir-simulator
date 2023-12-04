@@ -57,7 +57,3 @@ def get_configured_throughput_spectrum(configuration):
         data['throughput'] = throughput_spectrum(wavelength) * modifier_spectrum(wavelength)
 
     return data['wavelength'], data['throughput']
-
-
-def get_throughput_plot_data(configuration):
-    return get_configured_throughput_spectrum(configuration)
