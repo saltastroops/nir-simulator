@@ -9,9 +9,24 @@ import { button } from "../utils.ts";
 import { SimulationSetup } from "../Simulator.tsx";
 import { spectra } from "../../services.ts";
 import { useMemo, useState } from "react";
-import { defaultLinePlotOptions } from "../plots/PlotOptions.ts";
-import { LinePlot } from "../plots/LinePlot.tsx";
-import { ChartContent } from "../instrument/InstrumentConfigurationPanel.tsx";
+import {
+  defaultLinePlotOptions,
+  defaultSpectrumPlotOptions,
+  LineOptions,
+} from "../plots/PlotOptions.ts";
+import { SpectrumPlot } from "../plots/SpectrumPlot.tsx";
+
+export interface ChartContent {
+  chartData: {
+    x: number[];
+    spectrum: number[];
+    sky?: number[];
+    spectrumColor: string;
+    skyColor: string;
+    options: LineOptions;
+  };
+  requested: boolean;
+}
 
 interface Props {
   setup: SimulationSetup;
@@ -24,12 +39,14 @@ export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
   const [sourceChartContent, setSourceChartContent] = useState<ChartContent>({
     chartData: {
       x: [],
-      y: [],
-      lineColor: "rgb(255, 0, 0)",
+      spectrum: [],
+      sky: [],
+      spectrumColor: "rgba(255, 0, 0, 1)",
+      skyColor: "rgba(75, 100, 192, 0.2)",
       options: defaultLinePlotOptions(
         "Wavelength (\u212B)",
         "Flux (photons sec\u002D\u00B9 \u212B cm\u002D\u00B2)",
-          "Source Spectrum"
+        "Source Spectrum",
       ),
     },
     requested: false,
@@ -37,35 +54,12 @@ export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
   const [error, setError] = useState<string | null>(null);
   const sourceChart = useMemo(
     () => (
-      <LinePlot
+      <SpectrumPlot
         chartContent={sourceChartContent}
         isOutdated={false && sourceChartContent.requested}
       />
     ),
     [sourceChartContent],
-  );
-
-  const [skyChartContent, setSkyChartContent] = useState<ChartContent>({
-    chartData: {
-      x: [],
-      y: [],
-      lineColor: "rgb(75,100,192)" ,
-      options: defaultLinePlotOptions(
-          "Wavelength (\u212B)",
-          "Flux (photons sec\u002D\u00B9 \u212B cm\u002D\u00B2)",
-          "Sky Background Spectrum"
-      ),
-    },
-    requested: false,
-  });
-  const skyChart = useMemo(
-      () => (
-          <LinePlot
-              chartContent={skyChartContent}
-              isOutdated={false && skyChartContent.requested}
-          />
-      ),
-      [skyChartContent],
   );
 
   const updatePlots = async () => {
@@ -75,26 +69,22 @@ export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
       const skyData = spectraData.sky;
 
       setSourceChartContent((previousChartContent) => {
+        const options = defaultSpectrumPlotOptions(
+          "Wavelength (\u212B)",
+          "Flux (photons sec\u002D\u00B9 \u212B cm\u002D\u00B2)",
+          "Source Spectrum",
+          sourceData.y,
+        );
+        console.log(previousChartContent);
         const updatedChartData = {
           x: sourceData.x,
-          y: sourceData.y,
-          lineColor: previousChartContent.chartData.lineColor,
-          options: previousChartContent.chartData.options,
+          spectrum: sourceData.y,
+          sky: skyData.y,
+          spectrumColor: previousChartContent.chartData.spectrumColor,
+          skyColor: previousChartContent.chartData.skyColor,
+          options,
         };
         setError(null);
-        return {
-          chartData: updatedChartData,
-          requested: true,
-        };
-      });
-
-      setSkyChartContent((previousChartContent) => {
-        const updatedChartData = {
-          x: skyData.x,
-          y: skyData.y,
-          lineColor: previousChartContent.chartData.lineColor,
-          options: previousChartContent.chartData.options,
-        };
         return {
           chartData: updatedChartData,
           requested: true,
@@ -162,15 +152,10 @@ export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
             {sourceChart}
           </div>
         </div>
-        <div className="bg-gray-50 mt-2">
-          <div className={!error ? "tile" : "tile notification is-danger"}>
-            {skyChart}
-          </div>
-        </div>
         {error && (
-            <div className="tile">
-              <p className={"has-text-danger"}>{error}</p>
-            </div>
+          <div className="tile">
+            <p className={"has-text-danger"}>{error}</p>
+          </div>
         )}
       </div>
     </div>
