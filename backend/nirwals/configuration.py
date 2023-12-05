@@ -2,7 +2,7 @@ import dataclasses
 from pathlib import Path
 
 from astropy import units as u
-from typing import Literal, NamedTuple
+from typing import Literal
 
 from astropy.coordinates import Angle
 from astropy.units import Quantity
@@ -218,7 +218,7 @@ def configuration(data: dict) -> Configuration:
         spectrum_type = s["spectrumType"]
         match spectrum_type:
             case "Blackbody":
-                spectrum = Blackbody(
+                spectrum: Spectrum = Blackbody(
                     magnitude=float(s["magnitude"]),
                     temperature=float(s["temperature"]) * u.K,
                 )
@@ -237,7 +237,7 @@ def configuration(data: dict) -> Configuration:
                     redshift=float(s["redshift"]),
                     with_emission_lines=False,
                 )
-            case other:
+            case _:
                 raise ValueError(f"Unsupported spectrum type: {spectrum_type}")
 
         spectrum_parts.append(spectrum)

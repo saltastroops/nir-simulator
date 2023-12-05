@@ -1,4 +1,4 @@
-from io import StringIO, BytesIO
+from io import BytesIO
 
 import pytest
 from astropy import units as u

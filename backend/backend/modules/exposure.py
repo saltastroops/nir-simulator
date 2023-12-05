@@ -1,5 +1,5 @@
 import csv
-from typing import List, Union, Tuple
+from typing import List, Union, Tuple, Any, cast
 
 import numpy as np
 
@@ -15,8 +15,8 @@ class Galaxy:
     def __init__(self, filename: str, name: str):
         self.filename = filename
         self.name = name
-        self.wavelength = []  # Wavelength data
-        self.flux = []  # Flux data
+        self.wavelength: list[float] = []  # Wavelength data
+        self.flux: list[float] = []  # Flux data
 
 
 # Class to manage sources
@@ -49,7 +49,9 @@ class CustomData:
 
 
 class GalaxySource:
-    def __init__(self, typ: str, age: str, emission_line: bool, magnitude: float, redshift: float):
+    def __init__(
+        self, typ: str, age: str, emission_line: bool, magnitude: float, redshift: float
+    ):
         self.type = "galaxy"
         self.typ = typ
         self.age = age
@@ -59,7 +61,7 @@ class GalaxySource:
 
 
 def get_background_spectrum() -> Tuple[List[float], List[float]]:
-    with open("1-1-nirsky.csv", 'r') as file:
+    with open("1-1-nirsky.csv", "r") as file:
         filereader = csv.reader(file, delimiter=",", quotechar="|")
         data = np.array(list(filereader), dtype=float)
 
@@ -105,20 +107,22 @@ def handle_star(source, wavelength, spectra):
 
     # Calculate star radiance using Planck's radiation law
     star_rad = (
-            (2 * h * c**2)
-            / (wavelength**5)
-            / (np.exp((h * c) / (kb * temperature * wavelength)) - 1)
-            * 10**30
-            / (10**7)
+        (2 * h * c**2)
+        / (wavelength**5)
+        / (np.exp((h * c) / (kb * temperature * wavelength)) - 1)
+        * 10**30
+        / (10**7)
     )
 
     # Flux of a star with apparent magnitude = mag at 1.26 microns
     star_mag_flux = 3.02 * 10 ** (-10) * 10 ** (-0.4 * mag)
 
-    # Create a normalization factor to normalize Flux at mag to match Planck Radiation Law
+    # Create a normalization factor to normalize Flux at mag to match Planck Radiation
+    # Law
     normalizer = star_rad[18000] / star_mag_flux
 
-    # Normalize stellar radiance to flux based upon apparent magnitude, ergs/sec/cm^2/angstrom
+    # Normalize stellar radiance to flux based upon apparent magnitude,
+    # ergs/sec/cm^2/angstrom
     star_flux = star_rad / normalizer
 
     # Adjust to photon count and add to spectra
@@ -130,14 +134,20 @@ def handle_star(source, wavelength, spectra):
 
 # Function to handle EmissionLine sources
 def handle_emission_line(source, spectra):
-    wavelength, fwhm, flux, redshift = source.wavelength, source.fwhm, source.flux, source.redshift
+    wavelength, fwhm, flux, redshift = (
+        source.wavelength,
+        source.fwhm,
+        source.flux,
+        source.redshift,
+    )
 
     central_wavelength = wavelength * (1 + redshift)
     linesig = fwhm / 2.35
 
     line_profile = (
-            flux * (1 / (linesig * np.sqrt(2 * np.pi))) *
-            np.exp(-((wavelength - central_wavelength) ** 2 / (2 * linesig**2)))
+        flux
+        * (1 / (linesig * np.sqrt(2 * np.pi)))
+        * np.exp(-((wavelength - central_wavelength) ** 2 / (2 * linesig**2)))
     )
 
     # Adjust to photon count and add to spectra
@@ -159,7 +169,11 @@ def handle_custom_data(source, wavelength, spectra):
 # Function to handle GalaxySource sources
 def handle_galaxy(source, wavelength, spectra, galaxy_data):
     typ, age, emission_line, mag, redshift = (
-        source.typ, source.age, source.emission_line, source.magnitude, source.redshift
+        source.typ,
+        source.age,
+        source.emission_line,
+        source.magnitude,
+        source.redshift,
     )
     current_galaxy = get_galaxy(typ, age, emission_line, galaxy_data)
 
@@ -167,7 +181,7 @@ def handle_galaxy(source, wavelength, spectra, galaxy_data):
     starting_wavelength = 2 * round(starting_wavelength / 2, 1)
 
     starting_index = current_galaxy.wavelength.index(starting_wavelength)
-    selection = current_galaxy.flux[starting_index:starting_index + 40001]
+    selection = current_galaxy.flux[starting_index : starting_index + 40001]
     galmagflux = 3.02 * 10 ** (-10) * 10 ** (-0.4 * mag)
 
     normalizer = selection[18000] / galmagflux
@@ -184,15 +198,19 @@ def handle_galaxy(source, wavelength, spectra, galaxy_data):
     return spectra
 
 
-# Function to get the appropriate galaxy spectrum based on type, age, and emission scenario
+# Function to get the appropriate galaxy spectrum based on type, age, and emission
+# scenario
 def get_galaxy(
-        typ: str, age: str, emission_line: bool, galaxy_data: List[Tuple[str, str, bool, Galaxy]]
+    typ: str,
+    age: str,
+    emission_line: bool,
+    galaxy_data: List[Tuple[str, str, Galaxy]],
 ) -> Union[None, Galaxy]:
     for galaxy_typ, galaxy_age, galaxy in galaxy_data:
         if (
-                typ == galaxy_typ and
-                age == galaxy_age and
-                emission_line == galaxy.emission_line
+            typ == galaxy_typ
+            and age == galaxy_age
+            and emission_line == cast(Any, galaxy).emission_line
         ):
             return galaxy
     return None
@@ -224,7 +242,7 @@ def load_galaxy_data() -> List[Tuple[str, str, bool, Galaxy]]:
         ("Sd", "Young", True, load_galaxy("Young_Sb_type_emission.csv")),
         ("Sd", "Young", False, load_galaxy("Young_Sb_type_no_emission.csv")),
         ("Sd", "Old", True, load_galaxy("Old_Sb_type_emission.csv")),
-        ("Sd", "Old", False, load_galaxy("Old_Sb_type_no_emission.csv"))
+        ("Sd", "Old", False, load_galaxy("Old_Sb_type_no_emission.csv")),
     ]
 
 
@@ -234,8 +252,8 @@ def load_galaxy(filename: str) -> Galaxy:
     wavelength = data[:, 0]
     flux = data[:, 1]
     galaxy = Galaxy(filename, filename)
-    galaxy.wavelength = wavelength
-    galaxy.flux = flux
+    galaxy.wavelength = cast(Any, wavelength)
+    galaxy.flux = cast(Any, flux)
     return galaxy
 
 

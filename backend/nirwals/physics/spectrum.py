@@ -10,7 +10,7 @@ from synphot import (
     Empirical1D,
 )
 
-from constants import get_file_base_dir
+from constants import get_file_base_dir, FLUX
 from nirwals.configuration import (
     Configuration,
     Spectrum,
@@ -33,7 +33,7 @@ def _emission_line(
     central_wavelength: u.AA,
     fwhm: u.AA,
     redshift: float,
-    total_flux: u.erg / (u.cm**2 * u.s),
+    total_flux: FLUX,
 ) -> SourceSpectrum:
     return SourceSpectrum(
         GaussianFlux1D,
@@ -59,7 +59,10 @@ def _galaxy(
         raise ValueError(f"Unsupported galaxy type: {galaxy_type}")
 
     # Read in the galaxy spectrum from the relevant file.
-    filename = f"{age}_{galaxy_type}_type_{'emission' if with_emission_lines else 'no_emission'}.csv"
+    filename = (
+        f"{age}_{galaxy_type}_type_"
+        f"{'emission' if with_emission_lines else 'no_emission'}.csv"
+    )
     file_path = (
         get_file_base_dir() / "data_sheets" / "adjusted_program_datasheets" / filename
     )

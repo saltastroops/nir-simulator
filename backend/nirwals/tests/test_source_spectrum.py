@@ -5,7 +5,6 @@ import numpy as np
 import pytest
 
 from astropy import units as u
-from astropy.units import Quantity
 
 from nirwals.configuration import Blackbody, EmissionLine, GalaxyAge, GalaxyType, Galaxy
 from nirwals.physics.spectrum import source_spectrum

@@ -4,6 +4,9 @@ import pathlib
 from astropy import units as u
 
 
+FLUX = u.def_unit("TOTALFLAM", 1 * u.erg / (u.cm**2 * u.s))
+
+
 def get_file_base_dir() -> pathlib.Path:
     """
     Return the base directory for the data files.

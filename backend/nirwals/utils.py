@@ -23,19 +23,20 @@ def get_redshifted_spectrum(wavelength, flux, redshift: float):
 #  TODO Caching should be done Correctly
 @lru_cache
 def read_csv_file(filename):
-    spectra_data = np.loadtxt(filename, delimiter=",",  quotechar="|",  converters=conv)
+    spectra_data = np.loadtxt(filename, delimiter=",", quotechar="|", converters=conv)
     wavelength = spectra_data[:, 0]
     flux = spectra_data[:, 1]
     return wavelength, flux
 
 
 def resample_spectrum(
-        input_spectrum: Spectrum1D,
-        minimum_wavelength=9000,
-        maximum_wavelength=17000,
-        number_of_points=NUMBER_OF_POINTS
+    input_spectrum: Spectrum1D,
+    minimum_wavelength=9000,
+    maximum_wavelength=17000,
+    number_of_points=NUMBER_OF_POINTS,
 ):
-    wavelength_range = np.linspace(minimum_wavelength, maximum_wavelength, number_of_points) * u.AA
+    wavelength_range = (
+        np.linspace(minimum_wavelength, maximum_wavelength, number_of_points) * u.AA
+    )
     resampler = FluxConservingResampler()
     return resampler(input_spectrum, wavelength_range)
-

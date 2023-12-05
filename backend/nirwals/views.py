@@ -8,9 +8,8 @@ from synphot import units
 
 from nirwals.configuration import configuration
 from nirwals.configure.data.throughput import get_throughput_plot_data
-from nirwals.configure.data.spectrum import get_sources_spectrum, get_sky_spectrum
+from nirwals.configure.data.spectrum import get_sky_spectrum
 from nirwals.physics.spectrum import source_spectrum
-from nirwals.utils import resample_spectrum
 
 
 @csrf_exempt
