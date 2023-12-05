@@ -1,3 +1,5 @@
+from io import StringIO, BytesIO
+
 import pytest
 from astropy import units as u
 
@@ -21,8 +23,26 @@ def get_default_configuration():
     )
 
 
+def get_default_datafile() -> BytesIO:
+    content = b"""\
+Wavelength,Value
+1000,1
+2000,1
+3000,1
+"""
+    return BytesIO(content)
+
+
 def create_matplotlib_figure(
-    x, y, title="", xlog=False, ylog=False, left=None, right=None, bottom=None, top=None
+    x,
+    y,
+    title="",
+    xlog=False,
+    ylog=False,
+    left=3000,
+    right=18000,
+    bottom=None,
+    top=None,
 ):  # pragma: no cover
     """
     Create a matplotlib figure.

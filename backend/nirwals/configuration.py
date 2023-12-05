@@ -8,6 +8,11 @@ from astropy.coordinates import Angle
 from astropy.units import Quantity
 
 
+GalaxyAge = Literal["Old", "Young"]
+
+GalaxyType = Literal["E", "S0", "Sa", "Sb", "Sc", "Sd"]
+
+
 @dataclasses.dataclass
 class Blackbody:
     """
@@ -65,8 +70,8 @@ class Galaxy:
         Whether the spectrum should include emission lines.
     """
 
-    age: Literal["Old", "Young"]
-    galaxy_type: Literal["E", "S0", "Sa", "Sb", "Sc", "Sd"]
+    age: GalaxyAge
+    galaxy_type: GalaxyType
     magnitude: float
     redshift: float
     with_emission_lines: bool
