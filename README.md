@@ -46,3 +46,42 @@ Then in `src/components/spectrum/SourceForm.tsx` add the new component to `makeS
 Add the new spectrum type to the `SpectrumType` definition in `src/types.ts`.
 
 Finally, add the new spectrum type to the `spectrumTypes` array in the `SpectrumSelector` component (in `src/components/spectrum/SpectrumSelector.tsx`).
+
+### Testing
+
+The tests use the `pytest-mpl` plugin for comparing plots. For this to work, you need to generate the baseline images first:
+
+```shell
+pytest --mpl-generate-path=baseline path/to/your/tests
+```
+
+You can then run (regression) tests on the plots by passing the `--mpl` and `--mpl-baseline-path` options:
+
+```shell
+pytest --mpl --mpl-baseline-path=baseline
+```
+
+At the time of writing, you cannot define the `mpl-baseline-path` option in the pytest INI file, but this is likely to change in the next release of pytest-mpl.
+
+The regression tests for plots must be marked with the `pytest.mark.mpl_image_compare` decorator and must return a Matplotlib figure. A utility function for creating figures is provided. Here is an example test.
+
+```python
+import pytest
+
+from astropy.units import Quantity
+
+from nirwals.configuration import Blackbody
+from nirwals.physics.spectrum import source_spectrum
+from nirwals.tests.utils import get_default_configuration, create_matplotlib_figure
+
+
+@pytest.mark.mpl_image_compare
+def test_blackbody(temperature: Quantity):
+    config = get_default_configuration()
+    config.source.spectrum = [Blackbody(magnitude=18, temperature=temperature)]
+    spectrum = source_spectrum(config)
+
+    wavelengths = spectrum.waveset
+    fluxes = spectrum(wavelengths)
+    return create_matplotlib_figure(wavelengths, fluxes, title="Blackbody")
+```
