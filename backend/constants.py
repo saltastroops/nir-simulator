@@ -6,7 +6,10 @@ from astropy import units as u
 
 FLUX = u.def_unit("TOTALFLAM", 1 * u.erg / (u.cm**2 * u.s))
 
-ZERO_MAGNITUDE_FLUX = 1e-6 * u.erg / (u.cm**2 * u.s)
+"""
+Zero magnitude flux in the J band
+"""
+ZERO_MAGNITUDE_FLUX = 9.3905625e-7 * u.erg / (u.cm**2 * u.s)
 
 
 def get_file_base_dir() -> pathlib.Path:

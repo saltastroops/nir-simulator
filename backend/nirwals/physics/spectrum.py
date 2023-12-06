@@ -24,7 +24,24 @@ from nirwals.configuration import (
 from nirwals.physics.utils import read_from_file
 
 
-def _normalise(spectrum: SourceSpectrum, magnitude: float) -> SourceSpectrum:
+def normalize(spectrum: SourceSpectrum, magnitude: float) -> SourceSpectrum:
+    """
+    Normalize a source spectrum to have given Johnson J magnitude.
+
+    The `waveset` property must be defined for the given source spectrum.
+
+    Parameters
+    ----------
+    spectrum : SourceSpectrum
+        The source spectrum to normalize.
+    magnitude : float
+        The magnitude the normalized spectrum should have.
+
+    Returns
+    -------
+    SourceSpectrum
+        The normalized spectrum.
+    """
     # Get the total non-normalised flux in the J band.
     J = SpectralElement.from_filter("johnson_j")
     F = (J * spectrum).integrate(flux_unit=units.FLAM)
@@ -40,7 +57,7 @@ def _normalise(spectrum: SourceSpectrum, magnitude: float) -> SourceSpectrum:
 @u.quantity_input
 def _blackbody(temperature: u.K, magnitude: float) -> SourceSpectrum:
     spectrum = SourceSpectrum(BlackBodyNorm1D, temperature=temperature)
-    return _normalise(spectrum, magnitude)
+    return normalize(spectrum, magnitude)
 
 
 @u.quantity_input
@@ -91,7 +108,7 @@ def _galaxy(
         z=redshift,
         z_type="conserve_flux",
     )
-    return _normalise(spectrum, magnitude)
+    return normalize(spectrum, magnitude)
 
 
 def _spectrum(spectrum: Spectrum) -> SourceSpectrum:

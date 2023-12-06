@@ -5,12 +5,24 @@ import numpy as np
 import pytest
 
 from astropy import units as u
-from synphot import units, SpectralElement
+from synphot import units, SpectralElement, SourceSpectrum
 
 from constants import ZERO_MAGNITUDE_FLUX, FLUX
 from nirwals.configuration import Blackbody, EmissionLine, GalaxyAge, GalaxyType, Galaxy
-from nirwals.physics.spectrum import source_spectrum
+from nirwals.physics.spectrum import source_spectrum, normalize
 from nirwals.tests.utils import get_default_configuration, create_matplotlib_figure
+
+
+def test_normalize():
+    # Vega should have magnitude 0.
+    vega = SourceSpectrum.from_vega()
+    vega_0 = normalize(vega, 0)
+    assert 0.999 < float(vega_0(12000 * u.AA) / vega(12000 * u.AA)) < 1.001
+
+    # A difference of 5 magnitudes corresponds to a flux ratio of 100.
+    vega_5 = normalize(vega, 5)
+    vega_10 = normalize(vega, 10)
+    assert pytest.approx(float(vega_5(14000 * u.AA) / vega_10(14000 * u.AA))) == 100
 
 
 @pytest.mark.mpl_image_compare
