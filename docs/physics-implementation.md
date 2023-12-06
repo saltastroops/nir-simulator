@@ -46,7 +46,7 @@ Spectra are provided in form of text files for E, S0, Sa, Sb, Sc and Sd, either 
 
 #### User-defined
 
-A spectrum can be uploaded as a csv file containing wavelengths (in $\AA$) and corresponding fluxes (in erg / (cm$^{2}$ s $\AA$).
+A spectrum can be uploaded as a csv file containing wavelengths (in ${\rm\AA}$) and corresponding fluxes (in erg / (cm$^{2}$ s ${\rm\AA}$).
 
 ### Redshifting
 
@@ -77,9 +77,11 @@ $$
 f_{\rm normalised}(\lambda) = \frac{F_{m}}{F} f_{\rm redshifted}(\lambda)
 $$
 
-*TODO:*
-
-Instead of a zero magnitude flux $F_{0}$, often a zero magnitude flux density $f_{0,\lambda_{0}}$  at a specific wavelength $\lambda_{0}$ is specified. This raises the question how to convert this into the required zero magnitude flux. A solution might be to use the Vega spectrum for calculating it. The Vega spectrum might be available from the [sbpy](https://sbpy.readthedocs.io/en/stable/index.html) package.
+Vega has the magnitude 0. Denoting its flux with $f_{\rm Vega}$, we get
+$$
+F_{0} = \int_{0}^{\infty}f_{\rm Vega}(\lambda)\,{\rm d}\lambda = 3.28\times 10^{-10}\ {\rm erg}\,{\rm cm}^{-2}\,{\rm s}
+$$
+where we have used the [Vega spectrum shipping with synphot](https://synphot.readthedocs.io/en/latest/synphot/spectrum.html#vega) and its `integrate` method to obtain the numerical value.
 
 ### A note on symbols
 
@@ -439,7 +441,7 @@ The wavelength covered by a single CCD pixel is
 $$
 {\rm d}\lambda = \frac{p\cos\theta}{f_{\rm cam}}
 $$
-We create a binset from $\lambda_{\rm min} - 100\ \AA$ to approximately $\lambda_{\rm max} + 100\ \AA$ with a stepsize of ${\rm d}\lambda$. (The extra $100\ \AA$ are added to avoid artifacts at the boundaries of the wavelength range of interest. ) We then create an `Observation` with the source spectrum (or background), the product of the throughput bandpasses as the bandpass, the user-supplied effective mirror area and the binset just calculated.
+We create a binset from $\lambda_{\rm min} - 100\ {\rm\AA}$ to approximately $\lambda_{\rm max} + 100\ {\rm\AA}$ with a stepsize of ${\rm d}\lambda$. (The extra $100\ {\rm\AA}$ are added to avoid artifacts at the boundaries of the wavelength range of interest. ) We then create an `Observation` with the source spectrum (or background), the product of the throughput bandpasses as the bandpass, the user-supplied effective mirror area and the binset just calculated.
 
 From the `Observation` we then get the fluxes at the bin centres. Let $n$ be the array of these fluxes and let $n_{k}$ be the array  you get by shifting $n$ $k$-times to the right (for $k \ge 0$) or to the left (for $k \lt 0$). "Gaps" resulting from shifting are filled with zeroes. Then (using trapezoidal intregration) we see that (apart from the first and last bin) the count rate $N[k]$ for the $k$-th bin is approximately
 $$
