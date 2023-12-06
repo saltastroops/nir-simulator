@@ -8,9 +8,10 @@ from synphot import (
     ConstFlux1D,
     units,
     Empirical1D,
+    SpectralElement,
 )
 
-from constants import get_file_base_dir, FLUX
+from constants import get_file_base_dir, FLUX, ZERO_MAGNITUDE_FLUX
 from nirwals.configuration import (
     Configuration,
     Spectrum,
@@ -23,9 +24,23 @@ from nirwals.configuration import (
 from nirwals.physics.utils import read_from_file
 
 
+def _normalise(spectrum: SourceSpectrum, magnitude: float) -> SourceSpectrum:
+    # Get the total non-normalised flux in the J band.
+    J = SpectralElement.from_filter("johnson_j")
+    F = (J * spectrum).integrate(flux_unit=units.FLAM)
+
+    # Get the total (normalised) flux for the given magnitude.
+    F_m = 10 ** (-0.4 * magnitude) * ZERO_MAGNITUDE_FLUX
+
+    # Normalise the spectrum.
+    normalisation_factor = float(F_m / F)
+    return normalisation_factor * spectrum
+
+
 @u.quantity_input
 def _blackbody(temperature: u.K, magnitude: float) -> SourceSpectrum:
-    return SourceSpectrum(BlackBodyNorm1D, temperature=temperature)
+    spectrum = SourceSpectrum(BlackBodyNorm1D, temperature=temperature)
+    return _normalise(spectrum, magnitude)
 
 
 @u.quantity_input
@@ -69,7 +84,14 @@ def _galaxy(
     with open(file_path, "rb") as f:
         wavelengths, fluxes = read_from_file(f, unit=units.FLAM)
 
-    return SourceSpectrum(Empirical1D, points=wavelengths, lookup_table=fluxes)
+    spectrum = SourceSpectrum(
+        Empirical1D,
+        points=wavelengths,
+        lookup_table=fluxes,
+        z=redshift,
+        z_type="conserve_flux",
+    )
+    return _normalise(spectrum, magnitude)
 
 
 def _spectrum(spectrum: Spectrum) -> SourceSpectrum:
