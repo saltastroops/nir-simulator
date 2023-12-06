@@ -150,7 +150,7 @@ def test_galaxy(age: GalaxyAge, galaxy_type: GalaxyType, with_emission_lines: bo
     return create_matplotlib_figure(
         wavelengths,
         fluxes,
-        title=f"Galaxy (${galaxy_type}, {age.lower()}, "
+        title=f"Galaxy ({galaxy_type}, {age.lower()}, "
         f"{'with' if with_emission_lines else 'without' } emission lines)",
     )
 
