@@ -85,3 +85,40 @@ def test_blackbody(temperature: Quantity):
     fluxes = spectrum(wavelengths)
     return create_matplotlib_figure(wavelengths, fluxes, title="Blackbody")
 ```
+
+## Finding the maxima of grating efficiencies
+
+The following code illustrates how you can find the wavelengths of the maxima for the
+grating efficiency curves.
+
+```python
+import pathlib
+
+import numpy as np
+
+from astropy import units as u
+
+from constants import get_file_base_dir
+from nirwals.physics.utils import read_from_file
+
+grating = "950"
+available_angles = [30 * u.deg, 35 * u.deg, 40 * u.deg, 45 * u.deg, 50 * u.deg]
+grating_parameters = []
+for angle in available_angles:
+    angle_value = round(angle.to(u.deg).value)
+    path = pathlib.Path(
+        get_file_base_dir()
+        / "gratings"
+        / grating
+        / f"grating_{grating}_{angle_value}deg.csv"
+    )
+    with open(path, "rb") as f:
+        wavelengths, efficiencies = read_from_file(f)
+        efficiency_values = efficiencies.value
+        index_of_maximum = np.argmax(efficiency_values)
+        grating_parameters.append(
+            f"({angle_value} * u.deg, {wavelengths[index_of_maximum].to(u.AA).value} * u.AA)"
+        )
+
+print(", ".join(grating_parameters)
+```

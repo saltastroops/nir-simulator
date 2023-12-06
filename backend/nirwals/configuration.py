@@ -12,6 +12,8 @@ GalaxyAge = Literal["Old", "Young"]
 
 GalaxyType = Literal["E", "S0", "Sa", "Sb", "Sc", "Sd"]
 
+Grating = Literal["950"]
+
 
 @dataclasses.dataclass
 class Blackbody:

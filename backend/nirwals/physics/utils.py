@@ -6,8 +6,9 @@ from astropy.io import ascii
 from astropy.units import Unit, Quantity
 
 
-@u.quantity_input
-def read_from_file(file: BinaryIO, unit: Unit) -> Tuple[Quantity, Quantity]:
+def read_from_file(
+    file: BinaryIO, unit: Unit = u.dimensionless_unscaled
+) -> Tuple[Quantity, Quantity]:
     """
     Read wavelengths and corresponding values from a file.
 
@@ -16,7 +17,10 @@ def read_from_file(file: BinaryIO, unit: Unit) -> Tuple[Quantity, Quantity]:
 
     The first column must contain wavelength values, which are supposed to be given in
     Angstrom. The values in the second column are supposed to be given in the unit
-    specified by the unit parameter. If the file contains more than two columns, all
+    specified by the unit parameter. If no unit is given, the values are assumed to be
+    dimensionless.
+
+    If the file contains more than two columns, all
     columns other than the first and second one are ignored.
 
     The wavelengths in the first column are supposed to be sorted in ascending order,
@@ -39,7 +43,7 @@ def read_from_file(file: BinaryIO, unit: Unit) -> Tuple[Quantity, Quantity]:
     ----------
     file: BinaryIO
         The data file.
-    unit: Unit
+    unit: Unit, optional
         The unit to use for the values in the file's second column.
 
     Returns
