@@ -17,6 +17,8 @@ GalaxyType = Literal["E", "S0", "Sa", "Sb", "Sc", "Sd"]
 
 Grating = Literal["950"]
 
+SourceExtension = Literal["Diffuse", "Point"]
+
 
 @dataclasses.dataclass
 class Blackbody:
@@ -162,7 +164,7 @@ class Source:
     """
     A source configuration.
 
-    extension: str
+    extension: SourceExtension
         The source extension ("Diffuse" or "Point").
     spectrum: list of Spectrum
         The source spectrum, as a list of its constituent spectra.
@@ -170,7 +172,7 @@ class Source:
         The zenith distance of the source.
     """
 
-    extension: Literal["Diffuse", "Point"]
+    extension: SourceExtension
     spectrum: list[Spectrum]
     zenith_distance: Angle
 

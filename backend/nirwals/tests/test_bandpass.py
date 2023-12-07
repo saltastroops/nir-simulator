@@ -3,16 +3,19 @@ from typing import get_args
 
 import numpy as np
 import pytest
+from pytest import MonkeyPatch
 from astropy import units as u
 from astropy.units import Quantity
 
-from nirwals.configuration import Grating, Filter
+from constants import TELESCOPE_SEEING, FIBRE_RADIUS
+from nirwals.configuration import Grating, Filter, SourceExtension
 from nirwals.physics.bandpass import (
     grating_efficiency,
     atmospheric_transmission,
     filter_transmission,
     telescope_throughput,
     detector_quantum_efficiency,
+    fibre_throughput,
 )
 from nirwals.tests.utils import create_matplotlib_figure
 
@@ -52,6 +55,81 @@ def test_detector_quantum_efficiency():
     return create_matplotlib_figure(
         wavelengths, efficiencies, title="Detector Quantum Efficiency"
     )
+
+
+@pytest.mark.mpl_image_compare
+@pytest.mark.parametrize("source_extension", get_args(SourceExtension))
+def test_fibre_throughput(source_extension: SourceExtension):
+    seeing = 2 * u.arcsec
+    zenith_distance = 31 * u.deg
+    throughput = fibre_throughput(
+        seeing=seeing,
+        source_extension=source_extension,
+        zenith_distance=zenith_distance,
+    )
+    # No wavelengths are defined for the throughput object, so we define our own ones.
+    wavelengths = np.linspace(8000, 18000, 100) * u.AA
+    throughputs = throughput(wavelengths)
+
+    return create_matplotlib_figure(
+        wavelengths,
+        throughputs,
+        title=f"Fibre throughput ({source_extension}, seeing {seeing}, "
+        f"zenith distance {zenith_distance})",
+    )
+
+
+def test_fibre_throughput_values() -> None:
+    # In the following z denotes the zenith distance.
+    # First let's consider z=0 and a seeing of 1 arcsec
+    sigma_squared = ((1 * u.arcsec) ** 2 + TELESCOPE_SEEING**2) / (8 * math.log(2))
+    expected_throughput = 1 - math.exp(-(FIBRE_RADIUS**2) / (2 * sigma_squared))
+    throughput = fibre_throughput(1 * u.arcsec, "Point", 0 * u.arcsec)
+    assert pytest.approx(float(throughput(12000 * u.AA))) == expected_throughput
+    throughput = fibre_throughput(1 * u.arcsec, "Diffuse", 0 * u.arcsec)
+    assert float(throughput(12000)) == 1
+
+    # Now let us consider changes in z for a point source.
+    # For the throughput t, fibre radius r, seeing s and standard deviation sigma we get
+    # t = 1 - exp(-r^2 / (2 sigma^2)) and hence ln(1 - t) = -r^2 / (2 sigma^2). This
+    # means that (with the telescope seeing 0.6")
+    # ln(1 - t2) / ln(1 - t1) = sigma1^2 / sigma2^2
+    #        = (s^2 (sec z1)^(6/5) + 0.6"^2) / (s^2 (sec z2)^(6/5) + 0.6"^2)
+    s = 1 * u.arcsec
+    z1 = 31 * u.deg
+    z2 = 40 * u.deg
+    sec_z1 = 1 / math.cos(z1.to(u.rad).value)
+    sec_z2 = 1 / math.cos(z2.to(u.rad).value)
+    t1 = float(fibre_throughput(s, "Point", z1)(12000))
+    t2 = float(fibre_throughput(s, "Point", z2)(12000))
+    ratio1 = math.log(1 - t2) / math.log(1 - t1)
+    ratio2 = (s**2 * sec_z1 ** (6 / 5) + TELESCOPE_SEEING**2) / (
+        s**2 * sec_z2 ** (6 / 5) + TELESCOPE_SEEING**2
+    )
+
+    assert pytest.approx(float(ratio1)) == float(ratio2)
+
+
+def test_fibre_throughput_for_infinite_seeing():
+    # There should be no through for a point source if the seeing is "infinite", but the
+    # throughput for a diffuse source should still be 1.
+    seeing = 10000 * u.arcsec
+    zenith_distance = 35 * u.deg
+    throughput = fibre_throughput(seeing, "Point", zenith_distance)
+    assert float(throughput(12000)) < 1e-7
+    throughput = fibre_throughput(seeing, "Diffuse", zenith_distance)
+    assert float(throughput(12000)) == 1
+
+
+def test_fibre_throughput_without_seeing(monkeypatch: MonkeyPatch):
+    # If there is no seeing, the throughput is one for both point and diffuse sources.
+    seeing = 1e-10 * u.arcsec
+    monkeypatch.setattr("nirwals.physics.bandpass.TELESCOPE_SEEING", 0 * u.arcsec)
+    zenith_distance = 35 * u.deg
+    throughput = fibre_throughput(seeing, "Point", zenith_distance)
+    assert pytest.approx(float(throughput(12000))) == 1
+    throughput = fibre_throughput(seeing, "Diffuse", zenith_distance)
+    assert float(throughput(12000)) == 1
 
 
 @pytest.mark.mpl_image_compare

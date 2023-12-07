@@ -4,12 +4,27 @@ import pathlib
 from astropy import units as u
 
 
-FLUX = u.def_unit("TOTALFLAM", 1 * u.erg / (u.cm**2 * u.s))
+FIBRE_RADIUS = 0.665 * u.arcsec
+"""
+Fibre radius, as an angle on the sky.
+"""
 
+
+FLUX = u.def_unit("TOTALFLAM", 1 * u.erg / (u.cm**2 * u.s))
 """
-Zero magnitude flux in the J band
+Unit for a total energy flux.
 """
+
+TELESCOPE_SEEING = 0.6 * u.arcsec
+"""
+Telescope seeing, as an angle on the sky.
+"""
+
+
 ZERO_MAGNITUDE_FLUX = 9.3905625e-7 * u.erg / (u.cm**2 * u.s)
+"""
+Zero magnitude flux in the J band.
+"""
 
 
 def get_file_base_dir() -> pathlib.Path:

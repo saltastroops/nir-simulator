@@ -1,12 +1,13 @@
 import math
 import pathlib
+from typing import get_args
 
 import numpy as np
 from astropy import units as u
-from synphot import SpectralElement, Empirical1D
+from synphot import SpectralElement, Empirical1D, ConstFlux1D
 
-from constants import get_file_base_dir
-from nirwals.configuration import Grating, Filter
+from constants import get_file_base_dir, TELESCOPE_SEEING, FIBRE_RADIUS
+from nirwals.configuration import Grating, Filter, SourceExtension
 from nirwals.physics.utils import read_from_file
 
 
@@ -79,6 +80,58 @@ def filter_transmission(filter_name: Filter) -> SpectralElement:
     with open(path, "rb") as f:
         wavelengths, transmissions = read_from_file(f)
     return SpectralElement(Empirical1D, points=wavelengths, lookup_table=transmissions)
+
+
+@u.quantity_input
+def fibre_throughput(
+    seeing: u.arcsec, source_extension: SourceExtension, zenith_distance: u.deg
+) -> SpectralElement:
+    """
+    Return the fibre throughput.
+
+    For a point source the throughput is the fraction of the flux in the seeing disk
+    which is covered by the fibre, assuming the source is located at the centre of the
+    fibre. The seeing disk includes atmospheric and telescope seeing.
+
+    For a diffuse source the throughput is 1, as losses abd gains due to seeing cancel.
+
+    Parameters
+    ----------
+    seeing: Angle
+        The full width half maximum of the seeing disk for a zenith distance of 0.
+    source_extension: SourceExtension
+        The source extension ("Point" or "Diffuse"O).
+    zenith_distance: Angle
+        The zenith distance of the source.
+
+    Returns
+    -------
+    SpectralElement
+        The fibre throughput.
+    """
+    # Sanity check
+    if source_extension not in get_args(SourceExtension):
+        raise ValueError(f"Unsupported source extension {source_extension}")
+
+    # There is no throughput loss for diffuse sources.
+    if source_extension == "Diffuse":
+        return SpectralElement(ConstFlux1D, amplitude=1)
+
+    # Get the standard deviation for atmospheric seeing.
+    sec_z = 1 / math.cos(zenith_distance.to(u.rad).value)
+    sigma_atm = seeing * sec_z ** (3 / 5) / (2 * math.sqrt(2 * math.log(2)))
+
+    # Get the standard deviation for the telescope seeing.
+    sigma_tel = TELESCOPE_SEEING / (2 * math.sqrt(2 * math.log(2)))
+
+    # Get the square of the total standard deviation for the seeing disk
+    sigma_squared = sigma_atm**2 + sigma_tel**2
+
+    # Calculate the fraction of the seeing disk flux covered by the fibre.
+    covered_fraction = 1 - math.exp(-(FIBRE_RADIUS**2) / (2 * sigma_squared))
+
+    # Return the throughput.
+    return SpectralElement(ConstFlux1D, amplitude=covered_fraction)
 
 
 @u.quantity_input
