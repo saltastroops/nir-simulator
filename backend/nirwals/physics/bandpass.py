@@ -12,6 +12,18 @@ from nirwals.physics.utils import read_from_file
 
 @u.quantity_input
 def atmospheric_transmission(zenith_distance: u.deg) -> SpectralElement:
+    """
+    Return the atmospheric transmission curve for a given zenith distance.
+    Parameters
+    ----------
+    zenith_distance: Angle
+        Zenith distance.
+
+    Returns
+    -------
+    SpectralElement
+        The transmission curve.
+    """
     # Get the extinction coefficients.
     path = pathlib.Path(get_file_base_dir() / "atmospheric_extinction_coefficients.csv")
     with open(path, "rb") as f:
