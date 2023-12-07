@@ -5,7 +5,6 @@ import numpy as np
 import pytest
 from astropy import units as u
 from astropy.units import Quantity
-from synphot import Empirical1D
 
 from nirwals.configuration import Grating, Filter
 from nirwals.physics.bandpass import (
@@ -83,7 +82,7 @@ def test_grating_efficiency(alpha: u.deg):
     )
 
 
-def test_grating_efficiency_interpolation():
+def test_grating_efficiency_interpolation() -> None:
     # Efficiencies for 40, 41, 43, 45 degrees
     efficiencies = {
         alpha: grating_efficiency(grating="950", alpha=alpha)
