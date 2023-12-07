@@ -129,16 +129,18 @@ The photon rate suffers losses related to various effects:
 
 - Mirror efficiency
 - Telescope throughput
+- Filter throughput
+- Lomg wave blocking filter (LWBF) throughput
 - Grating efficiency
 - Quantum efficiency of the detector
 - Seeing
 
 The first four effects can be described by means of a wavelength dependent factor, which is a product of a wavelength dependent factor for each of the three effects:
 $$
-n_{\rm propagated}(\lambda) = \epsilon_{\rm mirror}(\lambda)\,\epsilon_{\rm throughput}(\lambda)\,\epsilon_{\rm grating}(\lambda)\,\epsilon_{\rm QE}(\lambda)\,\dot{n}(\lambda)
+n_{\rm propagated}(\lambda) = \epsilon_{\rm mirror}(\lambda)\,\epsilon_{\rm telescope}(\lambda)\,\epsilon_{\rm filter}(\lambda)\,\epsilon_{\rm lwbf}(\lambda)\,\epsilon_{\rm grating}(\lambda)\,\epsilon_{\rm QE}(\lambda)\,\dot{n}(\lambda)
 $$
 
-The mirror efficiency, the throughput efficiency and the quantum efficiency are all taken from csv files.
+The mirror efficiency, the telescope throughput, the filter throughput., the LWBF throughput and the quantum efficiency are all taken from csv files.
 
 The grating efficiency is provided as a csv file for a list of grating angles. Let these angles be denoted by $\alpha_{i}$, and let $\lambda_{{\rm max},i}$ be the wavelength at which the transmission curve for $\alpha_{i}$ reaches its maximum. Then we assume that the transmission at an angle $\alpha$ with $\alpha_{i} < \alpha < \alpha_{i+1}$ can be obtained by shifting the transmission curve for $\alpha_{i}$ by an amount of $((\alpha - \alpha_{i}) / (\alpha_{i + 1} - \alpha_{i})) (\lambda_{{\rm max},i+1} - \lambda_{{\rm max},i})$:
 $$
