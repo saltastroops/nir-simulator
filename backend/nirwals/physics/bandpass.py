@@ -38,6 +38,21 @@ def atmospheric_transmission(zenith_distance: u.deg) -> SpectralElement:
     return SpectralElement(Empirical1D, points=wavelengths, lookup_table=transmissions)
 
 
+def detector_quantum_efficiency() -> SpectralElement:
+    """
+    Return the quantum efficiency of the detector.
+
+    Returns
+    -------
+    SpectralElement
+        The quantum efficiency.
+    """
+    path = pathlib.Path(get_file_base_dir() / "detector_quantum_efficiency.csv")
+    with open(path, "rb") as f:
+        wavelengths, efficiencies = read_from_file(f)
+    return SpectralElement(Empirical1D, points=wavelengths, lookup_table=efficiencies)
+
+
 def filter_transmission(filter_name: Filter) -> SpectralElement:
     """
     Return the transmission curve for a given filter.

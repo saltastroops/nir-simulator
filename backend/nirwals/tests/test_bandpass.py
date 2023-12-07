@@ -5,6 +5,7 @@ import numpy as np
 import pytest
 from astropy import units as u
 from astropy.units import Quantity
+from synphot import Empirical1D
 
 from nirwals.configuration import Grating, Filter
 from nirwals.physics.bandpass import (
@@ -12,6 +13,7 @@ from nirwals.physics.bandpass import (
     atmospheric_transmission,
     filter_transmission,
     telescope_throughput,
+    detector_quantum_efficiency,
 )
 from nirwals.tests.utils import create_matplotlib_figure
 
@@ -41,6 +43,16 @@ def test_atmospheric_transmission_zenith_distance_dependency():
     ratio2 = math.log10(ts[3] / ts[2]) / (sec_zs[3] - sec_zs[2])
 
     assert pytest.approx(ratio1) == ratio2
+
+
+@pytest.mark.mpl_image_compare
+def test_detector_quantum_efficiency():
+    efficiency = detector_quantum_efficiency()
+    wavelengths = efficiency.waveset
+    efficiencies = efficiency(wavelengths)
+    return create_matplotlib_figure(
+        wavelengths, efficiencies, title="Detector Quantum Efficiency"
+    )
 
 
 @pytest.mark.mpl_image_compare
