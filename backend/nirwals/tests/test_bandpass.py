@@ -1,12 +1,17 @@
 import math
+from typing import get_args
 
 import numpy as np
 import pytest
 from astropy import units as u
 from astropy.units import Quantity
 
-from nirwals.configuration import Grating
-from nirwals.physics.bandpass import grating_efficiency, atmospheric_transmission
+from nirwals.configuration import Grating, Filter
+from nirwals.physics.bandpass import (
+    grating_efficiency,
+    atmospheric_transmission,
+    filter_transmission,
+)
 from nirwals.tests.utils import create_matplotlib_figure
 
 
@@ -35,6 +40,17 @@ def test_atmospheric_transmission_zenith_distance_dependency():
     ratio2 = math.log10(ts[3] / ts[2]) / (sec_zs[3] - sec_zs[2])
 
     assert pytest.approx(ratio1) == ratio2
+
+
+@pytest.mark.mpl_image_compare
+@pytest.mark.parametrize("filter_name", get_args(Filter))
+def test_filter_transmission(filter_name: Filter):
+    transmission = filter_transmission(filter_name)
+    wavelengths = transmission.waveset
+    transmissions = transmission(wavelengths)
+    return create_matplotlib_figure(
+        wavelengths, transmissions, title=f"Filter Transmission ({filter_name})"
+    )
 
 
 @pytest.mark.mpl_image_compare

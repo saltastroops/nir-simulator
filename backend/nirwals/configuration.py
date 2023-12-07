@@ -8,6 +8,9 @@ from astropy.coordinates import Angle
 from astropy.units import Quantity
 
 
+# LWBF: Long Wavelength Blocking Filter
+Filter = Literal["Clear", "LWBF"]
+
 GalaxyAge = Literal["Old", "Young"]
 
 GalaxyType = Literal["E", "S0", "Sa", "Sb", "Sc", "Sd"]

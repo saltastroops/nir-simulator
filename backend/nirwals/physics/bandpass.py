@@ -1,12 +1,13 @@
 import math
 import pathlib
+from typing import get_args
 
 import numpy as np
 from astropy import units as u
 from synphot import SpectralElement, Empirical1D
 
 from constants import get_file_base_dir
-from nirwals.configuration import Grating
+from nirwals.configuration import Grating, Filter
 from nirwals.physics.utils import read_from_file
 
 
@@ -34,6 +35,35 @@ def atmospheric_transmission(zenith_distance: u.deg) -> SpectralElement:
     transmissions = np.power(10, -0.4 * kappa_values * sec_z)
 
     # Return the extinction.
+    return SpectralElement(Empirical1D, points=wavelengths, lookup_table=transmissions)
+
+
+def filter_transmission(filter_name: Filter) -> SpectralElement:
+    """
+    Return the transmission curve for a given filter.
+    Parameters
+    ----------
+    filter_name: Filter
+        Filter name.
+
+    Returns
+    -------
+    SpectralElement
+        The filter transmission curve.
+    """
+    # Sanity check
+    match filter_name:
+        case "Clear":
+            filename = "clear_filter_transmission.csv"
+        case "LWBF":
+            filename = "lwbf_transmission.csv"
+        case _:
+            raise ValueError(f"Unsupported filter: {filter_name}")
+
+    # Get the filter transmission.
+    path = pathlib.Path(get_file_base_dir() / "filters" / filename)
+    with open(path, "rb") as f:
+        wavelengths, transmissions = read_from_file(f)
     return SpectralElement(Empirical1D, points=wavelengths, lookup_table=transmissions)
 
 
