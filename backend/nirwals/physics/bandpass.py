@@ -158,3 +158,22 @@ def grating_efficiency(grating: Grating, alpha: u.deg) -> SpectralElement:
     return SpectralElement(
         Empirical1D, points=wavelengths, lookup_table=shifted_efficiencies
     )
+
+
+def telescope_throughput() -> SpectralElement:
+    """
+    Return the telescope throughput.
+
+    The telescope throughput includes the mirror efficiency and the throughput of the
+    telescope optics, but excludes the filter transmission, grating efficiency and
+    detector efficiency.
+
+    Returns
+    -------
+    SpectralElement
+        The telescope throughput.
+    """
+    path = pathlib.Path(get_file_base_dir() / "telescope_throughput.csv")
+    with open(path, "rb") as f:
+        wavelengths, throughputs = read_from_file(f)
+    return SpectralElement(Empirical1D, points=wavelengths, lookup_table=throughputs)

@@ -11,6 +11,7 @@ from nirwals.physics.bandpass import (
     grating_efficiency,
     atmospheric_transmission,
     filter_transmission,
+    telescope_throughput,
 )
 from nirwals.tests.utils import create_matplotlib_figure
 
@@ -116,3 +117,13 @@ def test_grating_efficiency_interpolation():
         == lambda_max_43_expected.to(u.AA).value
     )
     assert pytest.approx(float(eff_max_43)) == float(eff_max_43_expected)
+
+
+@pytest.mark.mpl_image_compare
+def test_telescope_throughput():
+    throughput = telescope_throughput()
+    wavelengths = throughput.waveset
+    throughputs = throughput(wavelengths)
+    return create_matplotlib_figure(
+        wavelengths, throughputs, title="Telescope Throughput"
+    )
