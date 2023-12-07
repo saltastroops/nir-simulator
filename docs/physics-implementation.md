@@ -127,20 +127,18 @@ $$
 $$
 The photon rate suffers losses related to various effects:
 
-- Mirror efficiency
-- Telescope throughput
+- Telescope throughput, including the mirror efficiency
 - Filter throughput
-- Lomg wave blocking filter (LWBF) throughput
 - Grating efficiency
 - Quantum efficiency of the detector
 - Seeing
 
 The first four effects can be described by means of a wavelength dependent factor, which is a product of a wavelength dependent factor for each of the three effects:
 $$
-n_{\rm propagated}(\lambda) = \epsilon_{\rm mirror}(\lambda)\,\epsilon_{\rm telescope}(\lambda)\,\epsilon_{\rm filter}(\lambda)\,\epsilon_{\rm lwbf}(\lambda)\,\epsilon_{\rm grating}(\lambda)\,\epsilon_{\rm QE}(\lambda)\,\dot{n}(\lambda)
+n_{\rm propagated}(\lambda) = \epsilon_{\rm telescope}(\lambda)\,\epsilon_{\rm filter}(\lambda)\,\epsilon_{\rm grating}(\lambda)\,\epsilon_{\rm QE}(\lambda)\,\dot{n}(\lambda)
 $$
 
-The mirror efficiency, the telescope throughput, the filter throughput., the LWBF throughput and the quantum efficiency are all taken from csv files.
+The telescope throughput, the filter throughput and the quantum efficiency are all taken from csv files.
 
 The grating efficiency is provided as a csv file for a list of grating angles. Let these angles be denoted by $\alpha_{i}$, and let $\lambda_{{\rm max},i}$ be the wavelength at which the transmission curve for $\alpha_{i}$ reaches its maximum. Then we assume that the transmission at an angle $\alpha$ with $\alpha_{i} < \alpha < \alpha_{i+1}$ can be obtained by shifting the transmission curve for $\alpha_{i}$ by an amount of $((\alpha - \alpha_{i}) / (\alpha_{i + 1} - \alpha_{i})) (\lambda_{{\rm max},i+1} - \lambda_{{\rm max},i})$:
 $$
@@ -401,7 +399,19 @@ All throughput factors are handled in form of bandpass objects, i.e. `SpectrumEl
 
 #### Atmospheric extinction
 
-The extinction coefficient $\kappa(\lambda)$ is read from a file, and then the bandpass values are obtained by applying the formula $10^{-0.4\kappa(\lambda)\sec z}$. 
+The extinction coefficient $\kappa(\lambda)$ is read from a file, and then the bandpass values are obtained by applying the formula $10^{-0.4\kappa(\lambda)\sec z}$.  This file may first have to be generated from another file which gives the transmission $t$ for a specific zenith distance $z$. To perform the conversion from $t$ to $\kappa$, we note that
+$$
+t(\lambda, z) = 10^{-0.4\kappa(\lambda)\,\sec z}
+$$
+and hence
+$$
+\lg t(\lambda, z) = -0.4\kappa(\lambda)\,\sec z
+$$
+We can thus convert by means of the following formula:
+$$
+\kappa(\lambda) = -\frac{\lg t(\lambda, z)}{0.4\sec z}
+$$
+
 
 #### Seeing
 
