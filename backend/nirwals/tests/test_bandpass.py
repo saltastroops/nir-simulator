@@ -1,11 +1,40 @@
+import math
+
 import numpy as np
 import pytest
 from astropy import units as u
 from astropy.units import Quantity
 
 from nirwals.configuration import Grating
-from nirwals.physics.bandpass import grating_efficiency
+from nirwals.physics.bandpass import grating_efficiency, atmospheric_transmission
 from nirwals.tests.utils import create_matplotlib_figure
+
+
+@pytest.mark.mpl_image_compare
+def test_atmospheric_transmission():
+    zenith_distance = 31 * u.deg
+    extinction = atmospheric_transmission(zenith_distance)
+    wavelengths = extinction.waveset
+    extinction_values = extinction(wavelengths)
+    return create_matplotlib_figure(
+        wavelengths,
+        extinction_values,
+        title=f"Atmospheric Extinction (zenith distance {zenith_distance})",
+    )
+
+
+def test_atmospheric_transmission_zenith_distance_dependency():
+    # For the transmission t, extinction coefficient kappa and zenith distance z the
+    # relation t = 10^(-0.4 kappa (sec(z2) - sec(z1))) holds. This implies that the
+    # ratio lg(t2/t1) / (sec(z2) - sec(z1)) must be constant.
+
+    zs = [28 * u.deg, 31 * u.deg, 32 * u.deg, 42 * u.deg]
+    sec_zs = [1 / math.cos(z.to(u.rad).value) for z in zs]
+    ts = [atmospheric_transmission(zenith_distance=z)(12000) for z in zs]
+    ratio1 = math.log10(ts[1] / ts[0]) / (sec_zs[1] - sec_zs[0])
+    ratio2 = math.log10(ts[3] / ts[2]) / (sec_zs[3] - sec_zs[2])
+
+    assert pytest.approx(ratio1) == ratio2
 
 
 @pytest.mark.mpl_image_compare

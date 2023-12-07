@@ -122,3 +122,45 @@ for angle in available_angles:
 
 print(", ".join(grating_parameters)
 ```
+
+## Converting atmospheric transmissions to extinction coeefficients
+
+If a file with atmospheric transmission values is given, it can be converted to a file
+containing atmospheric extinction coefficients with code like the following.
+
+```python
+import math
+import pathlib
+
+import numpy as np
+from astropy import units as u
+
+from nirwals.physics.utils import read_from_file
+
+
+zenith_distance = 31 * u.deg
+
+path = pathlib.Path(
+    "data/data_sheets/adjusted_program_datasheets/nirskytransmission.csv"
+)
+
+with open(path, "rb") as f:
+    wavelengths, transmissions = read_from_file(f)
+
+# Avoid infinite values due to taking the logarithm of 0.
+for i in range(len(transmissions)):
+    if transmissions[i] < 1e-10:
+        transmissions[i] = 1e-10
+
+# To convert from transmissions t to extinction coefficients kappa, we note that
+# kappa = -lg(t) / 0.4 sec(z) = -2.5 cos(z) lg(t).
+kappa_values = (
+    -2.5 * math.cos(zenith_distance.to(u.rad).value) * np.log10(transmissions)
+)
+
+# Save the atmospheric extinction coefficients in a new file
+out_path = "data/atmospheric_extinction_coefficients.csv"
+with open(out_path, "w") as g:
+    for w, k in zip(wavelengths, kappa_values):
+        g.write(f"{w.to(u.AA).value},{k}\n")
+```

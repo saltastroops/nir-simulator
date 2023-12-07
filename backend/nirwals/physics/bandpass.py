@@ -1,11 +1,28 @@
+import math
 import pathlib
 
+import numpy as np
 from astropy import units as u
 from synphot import SpectralElement, Empirical1D
 
 from constants import get_file_base_dir
 from nirwals.configuration import Grating
 from nirwals.physics.utils import read_from_file
+
+
+@u.quantity_input
+def atmospheric_transmission(zenith_distance: u.deg) -> SpectralElement:
+    # Get the extinction coefficients.
+    path = pathlib.Path(get_file_base_dir() / "atmospheric_extinction_coefficients.csv")
+    with open(path, "rb") as f:
+        wavelengths, kappa_values = read_from_file(f)
+
+    # Calculate the transmission values.
+    sec_z = 1 / math.cos(zenith_distance.to(u.rad).value)
+    transmissions = np.power(10, -0.4 * kappa_values * sec_z)
+
+    # Return the extinction.
+    return SpectralElement(Empirical1D, points=wavelengths, lookup_table=transmissions)
 
 
 @u.quantity_input
