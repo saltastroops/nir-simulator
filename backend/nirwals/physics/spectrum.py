@@ -96,9 +96,7 @@ def _galaxy(
         f"{age}_{galaxy_type}_type_"
         f"{'emission' if with_emission_lines else 'no_emission'}.csv"
     )
-    file_path = (
-        get_file_base_dir() / "data_sheets" / "adjusted_program_datasheets" / filename
-    )
+    file_path = get_file_base_dir() / "galaxies" / filename
     with open(file_path, "rb") as f:
         wavelengths, fluxes = read_from_file(f, unit=units.FLAM)
 
