@@ -39,7 +39,7 @@ def create_matplotlib_figure(
     title="",
     xlog=False,
     ylog=False,
-    left=3000,
+    left=8000,
     right=18000,
     bottom=None,
     top=None,
