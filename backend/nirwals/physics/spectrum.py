@@ -1,3 +1,4 @@
+import pathlib
 from typing import cast, get_args
 
 from astropy import units as u
@@ -156,3 +157,24 @@ def source_spectrum(configuration: Configuration) -> SourceSpectrum:
         summed_spectrum += _spectrum(s)
 
     return summed_spectrum
+
+
+def sky_spectrum():
+    """
+    Return the sky background.
+
+    Returns
+    -------
+    SourceSpectrum
+        The sky background.
+    """
+    path = pathlib.Path(
+        get_file_base_dir()
+        / "data_sheets"
+        / "adjusted_program_datasheets"
+        / "1-1-nirsky.csv"
+    )
+    with open(path, "rb") as f:
+        wavelengths, fluxes = read_from_file(f, units.PHOTLAM)
+
+    return SourceSpectrum(Empirical1D, points=wavelengths, lookup_table=fluxes)

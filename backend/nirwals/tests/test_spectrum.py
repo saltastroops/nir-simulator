@@ -9,7 +9,7 @@ from synphot import units, SpectralElement, SourceSpectrum
 
 from constants import ZERO_MAGNITUDE_FLUX, FLUX
 from nirwals.configuration import Blackbody, EmissionLine, GalaxyAge, GalaxyType, Galaxy
-from nirwals.physics.spectrum import source_spectrum, normalize
+from nirwals.physics.spectrum import source_spectrum, normalize, sky_spectrum
 from nirwals.tests.utils import get_default_configuration, create_matplotlib_figure
 
 
@@ -258,4 +258,14 @@ def test_composite_spectrum():
     fluxes = spectrum(wavelengths)
     return create_matplotlib_figure(
         wavelengths, fluxes, title="Blackbody and Emission Line"
+    )
+
+
+@pytest.mark.mpl_image_compare
+def test_sky_spectrum():
+    sky = sky_spectrum()
+    wavelengths = sky.waveset
+    fluxes = sky(wavelengths)
+    return create_matplotlib_figure(
+        wavelengths, fluxes, left=9000, right=17000, top=8e-5, title="Sky Background"
     )
