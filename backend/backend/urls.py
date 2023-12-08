@@ -1,11 +1,12 @@
 from django.contrib import admin
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 from django.urls import path, include
 
 from nirwals.views import spectra, throughput, solve_for_snr
 
 
-def home(request):
+def home(request: HttpRequest) -> HttpResponse:
     return render(request, "index.html", {})
 
 

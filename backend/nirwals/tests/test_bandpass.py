@@ -3,12 +3,13 @@ from typing import get_args
 
 import numpy as np
 import pytest
+from matplotlib.figure import Figure
 from pytest import MonkeyPatch
 from astropy import units as u
 from astropy.units import Quantity
 
 from constants import TELESCOPE_SEEING, FIBRE_RADIUS
-from nirwals.configuration import Grating, Filter, SourceExtension
+from nirwals.configuration import GratingName, Filter, SourceExtension
 from nirwals.physics.bandpass import (
     grating_efficiency,
     atmospheric_transmission,
@@ -21,7 +22,7 @@ from nirwals.tests.utils import create_matplotlib_figure
 
 
 @pytest.mark.mpl_image_compare
-def test_atmospheric_transmission():
+def test_atmospheric_transmission() -> Figure:
     zenith_distance = 31 * u.deg
     extinction = atmospheric_transmission(zenith_distance)
     wavelengths = extinction.waveset
@@ -33,7 +34,7 @@ def test_atmospheric_transmission():
     )
 
 
-def test_atmospheric_transmission_zenith_distance_dependency():
+def test_atmospheric_transmission_zenith_distance_dependency() -> None:
     # For the transmission t, extinction coefficient kappa and zenith distance z the
     # relation t = 10^(-0.4 kappa (sec(z2) - sec(z1))) holds. This implies that the
     # ratio lg(t2/t1) / (sec(z2) - sec(z1)) must be constant.
@@ -48,7 +49,7 @@ def test_atmospheric_transmission_zenith_distance_dependency():
 
 
 @pytest.mark.mpl_image_compare
-def test_detector_quantum_efficiency():
+def test_detector_quantum_efficiency() -> Figure:
     efficiency = detector_quantum_efficiency()
     wavelengths = efficiency.waveset
     efficiencies = efficiency(wavelengths)
@@ -59,7 +60,7 @@ def test_detector_quantum_efficiency():
 
 @pytest.mark.mpl_image_compare
 @pytest.mark.parametrize("source_extension", get_args(SourceExtension))
-def test_fibre_throughput(source_extension: SourceExtension):
+def test_fibre_throughput(source_extension: SourceExtension) -> Figure:
     seeing = 2 * u.arcsec
     zenith_distance = 31 * u.deg
     throughput = fibre_throughput(
@@ -110,7 +111,7 @@ def test_fibre_throughput_values() -> None:
     assert pytest.approx(float(ratio1)) == float(ratio2)
 
 
-def test_fibre_throughput_for_infinite_seeing():
+def test_fibre_throughput_for_infinite_seeing() -> None:
     # There should be no through for a point source if the seeing is "infinite", but the
     # throughput for a diffuse source should still be 1.
     seeing = 10000 * u.arcsec
@@ -121,7 +122,7 @@ def test_fibre_throughput_for_infinite_seeing():
     assert float(throughput(12000)) == 1
 
 
-def test_fibre_throughput_without_seeing(monkeypatch: MonkeyPatch):
+def test_fibre_throughput_without_seeing(monkeypatch: MonkeyPatch) -> None:
     # If there is no seeing, the throughput is one for both point and diffuse sources.
     seeing = 1e-10 * u.arcsec
     monkeypatch.setattr("nirwals.physics.bandpass.TELESCOPE_SEEING", 0 * u.arcsec)
@@ -134,7 +135,7 @@ def test_fibre_throughput_without_seeing(monkeypatch: MonkeyPatch):
 
 @pytest.mark.mpl_image_compare
 @pytest.mark.parametrize("filter_name", get_args(Filter))
-def test_filter_transmission(filter_name: Filter):
+def test_filter_transmission(filter_name: Filter) -> Figure:
     transmission = filter_transmission(filter_name)
     wavelengths = transmission.waveset
     transmissions = transmission(wavelengths)
@@ -147,8 +148,8 @@ def test_filter_transmission(filter_name: Filter):
 @pytest.mark.parametrize(
     "alpha", [30 * u.deg, 35 * u.deg, 37.5 * u.deg, 40 * u.deg, 45 * u.deg, 50 * u.deg]
 )
-def test_grating_efficiency(alpha: u.deg):
-    grating: Grating = "950"
+def test_grating_efficiency(alpha: u.deg) -> Figure:
+    grating: GratingName = "950"
     efficiency = grating_efficiency(grating=grating, alpha=alpha)
 
     wavelengths = efficiency.waveset
@@ -209,7 +210,7 @@ def test_grating_efficiency_interpolation() -> None:
 
 
 @pytest.mark.mpl_image_compare
-def test_telescope_throughput():
+def test_telescope_throughput() -> Figure:
     throughput = telescope_throughput()
     wavelengths = throughput.waveset
     throughputs = throughput(wavelengths)

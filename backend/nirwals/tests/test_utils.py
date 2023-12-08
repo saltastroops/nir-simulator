@@ -6,7 +6,7 @@ from nirwals.physics.utils import read_from_file
 from nirwals.tests.utils import get_default_datafile
 
 
-def test_read_from_file():
+def test_read_from_file() -> None:
     wavelengths, values = read_from_file(file=get_default_datafile(), unit=units.FLAM)
 
     wavelengths = wavelengths.to(u.AA).value

@@ -7,7 +7,7 @@ from astropy import units as u
 from synphot import SpectralElement, Empirical1D, ConstFlux1D
 
 from constants import get_file_base_dir, TELESCOPE_SEEING, FIBRE_RADIUS
-from nirwals.configuration import Grating, Filter, SourceExtension
+from nirwals.configuration import GratingName, Filter, SourceExtension
 from nirwals.physics.utils import read_from_file
 
 
@@ -135,7 +135,7 @@ def fibre_throughput(
 
 
 @u.quantity_input
-def grating_efficiency(grating: Grating, alpha: u.deg) -> SpectralElement:
+def grating_efficiency(grating: GratingName, alpha: u.deg) -> SpectralElement:
     """
     Returns the grating efficiency for a given grating angle.
 

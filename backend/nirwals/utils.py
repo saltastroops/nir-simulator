@@ -1,19 +1,24 @@
 from functools import lru_cache
+from pathlib import Path
+from typing import Any
 
 import numpy as np
+from astropy.units import Quantity
 from specutils.manipulation import FluxConservingResampler
 from astropy import units as u
 from specutils import Spectrum1D
 
 
 NUMBER_OF_POINTS = 40001
-conv = {
+conv: Any = {
     0: lambda x: float(x),  # conversion fn for column 0
     1: lambda x: float(x),  # conversion fn for column 1
 }
 
 
-def get_redshifted_spectrum(wavelength, flux, redshift: float):
+def get_redshifted_spectrum(
+    wavelength: Any, flux: Any, redshift: float
+) -> tuple[Quantity, Quantity]:
     wavelength = wavelength * (1 + redshift)
     flux = flux / (1 + redshift)
 
@@ -22,7 +27,7 @@ def get_redshifted_spectrum(wavelength, flux, redshift: float):
 
 #  TODO Caching should be done Correctly
 @lru_cache
-def read_csv_file(filename):
+def read_csv_file(filename: Path) -> tuple[Any, Any]:
     spectra_data = np.loadtxt(filename, delimiter=",", quotechar="|", converters=conv)
     wavelength = spectra_data[:, 0]
     flux = spectra_data[:, 1]
@@ -31,10 +36,10 @@ def read_csv_file(filename):
 
 def resample_spectrum(
     input_spectrum: Spectrum1D,
-    minimum_wavelength=9000,
-    maximum_wavelength=17000,
-    number_of_points=NUMBER_OF_POINTS,
-):
+    minimum_wavelength: float = 9000,
+    maximum_wavelength: float = 17000,
+    number_of_points: int = NUMBER_OF_POINTS,
+) -> Spectrum1D:
     wavelength_range = (
         np.linspace(minimum_wavelength, maximum_wavelength, number_of_points) * u.AA
     )

@@ -2,6 +2,8 @@ import csv
 import os
 import pathlib
 from functools import lru_cache
+from pathlib import Path
+from typing import Any
 
 import numpy as np
 from scipy.special import erf
@@ -11,7 +13,7 @@ FILES_BASE_DIR = pathlib.Path(os.environ["FILES_BASE_DIR"])
 
 #  TODO Caching should be done Correctly
 @lru_cache
-def read_csv_file(filename):
+def read_csv_file(filename: Path) -> Any:
     with open(filename, "r") as file:
         reader = csv.reader(file, delimiter=",", quotechar="|")
         data = list(reader)
@@ -19,14 +21,14 @@ def read_csv_file(filename):
     return np.array(wavelength), np.array(modifier)
 
 
-def get_slit_modifier(constant):
+def get_slit_modifier(constant: float) -> tuple[Any, Any]:
     num_points = 40001
     wavelength = np.linspace(9000, 17000, 40001)
     modifier = np.full(num_points, constant, dtype=float)
     return wavelength, modifier
 
 
-def get_affected_filenames(form_data):
+def get_affected_filenames(form_data: dict[str, str]) -> list[Path]:
     filenames = [
         FILES_BASE_DIR
         / "data_sheets"
@@ -77,7 +79,7 @@ def get_affected_filenames(form_data):
     return list(set(filenames))
 
 
-def get_modifiers(configuration):
+def get_modifiers(configuration: dict[str, str]) -> tuple[Any, Any]:
     num_points = 40001
     data = np.empty(
         num_points,
@@ -111,5 +113,5 @@ def get_modifiers(configuration):
     return data["wavelength"], data["throughput"]
 
 
-def get_throughput_plot_data(configuration):
+def get_throughput_plot_data(configuration: dict[str, str]) -> tuple[Any, Any]:
     return get_modifiers(configuration)

@@ -2,7 +2,7 @@ import dataclasses
 from pathlib import Path
 
 from astropy import units as u
-from typing import Literal
+from typing import Literal, Any
 
 from astropy.coordinates import Angle
 from astropy.units import Quantity
@@ -15,7 +15,9 @@ GalaxyAge = Literal["Old", "Young"]
 
 GalaxyType = Literal["E", "S0", "Sa", "Sb", "Sc", "Sd"]
 
-Grating = Literal["950"]
+GratingName = Literal["950"]
+
+SamplingType = Literal["Fowler", "Up-the-Ramp"]
 
 SourceExtension = Literal["Diffuse", "Point"]
 
@@ -142,6 +144,96 @@ class Sun:
 
 
 @dataclasses.dataclass
+class Grating:
+    """
+    A grating configuration.
+
+    Parameters
+    ----------
+    grating_angle: Quantity
+        The grating angle, i.e. the angle of the incoming rays to the grating normal.
+    groove_frequency: Quantity
+        The inverse of the grating constant, i.e. the number of grooves (lines) per mm.
+    """
+
+    grating_angle: Quantity
+    groove_frequency: Quantity
+
+
+@dataclasses.dataclass
+class Detector:
+    """
+    Detector related parameters.
+
+    Parameters
+    ----------
+    adu: float
+        Analog-digital unit.
+    full_well: int
+        CCD full well.
+    read_noise: float
+        Readout noise for a single read.
+    """
+
+    adu: float
+    full_well: int
+    read_noise: float
+    samplings: int
+    sampling_type: SamplingType
+
+
+@dataclasses.dataclass
+class SNR:
+    """
+    Signal-to-noise ratio at a wavelength.
+
+    Parameters
+    ----------
+    snr: float
+        Signal-to-noise ratio (SNR).
+    wavelength: Quantity
+        Wavelength for the which the SNR is given.
+    """
+
+    snr: float
+    wavelength: Quantity
+
+
+@dataclasses.dataclass
+class Exposure:
+    """
+    Exposure related parameters.
+
+    Either the exposure time or the signal-to-noise ratio must be specified, but not
+    both.
+
+    Parameters
+    ----------
+    exposures: int
+        The number of exposures.
+    exposure_time: Quantity, optional
+        The requested exposure time for a single exposure.
+    snr: SNR, optional
+        The requested signal-to-noise ratio (SNR).
+    """
+
+    exposures: int
+    exposure_time: Quantity | None
+    snr: SNR | None
+
+    def __init__(
+        self, exposures: int, exposure_time: Quantity | None, snr: SNR | None
+    ) -> None:
+        if exposure_time is None and snr is None:
+            raise ValueError("An exposure time or SNR must be given.")
+        if exposure_time is not None and snr is not None:
+            raise ValueError("The exposure time and SNR are mutually exclusive.")
+        self.exposures = exposures
+        self.exposure_time = exposure_time
+        self.snr = snr
+
+
+@dataclasses.dataclass
 class Telescope:
     """
     Telescope properties.
@@ -150,13 +242,15 @@ class Telescope:
     ----------
     effective_mirror_area: Quantity
         The effective telescope mirror area.
-    grating_groove_frequency: Quantity
-        The groove frequency ("lines per mm") of the grating.
+    filter: Filter, optional
+        The filter.
+    grating: Grating, optional
+        The grating setup.
     """
 
-    effective_mirror_area: Quantity
-    grating_angle: Quantity | None
-    grating_groove_frequency: Quantity | None
+    effective_mirror_area: Quantity | None
+    filter: Filter | None
+    grating: Grating | None
 
 
 @dataclasses.dataclass
@@ -168,13 +262,10 @@ class Source:
         The source extension ("Diffuse" or "Point").
     spectrum: list of Spectrum
         The source spectrum, as a list of its constituent spectra.
-    zenith_distance: Angle
-        The zenith distance of the source.
     """
 
     extension: SourceExtension
     spectrum: list[Spectrum]
-    zenith_distance: Angle
 
 
 @dataclasses.dataclass
@@ -184,6 +275,10 @@ class Configuration:
 
     Parameters
     ----------
+    detector: Detector | None
+        The detector related properties.
+    exposure: Exposure
+        The exposure related properties.
     moon: Moon
         The lunar properties.
     seeing: Angle
@@ -195,32 +290,26 @@ class Configuration:
         The solar properties.
     telescope: Telescope
         The telescope configuration.
+    zenith_distance: Angle
+        The zenith distance of the source.
     """
 
-    moon: Moon
+    detector: Detector | None
+    exposure: Exposure | None
+    moon: Moon | None
     seeing: Angle
-    source: Source
-    sun: Sun
+    source: Source | None
+    sun: Sun | None
     telescope: Telescope
+    zenith_distance: Angle
 
 
-def configuration(data: dict) -> Configuration:
-    """
-    Return the configuration defined in the given POST data.
-
-    Parameters
-    ----------
-    data: dict
-       Configuration data, as included in the POST request.
-
-    Returns
-    -------
-    Configuration
-        The configuration.
-    """
+def _parse_source(data: dict[str, Any]) -> Source | None:
+    if "source" not in data:
+        return None
 
     source_extension = data["source"]["type"]
-    spectrum_parts = []
+    spectrum_parts: list[Spectrum] = []
     for s in data["source"]["spectrum"]:
         spectrum_type = s["spectrumType"]
         match spectrum_type:
@@ -249,27 +338,128 @@ def configuration(data: dict) -> Configuration:
 
         spectrum_parts.append(spectrum)
 
-    moon = Moon(
-        lunar_elongation=float(data["moon"]["lunarElongation"]) * u.deg,
-        phase=float(data["moon"]["phase"]) * u.deg,
-        zenith_distance=float(data["moon"]["zenithDistance"]) * u.deg,
-    )
-    sun = Sun(
-        ecliptic_latitude=float(data["sun"]["eclipticLatitude"]) * u.deg,
-        solar_elongation=float(data["sun"]["solarElongation"]) * u.deg,
-        year=int(data["sun"]["year"]),
-    )
+    return Source(extension=source_extension, spectrum=spectrum_parts)
+
+
+def configuration(data: dict[str, Any]) -> Configuration:
+    """
+    Return the configuration defined in the given POST data.
+
+    Parameters
+    ----------
+    data: dict
+       Configuration data, as included in the POST request.
+
+    Returns
+    -------
+    Configuration
+        The configuration.
+    """
+    source = _parse_source(data)
+
+    if "moon" in data:
+        moon: Moon | None = Moon(
+            lunar_elongation=float(data["moon"]["lunarElongation"]) * u.deg,
+            phase=float(data["moon"]["phase"]) * u.deg,
+            zenith_distance=float(data["moon"]["zenithDistance"]) * u.deg,
+        )
+    else:
+        moon = None
+
+    if "sun" in data:
+        sun: Sun | None = Sun(
+            ecliptic_latitude=float(data["sun"]["eclipticLatitude"]) * u.deg,
+            solar_elongation=float(data["sun"]["solarElongation"]) * u.deg,
+            year=int(data["sun"]["year"]),
+        )
+    else:
+        sun = None
+
+    if "instrument_setup" in data:
+        instrument_setup = data["instrument_setup"]
+
+        filter_name_data: str | None = instrument_setup["filter"]
+        if filter_name_data == "Clear Filter":
+            filter_name: Filter | None = "Clear"
+        elif filter_name_data == "lwbf":
+            filter_name = "LWBF"
+        else:
+            raise ValueError(f"Unsupported filter name: {filter_name_data}")
+
+        grating: Grating | None = Grating(
+            grating_angle=float(instrument_setup["grating_angle"]) * u.deg,
+            groove_frequency=float(instrument_setup["grating"]) * u.mm**-1,
+        )
+    else:
+        filter_name = None
+        grating = None
+
+    if "exposure_configuration" in data:
+        exposure_configuration = data["exposure_configuration"]
+
+        sampling_type_data: str = exposure_configuration["sampling"]["sampling_type"]
+        if sampling_type_data == "Fowler":
+            sampling_type: SamplingType = "Fowler"
+        elif sampling_type_data == "Up The Ramp":
+            sampling_type = "Up-the-Ramp"
+        else:
+            raise ValueError(f"Unsupported sampling type: {sampling_type_data}")
+
+        detector: Detector | None = Detector(
+            adu=float(exposure_configuration["gain"]["adu"]),
+            full_well=int(exposure_configuration["gain"]["full_well"]),
+            read_noise=float(exposure_configuration["gain"]["read_noise"]),
+            samplings=int(exposure_configuration["sampling"]["number_of_samples"]),
+            sampling_type=sampling_type,
+        )
+
+        exposure_time = (
+            float(exposure_configuration["exposure_time"]) * u.s
+            if "exposure_time" in exposure_configuration
+            else None
+        )
+        snr = (
+            SNR(
+                snr=float(exposure_configuration["snr"]),
+                wavelength=float(exposure_configuration["wavelength"]) * u.AA,
+            )
+            if "snr" in exposure_configuration
+            else None
+        )
+        if exposure_time is None and snr is None:
+            raise ValueError("Either an exposure time or a SNR must be supplied.")
+        if exposure_time is not None and snr is not None:
+            raise ValueError("The exposure time and SNR are mutually exclusive.")
+
+        exposure: Exposure | None = Exposure(
+            exposures=int(exposure_configuration["detector_iterations"]),
+            exposure_time=exposure_time,
+            snr=snr,
+        )
+    else:
+        detector = None
+        exposure = None
+
     telescope = Telescope(
         effective_mirror_area=float(data["earth"]["mirrorArea"]) * u.cm**2,
-        grating_angle=None,
-        grating_groove_frequency=None,
+        filter=filter_name,
+        grating=grating,
     )
-    seeing = float(data["earth"]["seeing"]) * u.arcsec
-    source = Source(
-        extension=source_extension,
-        spectrum=spectrum_parts,
-        zenith_distance=float(data["earth"]["targetZenithDistance"]) * u.deg,
-    )
+
+    if "earth" in data:
+        seeing = float(data["earth"]["seeing"]) * u.arcsec
+        zenith_distance = float(data["earth"]["targetZenithDistance"]) * u.deg
+    else:
+        seeing = None
+        zenith_distance = None
+
     return Configuration(
-        moon=moon, seeing=seeing, source=source, sun=sun, telescope=telescope
+        detector=detector,
+        exposure=exposure,
+        moon=moon,
+        seeing=seeing,
+        source=source,
+        sun=sun,
+        telescope=telescope,
+        zenith_distance=zenith_distance,
     )

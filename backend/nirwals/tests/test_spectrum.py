@@ -1,19 +1,27 @@
 from itertools import product
-from typing import get_args
+from typing import get_args, cast
 
 import numpy as np
 import pytest
 
 from astropy import units as u
+from matplotlib.figure import Figure
 from synphot import units, SpectralElement, SourceSpectrum
 
 from constants import ZERO_MAGNITUDE_FLUX, FLUX
-from nirwals.configuration import Blackbody, EmissionLine, GalaxyAge, GalaxyType, Galaxy
+from nirwals.configuration import (
+    Blackbody,
+    EmissionLine,
+    GalaxyAge,
+    GalaxyType,
+    Galaxy,
+    Source,
+)
 from nirwals.physics.spectrum import source_spectrum, normalize, sky_spectrum
 from nirwals.tests.utils import get_default_configuration, create_matplotlib_figure
 
 
-def test_normalize():
+def test_normalize() -> None:
     # Vega should have magnitude 0.
     vega = SourceSpectrum.from_vega()
     vega_0 = normalize(vega, 0)
@@ -26,9 +34,9 @@ def test_normalize():
 
 
 @pytest.mark.mpl_image_compare
-def test_no_source():
+def test_no_source() -> Figure:
     config = get_default_configuration()
-    config.source.spectrum = []
+    cast(Source, config.source).spectrum = []
     spectrum = source_spectrum(config)
 
     # The waveset property is undefined for a constant source spectrum, hence we have to
@@ -40,9 +48,11 @@ def test_no_source():
 
 
 @pytest.mark.mpl_image_compare
-def test_blackbody():
+def test_blackbody() -> Figure:
     config = get_default_configuration()
-    config.source.spectrum = [Blackbody(magnitude=18, temperature=4000 * u.K)]
+    cast(Source, config.source).spectrum = [
+        Blackbody(magnitude=18, temperature=4000 * u.K)
+    ]
     spectrum = source_spectrum(config)
 
     wavelengths = spectrum.waveset
@@ -50,15 +60,19 @@ def test_blackbody():
     return create_matplotlib_figure(wavelengths, fluxes, title="Blackbody")
 
 
-def test_blackbody_normalisation():
+def test_blackbody_normalisation() -> None:
     # 18th magnitude object
     config_mag18 = get_default_configuration()
-    config_mag18.source.spectrum = [Blackbody(magnitude=18, temperature=4000 * u.K)]
+    cast(Source, config_mag18.source).spectrum = [
+        Blackbody(magnitude=18, temperature=4000 * u.K)
+    ]
     spectrum_mag18 = source_spectrum(config_mag18)
 
     # 13th magnitude object
     config_mag13 = get_default_configuration()
-    config_mag13.source.spectrum = [Blackbody(magnitude=13, temperature=4000 * u.K)]
+    cast(Source, config_mag13.source).spectrum = [
+        Blackbody(magnitude=13, temperature=4000 * u.K)
+    ]
     spectrum_mag13 = source_spectrum(config_mag13)
 
     # A difference of 5 magnitudes corresponds to a flux ratio of 100.
@@ -68,10 +82,12 @@ def test_blackbody_normalisation():
     )
 
 
-def test_zero_magnitude():
+def test_zero_magnitude() -> None:
     # 0th magnitude object
     config_mag0 = get_default_configuration()
-    config_mag0.source.spectrum = [Blackbody(magnitude=0, temperature=4000 * u.K)]
+    cast(Source, config_mag0.source).spectrum = [
+        Blackbody(magnitude=0, temperature=4000 * u.K)
+    ]
     spectrum_mag0 = source_spectrum(config_mag0)
 
     # A 0th magnitude object should have the zero magnitude flux.
@@ -81,9 +97,9 @@ def test_zero_magnitude():
 
 
 @pytest.mark.mpl_image_compare
-def test_emission_line():
+def test_emission_line() -> Figure:
     config = get_default_configuration()
-    config.source.spectrum = [
+    cast(Source, config.source).spectrum = [
         EmissionLine(
             central_wavelength=13000 * u.AA,
             fwhm=1000 * u.AA,
@@ -98,10 +114,10 @@ def test_emission_line():
     return create_matplotlib_figure(wavelengths, fluxes, title="Emission Line")
 
 
-def test_emission_line_redshift():
+def test_emission_line_redshift() -> None:
     # Spectrum without redshift
     config_z0 = get_default_configuration()
-    config_z0.source.spectrum = [
+    cast(Source, config_z0.source).spectrum = [
         EmissionLine(
             central_wavelength=13000 * u.AA,
             fwhm=1000 * u.AA,
@@ -114,7 +130,7 @@ def test_emission_line_redshift():
     # Spectrum at redshift z=1
     z = 1
     config_z1 = get_default_configuration()
-    config_z1.source.spectrum = [
+    cast(Source, config_z1.source).spectrum = [
         EmissionLine(
             central_wavelength=13000 * u.AA,
             fwhm=1000 * u.AA,
@@ -144,9 +160,11 @@ def test_emission_line_redshift():
     "age, galaxy_type, with_emission_lines",
     product(get_args(GalaxyAge), get_args(GalaxyType), (True, False)),
 )
-def test_galaxy(age: GalaxyAge, galaxy_type: GalaxyType, with_emission_lines: bool):
+def test_galaxy(
+    age: GalaxyAge, galaxy_type: GalaxyType, with_emission_lines: bool
+) -> Figure:
     config = get_default_configuration()
-    config.source.spectrum = [
+    cast(Source, config.source).spectrum = [
         Galaxy(
             age=age,
             galaxy_type=galaxy_type,
@@ -167,10 +185,10 @@ def test_galaxy(age: GalaxyAge, galaxy_type: GalaxyType, with_emission_lines: bo
     )
 
 
-def test_galaxy_normalisation():
+def test_galaxy_normalisation() -> None:
     # 18th magnitude object
     config_mag18 = get_default_configuration()
-    config_mag18.source.spectrum = [
+    cast(Source, config_mag18.source).spectrum = [
         Galaxy(
             age="Young",
             galaxy_type="Sa",
@@ -183,7 +201,7 @@ def test_galaxy_normalisation():
 
     # 13th magnitude object
     config_mag13 = get_default_configuration()
-    config_mag13.source.spectrum = [
+    cast(Source, config_mag13.source).spectrum = [
         Galaxy(
             age="Young",
             galaxy_type="Sa",
@@ -201,10 +219,10 @@ def test_galaxy_normalisation():
     )
 
 
-def test_galaxy_redshift():
+def test_galaxy_redshift() -> None:
     # Spectrum without redshift
     config_z0 = get_default_configuration()
-    config_z0.source.spectrum = [
+    cast(Source, config_z0.source).spectrum = [
         Galaxy(
             age="Young",
             galaxy_type="Sa",
@@ -218,7 +236,7 @@ def test_galaxy_redshift():
     # Spectrum at redshift z=1
     z = 1
     config_z1 = get_default_configuration()
-    config_z1.source.spectrum = [
+    cast(Source, config_z1.source).spectrum = [
         Galaxy(
             age="Young",
             galaxy_type="Sa",
@@ -241,9 +259,9 @@ def test_galaxy_redshift():
 
 
 @pytest.mark.mpl_image_compare
-def test_composite_spectrum():
+def test_composite_spectrum() -> Figure:
     config = get_default_configuration()
-    config.source.spectrum = [
+    cast(Source, config.source).spectrum = [
         Blackbody(magnitude=18, temperature=4000 * u.K),
         EmissionLine(
             central_wavelength=13000 * u.AA,
@@ -262,7 +280,7 @@ def test_composite_spectrum():
 
 
 @pytest.mark.mpl_image_compare
-def test_sky_spectrum():
+def test_sky_spectrum() -> Figure:
     sky = sky_spectrum()
     wavelengths = sky.waveset
     fluxes = sky(wavelengths)

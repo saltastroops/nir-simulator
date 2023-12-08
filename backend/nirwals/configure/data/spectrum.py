@@ -1,5 +1,6 @@
 import os
 import pathlib
+from typing import Any
 
 import numpy as np
 from scipy.constants import Planck, speed_of_light, Boltzmann
@@ -18,7 +19,7 @@ c = speed_of_light * 10**10
 kb = Boltzmann * 10**7  # joules/kelvin -> erg/kelvin
 
 
-def get_stellar_flux_values(wavelength: float, temperature: float, mag: float):
+def get_stellar_flux_values(wavelength: Any, temperature: float, mag: float) -> Any:
     star_black_body_radiation = (
         ((2 * np.pi * h * c**2) / wavelength**5)
         * 1
@@ -34,13 +35,13 @@ def get_stellar_flux_values(wavelength: float, temperature: float, mag: float):
 
 
 def get_galaxy_flux_values(
-    wavelength: list[float],
+    wavelength: Any,
     galaxy_type: str,
     age: str,
     has_emission_line: bool,
     magnitude: float,
     redshift: float,
-):
+) -> Any:
     galaxy_types = ["E", "Sb", "Sa", "Sc", "Sd", "S0"]
     age_types = ["Young", "Old"]
 
@@ -79,12 +80,12 @@ def get_galaxy_flux_values(
 
 
 def get_emission_line_values(
-    wavelength: list[float],
+    wavelength: Any,
     line_flux: float,
     lamda: float,
     line_fwhm: float,
     redshift: float,
-):
+) -> Any:
     redshifted_central_wavelength, redshifted_line_flux = get_redshifted_spectrum(
         lamda, line_flux, redshift
     )
@@ -106,16 +107,16 @@ def get_emission_line_values(
     return photon_count
 
 
-def get_sky_spectrum(form_data):
+def get_sky_spectrum(form_data: dict[str, Any]) -> tuple[Any, Any]:
     parameters = form_data
     num_points = 40001
     data = np.empty(num_points, dtype=[("wavelength", float), ("sky_flux", float)])
-    filename = "1-1-nirsky.csv"
-    file_path = (
-        FILES_BASE_DIR / "data_sheets" / "adjusted_program_datasheets" / filename
+    filename_ = "1-1-nirsky.csv"
+    filename = (
+        FILES_BASE_DIR / "data_sheets" / "adjusted_program_datasheets" / filename_
     )
 
-    data["wavelength"], data["sky_flux"] = read_csv_file(file_path)
+    data["wavelength"], data["sky_flux"] = read_csv_file(filename)
 
     if parameters["source"]["type"] == "Point":
         if not parameters["spectrumPlotOptions"]["calculateFluxInSeeingDisk"]:
@@ -140,7 +141,7 @@ def get_sky_spectrum(form_data):
     return data["wavelength"], data["sky_flux"]
 
 
-def get_sources_spectrum(form_data):
+def get_sources_spectrum(form_data: dict[str, Any]) -> tuple[Any, Any]:
     parameters = form_data
     num_points = 40001
     data = np.empty(

@@ -1,5 +1,5 @@
 import pathlib
-from typing import cast, get_args
+from typing import get_args
 
 from astropy import units as u
 from synphot import (
@@ -111,25 +111,24 @@ def _galaxy(
 
 
 def _spectrum(spectrum: Spectrum) -> SourceSpectrum:
-    if type(spectrum) == Blackbody:
-        bb = cast(Blackbody, spectrum)
-        return _blackbody(temperature=bb.temperature, magnitude=bb.magnitude)
-    elif type(spectrum) == EmissionLine:
-        el = cast(EmissionLine, spectrum)
-        return _emission_line(
-            central_wavelength=el.central_wavelength,
-            fwhm=el.fwhm,
-            redshift=el.redshift,
-            total_flux=el.total_flux,
+    if type(spectrum) is Blackbody:
+        return _blackbody(
+            temperature=spectrum.temperature, magnitude=spectrum.magnitude
         )
-    elif type(spectrum) == Galaxy:
-        g = cast(Galaxy, spectrum)
+    elif type(spectrum) is EmissionLine:
+        return _emission_line(
+            central_wavelength=spectrum.central_wavelength,
+            fwhm=spectrum.fwhm,
+            redshift=spectrum.redshift,
+            total_flux=spectrum.total_flux,
+        )
+    elif type(spectrum) is Galaxy:
         return _galaxy(
-            age=g.age,
-            galaxy_type=g.galaxy_type,
-            magnitude=g.magnitude,
-            redshift=g.redshift,
-            with_emission_lines=g.with_emission_lines,
+            age=spectrum.age,
+            galaxy_type=spectrum.galaxy_type,
+            magnitude=spectrum.magnitude,
+            redshift=spectrum.redshift,
+            with_emission_lines=spectrum.with_emission_lines,
         )
 
     raise ValueError(f"Unsupported spectrum type: {type(spectrum)}")
@@ -149,6 +148,8 @@ def source_spectrum(configuration: Configuration) -> SourceSpectrum:
     SourceSpectrum
         The source spectrum.
     """
+    if configuration.source is None:
+        raise ValueError("Source missing in configuration")
 
     summed_spectrum = SourceSpectrum(ConstFlux1D, amplitude=0 * units.PHOTLAM)
     for s in configuration.source.spectrum:
@@ -157,7 +158,7 @@ def source_spectrum(configuration: Configuration) -> SourceSpectrum:
     return summed_spectrum
 
 
-def sky_spectrum():
+def sky_spectrum() -> SourceSpectrum:
     """
     Return the sky background.
 

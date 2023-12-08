@@ -21,8 +21,8 @@ class Galaxy:
 
 # Class to manage sources
 class Sources:
-    def __init__(self):
-        self.source_list = []  # List to store different source types
+    def __init__(self) -> None:
+        self.source_list: list[Any] = []  # List to store different source types
 
 
 # Source classes to represent different source types
@@ -71,7 +71,7 @@ def get_background_spectrum() -> Tuple[List[float], List[float]]:
     return wavelength.tolist(), spectra.tolist()
 
 
-def adjust_spectra(sources: Sources) -> np.ndarray:
+def adjust_spectra(sources: Sources) -> Any:
     spectra = np.zeros(40001)  # Initialize an array to store the resulting spectra
     wavelength = np.arange(9000, 20001, 0.5)  # Wavelength range
 
@@ -102,7 +102,7 @@ def adjust_spectra(sources: Sources) -> np.ndarray:
 
 
 # Function to handle Star sources
-def handle_star(source, wavelength, spectra):
+def handle_star(source: Any, wavelength: Any, spectra: Any) -> Any:
     temperature, mag = source.temperature, source.magnitude
 
     # Calculate star radiance using Planck's radiation law
@@ -133,7 +133,7 @@ def handle_star(source, wavelength, spectra):
 
 
 # Function to handle EmissionLine sources
-def handle_emission_line(source, spectra):
+def handle_emission_line(source: Any, spectra: Any) -> Any:
     wavelength, fwhm, flux, redshift = (
         source.wavelength,
         source.fwhm,
@@ -158,7 +158,7 @@ def handle_emission_line(source, spectra):
 
 
 # Function to handle CustomData sources
-def handle_custom_data(source, wavelength, spectra):
+def handle_custom_data(source: Any, wavelength: Any, spectra: Any) -> Any:
     filename = source.filename
     custom_wavelength, custom_flux = load_custom_data(filename)
     spectra += np.interp(wavelength, custom_wavelength, custom_flux, left=0, right=0)
@@ -167,7 +167,7 @@ def handle_custom_data(source, wavelength, spectra):
 
 
 # Function to handle GalaxySource sources
-def handle_galaxy(source, wavelength, spectra, galaxy_data):
+def handle_galaxy(source: Any, wavelength: Any, spectra: Any, galaxy_data: Any) -> Any:
     typ, age, emission_line, mag, redshift = (
         source.typ,
         source.age,
@@ -180,8 +180,8 @@ def handle_galaxy(source, wavelength, spectra, galaxy_data):
     starting_wavelength = 9000 / (1 + float(redshift))
     starting_wavelength = 2 * round(starting_wavelength / 2, 1)
 
-    starting_index = current_galaxy.wavelength.index(starting_wavelength)
-    selection = current_galaxy.flux[starting_index : starting_index + 40001]
+    starting_index = cast(Any, current_galaxy).wavelength.index(starting_wavelength)
+    selection = cast(Any, current_galaxy).flux[starting_index : starting_index + 40001]
     galmagflux = 3.02 * 10 ** (-10) * 10 ** (-0.4 * mag)
 
     normalizer = selection[18000] / galmagflux
@@ -258,7 +258,7 @@ def load_galaxy(filename: str) -> Galaxy:
 
 
 # Function to load custom data
-def load_custom_data(filename: str) -> Tuple[np.ndarray, np.ndarray]:
+def load_custom_data(filename: str) -> Tuple[Any, Any]:
     data = np.genfromtxt(filename, delimiter=",")
     custom_wavelength = data[:, 0]
     custom_flux = data[:, 1]

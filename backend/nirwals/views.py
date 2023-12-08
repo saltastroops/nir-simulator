@@ -1,6 +1,6 @@
 import json
 
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpRequest
 from django.views.decorators.csrf import csrf_exempt
 
 from nirwals.configuration import configuration
@@ -9,8 +9,8 @@ from nirwals.configure.data.spectrum import get_sources_spectrum, get_sky_spectr
 
 
 @csrf_exempt
-def throughput(request):
-    configuration = json.loads(request.POST.get("data"))
+def throughput(request: HttpRequest) -> JsonResponse:
+    configuration = json.loads(request.POST.get("data", None))
     # Get plot data based on configuration options
     wavelengths, throughputs = get_throughput_plot_data(configuration)
     # Prepare data for response
@@ -22,8 +22,8 @@ def throughput(request):
 
 
 @csrf_exempt
-def spectra(request):
-    parameters = json.loads(request.POST.get("data"))
+def spectra(request: HttpRequest) -> JsonResponse:
+    parameters = json.loads(request.POST.get("data", None))
     wavelength, sources_flux_values = get_sources_spectrum(parameters)
     _, sky_flux_values = get_sky_spectrum(parameters)
     data = {
@@ -34,13 +34,13 @@ def spectra(request):
 
 
 @csrf_exempt
-def solve_for_snr(request):
+def solve_for_snr(request: HttpRequest) -> JsonResponse:
     # Get plot data based on configuration options
-    config = configuration(request.POST.get("data"))
-    parameters = json.loads(request.POST.get("data"))
+    configuration(request.POST.get("data", None))
+    json.loads(request.POST.get("data", None))
 
     # Prepare data for response
-    wavelength, snr = [], []
+    wavelength, snr = [2, 3], [2, 3]
     additional_plot = {
         "x": {"label": "X-label", "values": [1, 2, 3, 4, 5]},
         "y": {"label": "Y-label", "values": [2, 3, 5, 0, 4]},
