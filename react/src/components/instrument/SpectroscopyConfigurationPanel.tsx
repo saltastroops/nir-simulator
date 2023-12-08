@@ -1,4 +1,5 @@
 import { InstrumentMode } from "../../types.ts";
+import { select } from "../utils.ts";
 
 interface SpectroscopyConfigurationParameters {
   slitType: string;
@@ -58,10 +59,11 @@ export default function SpectroscopyConfigurationPanel({
     <div className="tile is-child box mt-2">
       <div className="title is-6">Spectroscopy</div>
       <div className="field">
-        <div className="control">
-          <label className="label">Slit Type</label>
-          <div className="select">
+        <div className="control pb-2">
+          <label>Slit Type</label>
+          <div>
             <select
+              className={select("w-32")}
               value={slitType}
               onChange={(event) =>
                 updateParameter("slitType", event.target.value)
@@ -72,10 +74,11 @@ export default function SpectroscopyConfigurationPanel({
             </select>
           </div>
         </div>
-        <div className="control">
-          <label className="label">Slit Width</label>
-          <div className="select">
+        <div className="control  pb-2">
+          <label>Slit Width</label>
+          <div>
             <select
+              className={select("w-32")}
               value={slitWidth}
               onChange={(event) =>
                 updateParameter("slitWidth", event.target.value)
@@ -92,10 +95,11 @@ export default function SpectroscopyConfigurationPanel({
             </select>
           </div>
         </div>
-        <div className="control">
-          <label className="label">Grating</label>
-          <div className="select">
+        <div className="control  pb-2">
+          <label>Grating</label>
+          <div>
             <select
+              className={select("w-32")}
               value={grating}
               onChange={(event) =>
                 updateParameter("grating", event.target.value)
@@ -106,10 +110,11 @@ export default function SpectroscopyConfigurationPanel({
             </select>
           </div>
         </div>
-        <div className="control">
-          <label className="label">Grating Angle</label>
-          <div className="select">
+        <div className="control  pb-2">
+          <label>Grating Angle</label>
+          <div>
             <select
+              className={select("w-32")}
               value={gratingAngle}
               onChange={(event) =>
                 updateParameter("gratingAngle", event.target.value)

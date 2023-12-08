@@ -9,6 +9,8 @@ from astropy import units as u
 from nirwals.utils import get_redshifted_spectrum, read_csv_file
 
 
+from nirwals.utils import resample_spectrum
+
 FILES_BASE_DIR = pathlib.Path(getenv("FILES_BASE_DIR"))
 
 
@@ -48,7 +50,7 @@ def get_galaxy_flux_values(wavelength: [], galaxy_type: str, age: str, has_emiss
 
         new_disp_grid = wavelength * u.AA
 
-        new_resampled_spectrum = resampler(input_spectrum, new_disp_grid)
+        new_resampled_spectrum = resample_spectrum(input_spectrum)
 
         galaxy_magnitude_flux = 3.02 * 10 ** (-10) * 10 ** (-0.4 * magnitude)
 
@@ -112,7 +114,7 @@ def get_sources_spectrum(form_data):
 
     for source in sources:
         if source["spectrumType"] == "Blackbody":
-            star_flux = get_stellar_flux_values(data['wavelength'], float(source["temperature"]), float(source["magnitude"]))
+            star_flux = get_stellar_flux_values(float(data['wavelength']), float(source["temperature"]), float(source["magnitude"]))
             data['sources_flux'] = data['sources_flux'] + star_flux
         elif source["spectrumType"] == "Galaxy":
             has_emission_line = False

@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.shortcuts import render
 from django.urls import path, include
 
-from nirwals.views import spectra, throughput
+from nirwals.views import spectra, throughput, solve_for_snr
 
 
 def home(request):
@@ -15,4 +15,5 @@ urlpatterns = [
     path("__reload__/", include("django_browser_reload.urls")),
     path("spectra/", spectra, name="spectra"),
     path("throughput/", throughput, name="throughput"),
+    path("exposure/snr", solve_for_snr, name='solve-snr')
 ]

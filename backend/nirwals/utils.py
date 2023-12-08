@@ -1,10 +1,10 @@
 from functools import lru_cache
 
 import numpy as np
+import re
 from specutils.manipulation import FluxConservingResampler
 from astropy import units as u
 from specutils import Spectrum1D
-
 
 NUMBER_OF_POINTS = 40001
 conv = {
@@ -23,7 +23,7 @@ def get_redshifted_spectrum(wavelength, flux, redshift: float):
 #  TODO Caching should be done Correctly
 @lru_cache
 def read_csv_file(filename):
-    spectra_data = np.loadtxt(filename, delimiter=",",  quotechar="|",  converters=conv)
+    spectra_data = np.loadtxt(filename, delimiter=",", quotechar="|", converters=conv)
     wavelength = spectra_data[:, 0]
     flux = spectra_data[:, 1]
     return wavelength, flux
@@ -39,3 +39,12 @@ def resample_spectrum(
     resampler = FluxConservingResampler()
     return resampler(input_spectrum, wavelength_range)
 
+
+def to_snake(s):
+    return re.sub('([A-Z]\w+$)', '_\\1', s).lower()
+
+
+def convert_keys_to_snake_case(d):
+    if isinstance(d, list):
+        return [convert_keys_to_snake_case(i) if isinstance(i, (dict, list)) else i for i in d]
+    return {to_snake(a): convert_keys_to_snake_case(b) if isinstance(b, (dict, list)) else b for a, b in d.items()}
