@@ -259,7 +259,7 @@ where $\alpha$ is the grating angle. The angular size of the fibre on the sky is
 $$
 \phi_{\rm fibre} = \frac{w_{\rm fibre}}{f_{\rm tel}}
 $$
-where $w_{\rm fibre}$ and $f_{\rm tel}$ are the width of the fibre and the focal length of the primary mirror, respectively. Assuming Littrow diffraction, we have $\theta = -\alpha$, and hence $\cos\theta = \cos\alpha$ and $r_{\rm an} = 1$, so that the equation for the resolution can be simplified:
+where $w_{\rm fibre}$ and $f_{\rm tel}$ are the width of the fibre and the focal length of the primary mirror, respectively. *$\phi_{\rm fibre}$ must be given in radians.* Assuming Littrow diffraction, we have $\theta = -\alpha$, and hence $\cos\theta = \cos\alpha$ and $r_{\rm an} = 1$, so that the equation for the resolution can be simplified:
 $$
 \Delta\lambda = \phi_{\rm fibre}\frac{D_{\rm tel}}{D_{\rm col
 }}\sigma\cos\alpha
