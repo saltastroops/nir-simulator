@@ -312,7 +312,7 @@ $$
 $$
 If we denote the CCD pixel size by $p$, we thus see that the CCD's wavelength resolution is
 $$
-{\rm d}\lambda = \frac{p\cos\theta}{f_{\rm cam}}
+{\rm d}\lambda = \frac{\sigma p\cos\theta}{f_{\rm cam}}
 $$
 We choose the wavelength range for calculating the SNR to be $\lambda - i\cdot{\rm d}\lambda / 2, \lambda + i\cdot{\rm d}\lambda / 2$, where $i$ is the smallest integer with $i\cdot{\rm d}\lambda \geq \Delta\lambda$:
 $$
@@ -451,7 +451,7 @@ The bandpass is created from data in a file.
 
 The wavelength covered by a single CCD pixel is
 $$
-{\rm d}\lambda = \frac{p\cos\theta}{f_{\rm cam}}
+{\rm d}\lambda = \frac{\sigma p\cos\theta}{f_{\rm cam}}
 $$
 We create a binset from $\lambda_{\rm min} - 100\ {\rm\AA}$ to approximately $\lambda_{\rm max} + 100\ {\rm\AA}$ with a stepsize of ${\rm d}\lambda$. (The extra $100\ {\rm\AA}$ are added to avoid artifacts at the boundaries of the wavelength range of interest. ) We then create an `Observation` with the source spectrum (or background), the product of the throughput bandpasses as the bandpass, the user-supplied effective mirror area and the binset just calculated.
 
