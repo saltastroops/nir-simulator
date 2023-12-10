@@ -3,6 +3,16 @@ import pathlib
 
 from astropy import units as u
 
+CAMERA_FOCAL_LENGTH = 0.220 * u.m
+"""
+Focal length of the camera.
+"""
+
+CCD_PIXEL_SIZE = 18 * u.micron
+"""
+Size of a CCD pixel.
+"""
+
 COLLIMATOR_FOCAL_LENGTH = 0.630 * u.m
 """
 Focal length of the collimator.
