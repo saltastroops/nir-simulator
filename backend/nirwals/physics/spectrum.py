@@ -162,10 +162,13 @@ def sky_spectrum() -> SourceSpectrum:
     """
     Return the sky background.
 
+    The background is assumed to include any atmospheric extinction already, i.e, it is
+    the flux received at the telescope.
+
     Returns
     -------
     SourceSpectrum
-        The sky background.
+        The sky background, as received at the telescope.
     """
     path = pathlib.Path(
         get_file_base_dir()
