@@ -3,6 +3,10 @@ import pathlib
 
 from astropy import units as u
 
+COLLIMATOR_FOCAL_LENGTH = 0.630 * u.m
+"""
+Focal length of the collimator.
+"""
 
 FIBRE_RADIUS = 0.665 * u.arcsec
 """
@@ -13,6 +17,11 @@ Fibre radius, as an angle on the sky.
 FLUX = u.def_unit("TOTALFLAM", 1 * u.erg / (u.cm**2 * u.s))
 """
 Unit for a total energy flux.
+"""
+
+TELESCOPE_FOCAL_LENGTH = 46.2 * u.m
+"""
+Focal length of the telescope.
 """
 
 TELESCOPE_SEEING = 0.6 * u.arcsec
