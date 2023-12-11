@@ -5,7 +5,17 @@ from astropy import units as u
 from astropy.units import Quantity
 from matplotlib.figure import Figure
 
-from nirwals.configuration import Configuration, Source, Sun, Moon, Telescope, Grating
+from nirwals.configuration import (
+    Configuration,
+    Source,
+    Sun,
+    Moon,
+    Telescope,
+    Grating,
+    Detector,
+    Exposure,
+    Blackbody,
+)
 
 
 def get_default_configuration() -> Configuration:
@@ -17,23 +27,26 @@ def get_default_configuration() -> Configuration:
     Configuration
         A default simulator configuration.
     """
+    detector = Detector(
+        adu=2.04, full_well=83500, read_noise=24.6, samplings=1, sampling_type="Fowler"
+    )
+    exposure = Exposure(exposures=1, exposure_time=100 * u.s, snr=None)
     moon = Moon(
         lunar_elongation=180 * u.deg, phase=90 * u.deg, zenith_distance=45 * u.deg
     )
-    source = Source(extension="Point", spectrum=[])
+    source = Source(
+        extension="Point", spectrum=[Blackbody(magnitude=19, temperature=4000 * u.K)]
+    )
     sun = Sun(ecliptic_latitude=0 * u.deg, solar_elongation=180 * u.deg, year=2023)
     telescope = Telescope(
         effective_mirror_area=460000 * u.cm**2,
         filter="Clear",
-        grating=Grating(
-            grating_angle=45 * u.deg,
-            groove_frequency=950 * u.mm**-1,
-        ),
+        grating=Grating(grating_angle=45 * u.deg, name="950"),
     )
 
     return Configuration(
-        detector=None,
-        exposure=None,
+        detector=detector,
+        exposure=exposure,
         moon=moon,
         seeing=2 * u.arcsec,
         source=source,

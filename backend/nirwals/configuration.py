@@ -152,12 +152,18 @@ class Grating:
     ----------
     grating_angle: Quantity
         The grating angle, i.e. the angle of the incoming rays to the grating normal.
-    groove_frequency: Quantity
-        The inverse of the grating constant, i.e. the number of grooves (lines) per mm.
+    name: str
+        The grating name.
     """
 
     grating_angle: Quantity
-    groove_frequency: Quantity
+    name: GratingName
+
+    @property
+    def grating_constant(self) -> u.micron:
+        """Quantity: The grating constant, i.e. the spacing between grooves."""
+        groove_frequency = float(self.name) * u.mm**-1
+        return 1 / groove_frequency
 
 
 @dataclasses.dataclass
@@ -388,7 +394,7 @@ def configuration(data: dict[str, Any]) -> Configuration:
 
         grating: Grating | None = Grating(
             grating_angle=float(instrument_setup["grating_angle"]) * u.deg,
-            groove_frequency=float(instrument_setup["grating"]) * u.mm**-1,
+            name=instrument_setup["grating"],
         )
     else:
         filter_name = None

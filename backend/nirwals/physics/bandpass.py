@@ -135,7 +135,9 @@ def fibre_throughput(
 
 
 @u.quantity_input
-def grating_efficiency(grating: GratingName, alpha: u.deg) -> SpectralElement:
+def grating_efficiency(
+    grating_angle: u.deg, grating_name: GratingName
+) -> SpectralElement:
     """
     Returns the grating efficiency for a given grating angle.
 
@@ -144,10 +146,10 @@ def grating_efficiency(grating: GratingName, alpha: u.deg) -> SpectralElement:
 
     Parameters
     ----------
-    grating: Grating
-        Grating name. This is equal to the grating frequency, i.e. grooves per mm.
-    alpha: Angle
+    grating_angle: Angle
         Grating angle.
+    grating_name: GratingName
+        Grating name. This is equal to the grating frequency, i.e. grooves per mm.
 
     Returns
     -------
@@ -172,24 +174,24 @@ def grating_efficiency(grating: GratingName, alpha: u.deg) -> SpectralElement:
 
     # Avoid rounding issues.
     eps = 0.000001
-    if angles[0] - eps * u.deg < alpha < angles[0] + eps * u.deg:
-        alpha = angles[0] + eps * u.deg
-    if angles[-1] - eps * u.deg < alpha < angles[-1] + eps * u.deg:
-        alpha = angles[-1] - eps * u.deg
+    if angles[0] - eps * u.deg < grating_angle < angles[0] + eps * u.deg:
+        grating_angle = angles[0] + eps * u.deg
+    if angles[-1] - eps * u.deg < grating_angle < angles[-1] + eps * u.deg:
+        grating_angle = angles[-1] - eps * u.deg
 
     # Find the smallest interval [alpha1, alpha2] in angles with
     # alpha1 <= alpha <= alpha2.
-    if angles[0] > alpha or alpha > angles[-1]:
+    if angles[0] > grating_angle or grating_angle > angles[-1]:
         raise ValueError(
             f"Only grating angles between {angles[0]} and {angles[1]} are "
             f"supported."
         )
-    alpha1 = max([a for a in angles if a <= alpha])
-    alpha2 = min([a for a in angles if alpha < a])
+    alpha1 = max([a for a in angles if a <= grating_angle])
+    alpha2 = min([a for a in angles if grating_angle < a])
 
     # Figure out whether to shift the efficiency curve for alpha1 to the right or the
     # curve for alpha2 to the left.
-    if alpha <= (alpha1 + alpha2) / 2:
+    if grating_angle <= (alpha1 + alpha2) / 2:
         angle = alpha1
         shift_to_right = True
     else:
@@ -201,8 +203,8 @@ def grating_efficiency(grating: GratingName, alpha: u.deg) -> SpectralElement:
     path = pathlib.Path(
         get_file_base_dir()
         / "gratings"
-        / grating
-        / f"grating_{grating}_{angle_value}deg.csv"
+        / grating_name
+        / f"grating_{grating_name}_{angle_value}deg.csv"
     )
     with open(path, "rb") as f:
         wavelengths_, efficiencies_ = read_from_file(f)
@@ -214,9 +216,9 @@ def grating_efficiency(grating: GratingName, alpha: u.deg) -> SpectralElement:
     lmax1 = maxima[alpha1]
     lmax2 = maxima[alpha2]
     if shift_to_right:
-        shift = -((alpha - alpha1) / (alpha2 - alpha1)) * (lmax2 - lmax1)
+        shift = -((grating_angle - alpha1) / (alpha2 - alpha1)) * (lmax2 - lmax1)
     else:
-        shift = ((alpha2 - alpha) / (alpha2 - alpha1)) * (lmax2 - lmax1)
+        shift = ((alpha2 - grating_angle) / (alpha2 - alpha1)) * (lmax2 - lmax1)
     wavelengths = np.arange(4000, 22000, 0.2) * u.AA
     shifted_wavelengths = wavelengths + shift
     shifted_efficiencies = efficiency(shifted_wavelengths)

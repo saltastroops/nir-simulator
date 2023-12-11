@@ -150,7 +150,7 @@ def test_filter_transmission(filter_name: Filter) -> Figure:
 )
 def test_grating_efficiency(alpha: u.deg) -> Figure:
     grating: GratingName = "950"
-    efficiency = grating_efficiency(grating=grating, alpha=alpha)
+    efficiency = grating_efficiency(grating_angle=alpha, grating_name=grating)
 
     wavelengths = efficiency.waveset
     efficiencies = efficiency(wavelengths)
@@ -164,7 +164,7 @@ def test_grating_efficiency(alpha: u.deg) -> Figure:
 def test_grating_efficiency_interpolation() -> None:
     # Efficiencies for 40, 41, 43, 45 degrees
     efficiencies = {
-        alpha: grating_efficiency(grating="950", alpha=alpha)
+        alpha: grating_efficiency(grating_angle=alpha, grating_name="950")
         for alpha in [40 * u.deg, 41 * u.deg, 43 * u.deg, 45 * u.deg]
     }
 
