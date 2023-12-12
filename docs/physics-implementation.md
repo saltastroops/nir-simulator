@@ -457,11 +457,11 @@ We create a binset from $\lambda_{\rm min} - 100\ {\rm\AA}$ to approximately $\l
 
 From the `Observation` we then get the fluxes at the bin centres. Let $n$ be the array of these fluxes and let $n_{k}$ be the array  you get by shifting $n$ $k$-times to the right (for $k \ge 0$) or to the left (for $k \lt 0$). "Gaps" resulting from shifting are filled with zeroes. Then (using trapezoidal intregration) we see that (apart from the first and last bin) the count rate $N[k]$ for the $k$-th bin is approximately
 $$
-N[k] = {\rm d}\lambda\left(\frac{n[k-1] + n[k]}{2} + \frac{n[k] + n[k+1]}{2}\right) = \frac{1}{2}{\rm d}\lambda\,(n[k-1] + 2 n[k] + n[k+1])
+N[k] = \frac{1}{2}{\rm d}\lambda\left(\frac{n[k-1] + n[k]}{2} + \frac{n[k] + n[k+1]}{2}\right) = \frac{1}{4}{\rm d}\lambda\,(n[k-1] + 2 n[k] + n[k+1])
 $$
 So the array $N$ of count rates is given by
 $$
-N = \frac{1}{2}{\rm d}\lambda\,(n_{-1} +2n + n_{+1})
+N = \frac{1}{4}{\rm d}\lambda\,(n_{-1} +2n + n_{+1})
 $$
 The wavelength resolution is given by
 $$
