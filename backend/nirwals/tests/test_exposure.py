@@ -11,13 +11,15 @@ from pytest import MonkeyPatch
 from synphot import SourceSpectrum, ConstFlux1D, units, SpectralElement, Observation
 
 from constants import get_minimum_wavelength, get_maximum_wavelength
-from nirwals.configuration import Source, Grating
+from nirwals.configuration import Source, Grating, Exposure
 from nirwals.physics.exposure import (
     wavelength_resolution_element,
     pixel_wavelength_range,
     source_observation,
     sky_observation,
     detection_rates,
+    readout_noise,
+    snr,
 )
 from nirwals.tests.utils import get_default_configuration, create_matplotlib_figure
 
@@ -70,7 +72,7 @@ def _patch(monkeypatch: MonkeyPatch) -> dict[str, MagicMock]:
     return mocks
 
 
-class _MockObservation:
+class _MockLinearObservation:
     """
     A mock (and completely unrealistic) observation.
 
@@ -141,6 +143,30 @@ class _MockObservation:
 
     def _f(self, x: Any) -> Any:
         return self.gradient * x
+
+
+class _MockConstantObservation:
+    """
+    A mock (and completely unrealistic) observation.
+
+    The observation has a constant user-specified flux and a binset from 100 to 1000 A
+    with a spacing of 1 A.
+
+    Parameters
+    ----------
+    flux
+        The constant flux.
+    """
+
+    def __init__(self, flux: Quantity) -> None:
+        self.flux = flux
+
+    def __call__(self, wavelength: Quantity) -> Quantity:
+        return self.flux * np.ones(len(wavelength))
+
+    @property
+    def binset(self) -> Quantity:
+        return np.arange(8000, 17000, 1) * u.AA
 
 
 def test_wavelength_resolution_element(monkeypatch: MonkeyPatch) -> None:
@@ -336,7 +362,7 @@ def test_detection_rates(
         "nirwals.physics.exposure.wavelength_resolution_element", wre_mock
     )
 
-    observation = _MockObservation(
+    observation = _MockLinearObservation(
         pixel_wavelength_range=pixel_wavelength_range, binning=binning
     )
     area = 10 * u.cm**2
@@ -364,3 +390,61 @@ def test_detection_rates(
         actual_rates[1][1:-1].to(u.cm**2 * u.AA * units.PHOTLAM).value,
         expected_rates[1][1:-1].to(u.cm**2 * u.AA * units.PHOTLAM).value,
     )
+
+
+def test_readout_noise() -> None:
+    assert (
+        pytest.approx(readout_noise(read_noise=5, samplings=3, sampling_type="Fowler"))
+        == 50 / 3
+    )
+    assert (
+        pytest.approx(
+            readout_noise(read_noise=8, samplings=5, sampling_type="Up-the-Ramp")
+        )
+        == 153.6
+    )
+
+
+def test_snr_value(monkeypatch: MonkeyPatch) -> None:
+    # Mock the source observation to have a constant flux of 7 PHOTLAM and a bin set
+    # spacing of 1 A.
+    source_mock = MagicMock(return_value=_MockConstantObservation(7 * units.PHOTLAM))
+    monkeypatch.setattr("nirwals.physics.exposure.source_observation", source_mock)
+
+    # Mock the source observation to have a constant flux of 3 PHOTLAM and a bin set
+    # spacing of 1 A.
+    sky_mock = MagicMock(return_value=_MockConstantObservation(3 * units.PHOTLAM))
+    monkeypatch.setattr("nirwals.physics.exposure.sky_observation", sky_mock)
+
+    # Choose the wavelength resolution element so that the detection rate bins will have
+    # a size of 10 A.
+    wre_mock = MagicMock(return_value=10 * u.AA)
+    monkeypatch.setattr(
+        "nirwals.physics.exposure.wavelength_resolution_element", wre_mock
+    )
+
+    # Choose a mirror area of 1 cm^2, two exposures and an exposure time of 3 seconds.
+    configuration = get_default_configuration()
+    configuration.telescope.effective_mirror_area = 1 * u.cm**2
+    exposure = cast(Exposure, configuration.exposure)
+    exposure.exposures = 2
+    exposure.exposure_time = 3 * u.s
+
+    # Choose the readout noise per exposure to be 12.5.
+    rn_mock = MagicMock(return_value=12.5)
+    monkeypatch.setattr("nirwals.physics.exposure.readout_noise", rn_mock)
+
+    # With the above choices the detection rate for the source will be 70 per second,
+    # and that for the sky 30 per second. Hence, the signal will be 70 * 2 * 3 = 420,
+    # whereas the noise will be the square root of (70 + 30) * 2 * 3 + 12.5 * 2 = 625,
+    # i.e. 25. The SNR thus should be 420 / 25 = 16.8.
+    wavelengths, snr_values = snr(configuration)
+    assert pytest.approx(snr_values[20]) == 16.8
+
+
+@pytest.mark.mpl_image_compare
+def test_snr() -> Figure:
+    configuration = get_default_configuration()
+    wavelengths, snr_values = snr(configuration)
+
+    return create_matplotlib_figure(wavelengths, snr_values * u.dimensionless_unscaled)

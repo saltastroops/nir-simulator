@@ -15,7 +15,15 @@ from constants import (
     get_minimum_wavelength,
     get_maximum_wavelength,
 )
-from nirwals.configuration import Configuration, Filter, Source, Grating
+from nirwals.configuration import (
+    Configuration,
+    Filter,
+    Source,
+    Grating,
+    SamplingType,
+    Exposure,
+    Detector,
+)
 from nirwals.physics.bandpass import (
     atmospheric_transmission,
     telescope_throughput,
@@ -292,6 +300,33 @@ def detection_rates(
     return bin_wavelengths, rates
 
 
+def readout_noise(
+    read_noise: float, samplings: int, sampling_type: SamplingType
+) -> float:
+    """
+    Return the readout noise for a single exposure.
+
+    Parameters
+    ----------
+    read noise: float
+        Read noise.
+    samplings: int
+        Number of samplings (per exposure).
+    sampling_type: SamplingType
+        Sampling type, such as "Fowler".
+
+    Returns
+    -------
+    float
+        The readout noise.
+    """
+    match sampling_type:
+        case "Fowler":
+            return read_noise**2 / (samplings / 2)
+        case "Up-the-Ramp":
+            return read_noise**2 / (samplings / 12)
+
+
 def _binset(grating_angle: u.deg, grating_constant: Quantity) -> Quantity:
     # Get the step size for the bin set.
     delta_lambda = pixel_wavelength_range(grating_angle, grating_constant)
@@ -347,3 +382,46 @@ def _bin_integrals(x: np.ndarray, y: np.ndarray) -> np.ndarray:
     integrals = 0.25 * dx * (n_shifted_left + 2 * n + n_shifted_right)
 
     return cast(np.ndarray, integrals[1:-1])
+
+
+def snr(configuration: Configuration) -> tuple[Quantity, Quantity]:
+    # Get the source and sky observation.
+    source = source_observation(configuration)
+    sky = sky_observation(configuration)
+
+    # Get the source and sky detection rates,
+    grating = cast(Grating, configuration.telescope.grating)
+    wavelengths_source, rates_source = detection_rates(
+        area=configuration.telescope.effective_mirror_area,
+        grating_angle=grating.grating_angle,
+        grating_constant=grating.grating_constant,
+        observation=source,
+    )
+    wavelengths_sky, rates_sky = detection_rates(
+        area=configuration.telescope.effective_mirror_area,
+        grating_angle=grating.grating_angle,
+        grating_constant=grating.grating_constant,
+        observation=sky,
+    )
+
+    # Collect the remaining relevant configuration parameters.
+    exposure = cast(Exposure, configuration.exposure)
+    e = exposure.exposures
+    t = exposure.exposure_time
+    detector = cast(Detector, configuration.detector)
+    read_noise = detector.read_noise
+    samplings = detector.samplings
+    sampling_type = detector.sampling_type
+    r = readout_noise(
+        read_noise=read_noise, samplings=samplings, sampling_type=sampling_type
+    )
+
+    # Calculate the SNR.
+    source_counts = (
+        (rates_source * e * t).to(units.PHOTLAM * u.AA * u.cm**2 * u.s).value
+    )
+    sky_counts = (rates_sky * e * t).to(units.PHOTLAM * u.AA * u.cm**2 * u.s).value
+    snr_values = source_counts / np.sqrt(source_counts + sky_counts + r * e)
+
+    # Return the wavelengths and SNR values.
+    return wavelengths_source, snr_values
