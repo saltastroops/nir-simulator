@@ -72,3 +72,31 @@ def read_from_file(
         values = np.concatenate((values, np.array([0, 0])))
 
     return wavelengths * u.AA, values * unit
+
+
+def shift(a: np.ndarray, k: int) -> np.ndarray:
+    """
+    Shift an array by k places.
+
+    A negative shift is to the left, a positive shift is to the right. "Gaps" resulting
+    from the shift are filled with zeroes.
+
+    Parameters
+    ----------
+    a: np.ndarray
+        Array to shift.
+    k: int
+        Size of the shift.
+
+    Returns
+    -------
+    np.ndarray
+        The shifted array.
+    """
+    shifted_a = np.roll(a, k)
+    if k < 0:
+        shifted_a[k:] = 0
+    if k > 0:
+        shifted_a[:k] = 0
+
+    return shifted_a

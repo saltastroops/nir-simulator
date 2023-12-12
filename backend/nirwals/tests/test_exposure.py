@@ -1,12 +1,14 @@
 import math
-from typing import cast
+from typing import cast, Any
 from unittest.mock import MagicMock
 
+import numpy as np
 import pytest
 from astropy import units as u
+from astropy.units import Quantity
 from matplotlib.figure import Figure
 from pytest import MonkeyPatch
-from synphot import SourceSpectrum, ConstFlux1D, units, SpectralElement
+from synphot import SourceSpectrum, ConstFlux1D, units, SpectralElement, Observation
 
 from constants import get_minimum_wavelength, get_maximum_wavelength
 from nirwals.configuration import Source, Grating
@@ -15,6 +17,7 @@ from nirwals.physics.exposure import (
     pixel_wavelength_range,
     source_observation,
     sky_observation,
+    detection_rates,
 )
 from nirwals.tests.utils import get_default_configuration, create_matplotlib_figure
 
@@ -67,6 +70,79 @@ def _patch(monkeypatch: MonkeyPatch) -> dict[str, MagicMock]:
     return mocks
 
 
+class _MockObservation:
+    """
+    A mock (and completely unrealistic) observation.
+
+    The flux f for the observation is linear in the wavelength, f = gradient * l.
+
+    The rates method returns the wavelengths and rates that the detection_rates method
+    of the nirwals.physics.exposure module should return.
+
+    Parameters
+    ----------
+    pixel_wavelength_range: Quantity
+        Wavelength range covered by a pixel.
+    binning: int
+        Binning required to cover the wavelength resolution element.
+    """
+
+    gradient = 7
+
+    def __init__(self, pixel_wavelength_range: u.AA, binning: int):
+        self.pixel_wavelength_range = pixel_wavelength_range
+        self.wavelengths = (
+            np.arange(10, 1001, self.pixel_wavelength_range.to(u.AA).value) * u.AA
+        )
+        self.binning = binning
+
+    @property
+    def binset(self) -> Quantity:
+        return self.wavelengths
+
+    def __call__(self, wavelength: Quantity) -> Quantity:
+        return self._f(wavelength.to(u.AA).value) * units.PHOTLAM
+
+    def rates(self, area: Quantity) -> tuple[Quantity, Quantity]:
+        binned_wavelengths: list[float] = []
+        binned_fluxes: list[float] = []
+        bin = 0
+        while bin < len(self.binset):
+            wavelength = (
+                self.wavelengths[0].to(u.AA).value
+                + (bin + 0.5 * (self.binning - 1))
+                * self.pixel_wavelength_range.to(u.AA).value
+            )
+            binned_wavelengths.append(wavelength)
+            binned_flux = 0.0
+            for _ in range(self.binning):
+                binned_flux += self._bin_integral(bin)
+                bin += 1
+            binned_fluxes.append(binned_flux)
+
+        return (
+            np.array(binned_wavelengths) * u.AA,
+            np.array(binned_fluxes) * area * u.AA * units.PHOTLAM,
+        )
+
+    def _bin_integral(self, bin: int) -> float:
+        if bin > len(self.binset) - 1:
+            return 0
+        dx = self.pixel_wavelength_range.to(u.AA).value
+        x = self.binset[bin].to(u.AA).value
+        m = self.gradient
+        if bin == 0:
+            y = self._f(x)
+            return cast(float, (3 / 8) * y + 0.5 * m * ((x + dx / 2) ** 2 - x**2))
+        elif bin == len(self.binset) - 1:
+            return cast(float, 0.5 * m * (x**2 - (x - dx / 2) ** 2))
+        else:
+            return cast(float, 0.5 * m * ((x + dx / 2) ** 2 - (x - dx / 2) ** 2))
+
+    def _f(self, x: Any) -> Any:
+        return self.gradient * x
+
+
 def test_wavelength_resolution_element(monkeypatch: MonkeyPatch) -> None:
     monkeypatch.setattr("nirwals.physics.exposure.FIBRE_RADIUS", 2 * u.arcsec)
     monkeypatch.setattr("nirwals.physics.exposure.TELESCOPE_FOCAL_LENGTH", 50 * u.m)
@@ -74,7 +150,7 @@ def test_wavelength_resolution_element(monkeypatch: MonkeyPatch) -> None:
     grating_constant = 2 * u.um
     grating_angle = 60 * u.deg
 
-    dlambda = wavelength_resolution_element(grating_constant, grating_angle)
+    dlambda = wavelength_resolution_element(grating_angle, grating_constant)
     assert pytest.approx(dlambda.to(u.m).value) == (math.pi / 2.43) * 1e-9
 
 
@@ -242,3 +318,49 @@ def test_sky_observation_without_mocking() -> Figure:
     fluxes = observation(wavelengths)
 
     return create_matplotlib_figure(wavelengths, fluxes)
+
+
+@pytest.mark.parametrize(
+    "binning, pixel_wavelength_range, wavelength_resolution_element",
+    [(5, 3 * u.AA, 13 * u.AA), (6, 3 * u.AA, 17 * u.AA)],
+)
+def test_detection_rates(
+    binning: int,
+    pixel_wavelength_range: Quantity,
+    wavelength_resolution_element: Quantity,
+    monkeypatch: MonkeyPatch,
+) -> None:
+    # Patch the wavelength resolution element.
+    wre_mock = MagicMock(return_value=wavelength_resolution_element)
+    monkeypatch.setattr(
+        "nirwals.physics.exposure.wavelength_resolution_element", wre_mock
+    )
+
+    observation = _MockObservation(
+        pixel_wavelength_range=pixel_wavelength_range, binning=binning
+    )
+    area = 10 * u.cm**2
+    expected_rates = observation.rates(area)
+    grating_angle = 40 * u.deg
+    grating_constant = 2 * u.micron
+    actual_rates = detection_rates(
+        area=area,
+        grating_angle=grating_angle,
+        grating_constant=grating_constant,
+        observation=cast(Observation, observation),
+    )
+
+    # Sanity check: Our patched methods were used.
+    wre_mock.assert_called_once_with(
+        grating_angle=grating_angle, grating_constant=grating_constant
+    )
+
+    # Check that the correct wavelengths and rates were calculated. As the rates in the
+    # first and last bin are considered to be arbitrary, we ignore these bins.
+    assert np.allclose(
+        actual_rates[0][1:-1].to(u.AA).value, expected_rates[0][1:-1].to(u.AA).value
+    )
+    assert np.allclose(
+        actual_rates[1][1:-1].to(u.cm**2 * u.AA * units.PHOTLAM).value,
+        expected_rates[1][1:-1].to(u.cm**2 * u.AA * units.PHOTLAM).value,
+    )

@@ -4,7 +4,7 @@ from typing import cast
 import numpy as np
 from astropy import units as u
 from astropy.units import Quantity
-from synphot import Observation
+from synphot import Observation, units
 
 from constants import (
     FIBRE_RADIUS,
@@ -25,6 +25,7 @@ from nirwals.physics.bandpass import (
     detector_quantum_efficiency,
 )
 from nirwals.physics.spectrum import sky_spectrum, source_spectrum
+from nirwals.physics.utils import shift
 
 
 def source_observation(configuration: Configuration) -> Observation:
@@ -146,7 +147,7 @@ def sky_observation(configuration: Configuration) -> Observation:
 
 
 def wavelength_resolution_element(
-    grating_constant: u.micron, grating_angle: u.deg
+    grating_angle: u.deg, grating_constant: u.micron
 ) -> u.AA:
     """
     Return the wavelength resolution element for a grating setup.
@@ -198,6 +199,99 @@ def pixel_wavelength_range(grating_angle: u.deg, grating_constant: u.micron) -> 
     )
 
 
+def detection_rates(
+    area: Quantity,
+    grating_angle: u.deg,
+    grating_constant: Quantity,
+    observation: Observation,
+) -> tuple[Quantity, Quantity]:
+    """
+    Return the count rates of an observation, binned for the wavelength resolution.
+
+    The function bins the observation's wavelength bins together, so that the new bins
+    cover the wavelength resolution element as tightly as possible. For example, if each
+    observation wavelength bin covers 5 A and the wavelength resolution element is
+    23 A, then the new bins will consist of 5 of the original bins each. The first five
+    original bins become the first new bin, the sixth to tenth original bin become the
+    second new bin, and so on.
+
+    The wavelengths corresponding to the new bins are taken to be the midpoints of the
+    new bins.
+
+    The flux in each new bin is integrated and multiplied by the given area. These rates
+    are returned together with the new wavelengths.
+
+    This function assumes that the bin set of the observation is equidistant, and that
+    each wavelength bin corresponds to the wavelength range covered by a pixel.
+
+    The rates of the first and last bin should be considered to have arbitrary values,
+    as they are affected by boundary effects.
+
+    Parameters
+    ----------
+    area: Quantity
+        Effective mirror area.
+    grating_angle: Angle
+        Grating angle.
+    grating_constant: u.micron
+        The grating constant, i.e. the spacing between grooves.
+    observation: Observation
+        Observation.
+
+    Returns
+    -------
+    tuple
+        A tuple of wavelengths and corresponding rates.
+    """
+
+    wavelengths = observation.binset
+    wavelength_values = wavelengths.to(u.AA).value
+    flux_values = observation(wavelengths).to(units.PHOTLAM).value
+    delta_lambda = wavelengths[1] - wavelengths[0]
+    delta_lambda_value = delta_lambda.to(u.AA).value
+    pixel_flux_values = _bin_integrals(wavelength_values, flux_values)
+
+    # Find the binning so that each bin covers the wavelength resolution element as
+    # tightly as possible.
+    binning = 1
+    wre = wavelength_resolution_element(
+        grating_angle=grating_angle, grating_constant=grating_constant
+    )
+    while binning * delta_lambda < wre:
+        binning += 1
+
+    # Get the wavelengths for the bin wavelengths and the fluxes in the bins.
+    bin_wavelength_values: list[float] = []
+    bin_flux_values: list[float] = []
+    pixel = 0
+    while pixel < len(wavelengths):
+        # Get the wavelength in the middle of the bin. The current pixel is the first in
+        # the bin and the distance between the midpoints of the bin's outer pixels is
+        # the binsize less one pixel.
+        bin_wavelength_value = (
+            wavelength_values[0] + (pixel + 0.5 * (binning - 1)) * delta_lambda_value
+        )
+        bin_wavelength_values.append(bin_wavelength_value)
+
+        # Add up the fluxes of the pixels in the bin. If we are running out of pixels
+        # for the last bin, we assume a flux of 0 for the "missing" pixels.
+        bin_flux_value = 0
+        for _ in range(binning):
+            pixel_flux = (
+                pixel_flux_values[pixel] if pixel < len(pixel_flux_values) else 0
+            )
+            bin_flux_value += pixel_flux
+            pixel += 1
+        bin_flux_values.append(bin_flux_value)
+
+    # Add the units, and convert fluxes to rates.
+    bin_wavelengths = np.array(bin_wavelength_values) * u.AA
+    rates = np.array(bin_flux_values) * area * u.AA * units.PHOTLAM
+
+    # Returns wavelengths and rates.
+    return bin_wavelengths, rates
+
+
 def _binset(grating_angle: u.deg, grating_constant: Quantity) -> Quantity:
     # Get the step size for the bin set.
     delta_lambda = pixel_wavelength_range(grating_angle, grating_constant)
@@ -210,3 +304,46 @@ def _binset(grating_angle: u.deg, grating_constant: Quantity) -> Quantity:
 
     # Return the bin set.
     return binset_values * u.AA
+
+
+def _bin_integrals(x: np.ndarray, y: np.ndarray) -> np.ndarray:
+    """
+    Calculate the integral per bin for given x and y values.
+
+    The given x values must be equidistant, i.e. x[k] - x[k - 1] must be the same for
+    all 1 < k < len(k). This is not checked, though. x[k] is the midpoint of the bin
+    [x[k] - dx/2, x[k] + dx/2], where dx is the distance between adjacent x values.
+
+    The given y values are assumed to be function values at the corresponding x value,
+    y[k] = f(x[k]).
+
+    The function calculates the integral over f for each bin using trapezoidal
+    integration and returns the result. For the first and last bin the assumption is
+    made that f(x[0] - dx/2) = f(x[-1] + dx/2) = 0.
+
+    Parameters
+    ----------
+    x: np.ndarray
+        Array of bin midpoints.
+    y: np.ndarray
+        Array of y values corresponding to the bin midpoints.
+
+    Returns
+    -------
+    np.ndarray
+        The integral value for each bin.
+    """
+
+    # Sanity checks
+    if len(x) < 2:
+        raise ValueError("There must be at least two x values.")
+    if x.shape != y.shape:
+        raise ValueError("The shapes of x and y must be the same.")
+
+    dx = x[1] - x[0]
+    n = np.concatenate((np.array([0]), y, np.array([0])))
+    n_shifted_left = shift(n, -1)
+    n_shifted_right = shift(n, +1)
+    integrals = 0.25 * dx * (n_shifted_left + 2 * n + n_shifted_right)
+
+    return cast(np.ndarray, integrals[1:-1])

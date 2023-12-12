@@ -1,8 +1,9 @@
+import numpy as np
 import pytest
 from astropy import units as u
 from synphot import units
 
-from nirwals.physics.utils import read_from_file
+from nirwals.physics.utils import read_from_file, shift
 from nirwals.tests.utils import get_default_datafile
 
 
@@ -27,3 +28,12 @@ def test_read_from_file() -> None:
     assert pytest.approx(values[4]) == 1
     assert pytest.approx(values[5]) == 0
     assert pytest.approx(values[6]) == 0
+
+
+def test_shift() -> None:
+    a = np.arange(1, 11)
+    assert np.array_equal(shift(a, 0), a)
+    assert np.array_equal(shift(a, 1), np.array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]))
+    assert np.array_equal(shift(a, 5), np.array([0, 0, 0, 0, 0, 1, 2, 3, 4, 5]))
+    assert np.array_equal(shift(a, -1), np.array([2, 3, 4, 5, 6, 7, 8, 9, 10, 0]))
+    assert np.array_equal(shift(a, -3), np.array([4, 5, 6, 7, 8, 9, 10, 0, 0, 0]))
