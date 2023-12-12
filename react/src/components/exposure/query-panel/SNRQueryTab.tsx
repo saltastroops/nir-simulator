@@ -61,8 +61,9 @@ export class ExposureTime {
 interface Props {
   exposureTime: ExposureTime;
   update: (key: "exposureTime" | "snr", exposureTime: ExposureTime) => void;
+  updatePlots: () => void;
 }
-export function SNRQueryTab({ exposureTime, update }: Props) {
+export function SNRQueryTab({ exposureTime, update, updatePlots }: Props) {
   const updateValue = (event: any) => {
     updateExposureTime(event.target.name, event.target.value);
   };
@@ -80,9 +81,9 @@ export function SNRQueryTab({ exposureTime, update }: Props) {
     );
   };
 
-  const updatePlot = () => {
-    console.log("Update plot method not implement"); // TODO update should come from ExposurePanel
-  };
+  // const updatePlot = () => {
+  //   console.log("Update plot method not implement"); // TODO update should come from ExposurePanel
+  // };
 
   return (
     <>
@@ -126,7 +127,7 @@ export function SNRQueryTab({ exposureTime, update }: Props) {
       </div>
       <div className="field ">
         <div className="control">
-          <button className="button is-link" onClick={updatePlot}>
+          <button className="button is-link" onClick={updatePlots}>
             Solve for Signal to Noise
           </button>
         </div>

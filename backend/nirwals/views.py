@@ -4,6 +4,8 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from nirwals.configure.data.throughput import get_configured_throughput_spectrum
 from nirwals.configure.data.spectrum import get_sources_spectrum, get_sky_spectrum
+from nirwals.configure.data.exposure import get_imaging_mode_snr, get_spectroscopy_mode_snr
+
 
 
 @csrf_exempt
@@ -27,5 +29,17 @@ def spectra(request):
     data = {
         "source": {"x": wavelength.tolist(), "y": sources_flux_values.tolist()},
         "sky": {"x": wavelength.tolist(), "y": sky_flux_values.tolist()},
+    }
+    return JsonResponse(data)
+
+
+@csrf_exempt
+def exposure(request):
+    parameters = json.loads(request.POST.get("data"))
+    wavelength, snr = get_spectroscopy_mode_snr(parameters)
+    imaging_snr = get_imaging_mode_snr(parameters)
+    _, sky_flux_values = get_sky_spectrum(parameters)
+    data = {
+        "snr": {"x": wavelength.tolist(), "y": snr.tolist()},
     }
     return JsonResponse(data)

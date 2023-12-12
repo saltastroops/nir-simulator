@@ -31,3 +31,23 @@ export async function throughput(setupData: SimulationSetupData) {
   });
   return response.json();
 }
+
+export async function exposure(setupData: SimulationSetupData) {
+  const data = {
+    source: setupData.source,
+    moon: setupData.moon,
+    sun: setupData.sun,
+    earth: setupData.earth,
+    spectrumPlotOptions: setupData.spectrumPlotOptions,
+    instrumentConfiguration: setupData.instrumentConfiguration,
+    exposureConfiguration: setupData.exposureConfiguration,
+  };
+  const formData = new FormData();
+  formData.append("data", JSON.stringify(data));
+
+  const response = await fetch(environment.apiUrl + "/exposure/", {
+    method: "POST",
+    body: formData,
+  });
+  return response.json();
+}

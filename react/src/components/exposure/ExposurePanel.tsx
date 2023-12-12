@@ -11,6 +11,8 @@ import {
 } from "./query-panel/SNRQueryTab.tsx";
 import { SNR, SNRDataType } from "./query-panel/ExposureTimeQueryTab.tsx";
 import { SimulationSetup } from "../Simulator.tsx";
+import {useState} from "react";
+import {exposure} from "../../services.ts";
 
 interface ExposureConfigurationParameters {
   gain: Gain;
@@ -70,6 +72,18 @@ export function ExposurePanel({ setup, update }: Props) {
     update(new ExposureConfiguration(newExposureConfiguration));
   };
 
+  const [error, setError] = useState<string | null>(null);
+
+  const updatePlots = async () => {
+    try {
+      const exposureData = await exposure(setup);
+      console.log(exposureData);
+    } catch (error) {
+      setError("Data request failed.");
+      console.error("Error fetching plot data:", error);
+    }
+  };
+
   return (
     <div>
       <h1 className="title is-1">Make An Exposure</h1>
@@ -92,6 +106,7 @@ export function ExposurePanel({ setup, update }: Props) {
             <QueryTabs
               exposureConfiguration={setup.exposureConfiguration}
               update={updateExposureConfiguration}
+              updatePlots={updatePlots}
             />
           </div>
         </div>
