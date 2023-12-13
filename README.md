@@ -123,7 +123,7 @@ for angle in available_angles:
 print(", ".join(grating_parameters)
 ```
 
-## Converting atmospheric transmissions to extinction coeefficients
+## Converting atmospheric transmissions to extinction coefficients
 
 If a file with atmospheric transmission values is given, it can be converted to a file
 containing atmospheric extinction coefficients with code like the following.
@@ -138,7 +138,8 @@ from astropy import units as u
 from nirwals.physics.utils import read_from_file
 
 
-zenith_distance = 31 * u.deg
+airmass = 1.5
+zenith_distance = math.acos(1 / airmass) * u.rad
 
 path = pathlib.Path(
     "data/data_sheets/adjusted_program_datasheets/nirskytransmission.csv"
