@@ -1,13 +1,20 @@
 import math
 import pathlib
-from typing import get_args
+from typing import get_args, cast
 
 import numpy as np
 from astropy import units as u
 from synphot import SpectralElement, Empirical1D, ConstFlux1D
 
 from constants import get_file_base_dir, TELESCOPE_SEEING, FIBRE_RADIUS
-from nirwals.configuration import GratingName, Filter, SourceExtension
+from nirwals.configuration import (
+    GratingName,
+    Filter,
+    SourceExtension,
+    Configuration,
+    Grating,
+    Source,
+)
 from nirwals.physics.utils import read_from_file
 
 
@@ -246,3 +253,47 @@ def telescope_throughput() -> SpectralElement:
     with open(path, "rb") as f:
         wavelengths, throughputs = read_from_file(f)
     return SpectralElement(Empirical1D, points=wavelengths, lookup_table=throughputs)
+
+
+def throughput(configuration: Configuration) -> SpectralElement:
+    """
+    Calculate the throughput for a given configuration.
+
+    The throughput includes the following:
+
+    - The atmospheric transmission
+    - The mirror efficiency
+    - The fibre throughput
+    - The filter transmission
+    - The grating efficiency
+    - The detector quantum efficiency
+
+    Parameters
+    ----------
+    configuration: Configuration
+        The configuration.
+
+    Returns
+    -------
+    SpectralElement
+        The throughput.
+    """
+    grating = cast(Grating, configuration.telescope.grating)
+    configuration_source = cast(Source, configuration.source)
+    bandpass = (
+        atmospheric_transmission(zenith_distance=configuration.zenith_distance)
+        * telescope_throughput()
+        * fibre_throughput(
+            seeing=configuration.seeing,
+            source_extension=configuration_source.extension,
+            zenith_distance=configuration.zenith_distance,
+        )
+        * filter_transmission(filter_name=cast(Filter, configuration.telescope.filter))
+        * grating_efficiency(
+            grating_angle=grating.grating_angle,
+            grating_name=grating.name,
+        )
+        * detector_quantum_efficiency()
+    )
+
+    return bandpass

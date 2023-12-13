@@ -1,5 +1,6 @@
 import math
-from typing import get_args
+from typing import get_args, cast
+from unittest.mock import MagicMock
 
 import numpy as np
 import pytest
@@ -7,9 +8,10 @@ from matplotlib.figure import Figure
 from pytest import MonkeyPatch
 from astropy import units as u
 from astropy.units import Quantity
+from synphot import SpectralElement, ConstFlux1D
 
 from constants import TELESCOPE_SEEING, FIBRE_RADIUS
-from nirwals.configuration import GratingName, Filter, SourceExtension
+from nirwals.configuration import GratingName, Filter, SourceExtension, Source, Grating
 from nirwals.physics.bandpass import (
     grating_efficiency,
     atmospheric_transmission,
@@ -17,8 +19,9 @@ from nirwals.physics.bandpass import (
     telescope_throughput,
     detector_quantum_efficiency,
     fibre_throughput,
+    throughput,
 )
-from nirwals.tests.utils import create_matplotlib_figure
+from nirwals.tests.utils import create_matplotlib_figure, get_default_configuration
 
 
 @pytest.mark.mpl_image_compare
@@ -217,3 +220,75 @@ def test_telescope_throughput() -> Figure:
     return create_matplotlib_figure(
         wavelengths, throughputs, title="Telescope Throughput"
     )
+
+
+def test_throughput_value(monkeypatch: MonkeyPatch) -> None:
+    # Mock values. Prime numbers are used so that multiplying different mock values is
+    # guaranteed to yield different results.
+    _MOCK_ATMOSPHERIC_TRANSMISSION = ("atmospheric_transmission", 5)
+    _MOCK_TELESCOPE_THROUGHPUT = ("telescope_throughput", 7)
+    _MOCK_FIBRE_THROUGHPUT = ("fibre_throughput", 11)
+    _MOCK_FILTER_TRANSMISSION = ("filter_transmission", 13)
+    _MOCK_GRATING_EFFICIENCY = ("grating_efficiency", 17)
+    _MOCK_DETECTOR_QUANTUM_EFFICIENCY = ("detector_quantum_efficiency", 19)
+
+    # Mock the various throughput components.
+    mocks: dict[str, MagicMock] = dict()
+    for m in (
+        _MOCK_ATMOSPHERIC_TRANSMISSION,
+        _MOCK_TELESCOPE_THROUGHPUT,
+        _MOCK_FIBRE_THROUGHPUT,
+        _MOCK_FILTER_TRANSMISSION,
+        _MOCK_GRATING_EFFICIENCY,
+        _MOCK_DETECTOR_QUANTUM_EFFICIENCY,
+    ):
+        mock = MagicMock(return_value=SpectralElement(ConstFlux1D, amplitude=m[1]))
+        monkeypatch.setattr(f"nirwals.physics.bandpass.{m[0]}", mock)
+        mocks[m[0]] = mock
+
+    # Calculate the throughput.
+    configuration = get_default_configuration()
+    actual_throughput = throughput(configuration=configuration)
+
+    # Check that all the throughput component functions have been called with the
+    # correct arguments.
+    mocks["atmospheric_transmission"].assert_called_once_with(
+        zenith_distance=configuration.zenith_distance
+    )
+    mocks["telescope_throughput"].assert_called_once()
+    source = cast(Source, configuration.source)
+    mocks["fibre_throughput"].assert_called_once_with(
+        seeing=configuration.seeing,
+        source_extension=source.extension,
+        zenith_distance=configuration.zenith_distance,
+    )
+    mocks["filter_transmission"].assert_called_once_with(
+        filter_name=configuration.telescope.filter
+    )
+    grating = cast(Grating, configuration.telescope.grating)
+    mocks["grating_efficiency"].assert_called_once_with(
+        grating_angle=grating.grating_angle,
+        grating_name=grating.name,
+    )
+    mocks["detector_quantum_efficiency"].assert_called_once()
+
+    # Check that the calculated throughput value is correct.
+    expected_throughput = (
+        _MOCK_ATMOSPHERIC_TRANSMISSION[1]
+        * _MOCK_TELESCOPE_THROUGHPUT[1]
+        * _MOCK_FIBRE_THROUGHPUT[1]
+        * _MOCK_FILTER_TRANSMISSION[1]
+        * _MOCK_GRATING_EFFICIENCY[1]
+        * _MOCK_DETECTOR_QUANTUM_EFFICIENCY[1]
+    )
+    assert pytest.approx(float(actual_throughput(12345 * u.AA))) == expected_throughput
+
+
+@pytest.mark.mpl_image_compare
+def test_throughput() -> Figure:
+    configuration = get_default_configuration()
+    throughput_bandpass = throughput(configuration=configuration)
+    wavelengths = throughput_bandpass.waveset
+    throughputs = throughput_bandpass(wavelengths)
+
+    return create_matplotlib_figure(wavelengths, throughputs, title="Throughput")
