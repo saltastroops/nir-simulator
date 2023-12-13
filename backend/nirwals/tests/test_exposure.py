@@ -1,3 +1,4 @@
+import dataclasses
 import math
 from typing import cast, Any
 from unittest.mock import MagicMock
@@ -8,10 +9,17 @@ from astropy import units as u
 from astropy.units import Quantity
 from matplotlib.figure import Figure
 from pytest import MonkeyPatch
-from synphot import SourceSpectrum, ConstFlux1D, units, SpectralElement, Observation
+from synphot import (
+    SourceSpectrum,
+    ConstFlux1D,
+    units,
+    SpectralElement,
+    Observation,
+    Empirical1D,
+)
 
 from constants import get_minimum_wavelength, get_maximum_wavelength
-from nirwals.configuration import Source, Grating, Exposure
+from nirwals.configuration import Source, Grating, Exposure, SNR
 from nirwals.physics.exposure import (
     wavelength_resolution_element,
     pixel_wavelength_range,
@@ -20,6 +28,7 @@ from nirwals.physics.exposure import (
     detection_rates,
     readout_noise,
     snr,
+    exposure_time,
 )
 from nirwals.tests.utils import get_default_configuration, create_matplotlib_figure
 
@@ -447,4 +456,70 @@ def test_snr() -> Figure:
     configuration = get_default_configuration()
     wavelengths, snr_values = snr(configuration)
 
-    return create_matplotlib_figure(wavelengths, snr_values * u.dimensionless_unscaled)
+    return create_matplotlib_figure(wavelengths, snr_values, title="SNR")
+
+
+def test_exposure_time_value() -> None:
+    # Create the required configuration.
+    original_configuration = get_default_configuration()
+    requested_exposures = 5
+    requested_snr = 10
+    requested_wavelength = 12345 * u.AA
+    snr_ = SNR(
+        snr=requested_snr,
+        wavelength=requested_wavelength,
+    )
+    exposure = Exposure(exposures=requested_exposures, exposure_time=None, snr=snr_)
+    configuration = dataclasses.replace(original_configuration, exposure=exposure)
+
+    # Calculate the exposure times.
+    snr_values, exposure_times = exposure_time(configuration)
+
+    # Check that the correct SNR values were returned.
+    assert len(snr_values) == 101
+    assert pytest.approx(float(snr_values[0])) == 0
+    assert pytest.approx(float(snr_values[50])) == requested_snr
+    assert pytest.approx(float(snr_values[-1])) == 2 * requested_snr
+
+    # We check for consistency: If we calculate the SNR for the exposure time at index
+    # 50 (i.e. the one for the requested SNR), we should get the requested SNR again.
+    exposure_time_for_requested_exposure = exposure_times[50]
+    exposure2 = Exposure(
+        exposures=requested_exposures,
+        exposure_time=exposure_time_for_requested_exposure,
+        snr=None,
+    )
+    configuration2 = dataclasses.replace(original_configuration, exposure=exposure2)
+    wavelengths, snr_values = snr(configuration2)
+    snr_spectrum = SpectralElement(
+        Empirical1D, points=wavelengths, lookup_table=snr_values
+    )
+    snr_value = float(snr_spectrum(requested_wavelength))
+    requested_snr_value = float(requested_snr)
+    assert pytest.approx(snr_value) == requested_snr_value
+
+
+@pytest.mark.mpl_image_compare
+def test_exposure_time() -> Figure:
+    # Create the required configuration.
+    original_configuration = get_default_configuration()
+    requested_exposures = 5
+    requested_snr = 10
+    requested_wavelength = 12345 * u.AA
+    snr_ = SNR(
+        snr=requested_snr,
+        wavelength=requested_wavelength,
+    )
+    exposure = Exposure(exposures=requested_exposures, exposure_time=None, snr=snr_)
+    configuration = dataclasses.replace(original_configuration, exposure=exposure)
+
+    # Calculate the exposure times.
+    snr_values, exposure_times = exposure_time(configuration)
+
+    return create_matplotlib_figure(
+        snr_values,
+        exposure_times,
+        left=0,
+        right=float(snr_values[-1]),
+        title="Exposure Time",
+    )

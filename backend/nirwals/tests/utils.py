@@ -131,12 +131,16 @@ def create_matplotlib_figure(
     xu = x.unit
     if xu.physical_type == "frequency":
         ax.set_xlabel("Frequency ({0})".format(xu))
+    elif xu.physical_type == "dimensionless":
+        ax.set_xlabel("Unitless")
     else:
         ax.set_xlabel("Wavelength ({0})".format(xu))
 
     yu = y.unit
     if yu is u.dimensionless_unscaled:
         ax.set_ylabel("Unitless")
+    elif yu.physical_type == "time":
+        ax.set_ylabel("Time ({0})".format(yu))
     else:
         ax.set_ylabel("Flux ({0})".format(yu))
 

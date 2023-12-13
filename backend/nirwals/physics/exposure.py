@@ -4,7 +4,7 @@ from typing import cast
 import numpy as np
 from astropy import units as u
 from astropy.units import Quantity
-from synphot import Observation, units
+from synphot import Observation, units, SpectralElement, Empirical1D
 
 from constants import (
     FIBRE_RADIUS,
@@ -23,6 +23,7 @@ from nirwals.configuration import (
     SamplingType,
     Exposure,
     Detector,
+    SNR,
 )
 from nirwals.physics.bandpass import (
     atmospheric_transmission,
@@ -424,4 +425,84 @@ def snr(configuration: Configuration) -> tuple[Quantity, Quantity]:
     snr_values = source_counts / np.sqrt(source_counts + sky_counts + r * e)
 
     # Return the wavelengths and SNR values.
-    return wavelengths_source, snr_values
+    return wavelengths_source, snr_values * u.dimensionless_unscaled
+
+
+def exposure_time(configuration: Configuration) -> tuple[Quantity, Quantity]:
+    """
+    Calculate the exposure time as a function of the signal-to-noise ratio.
+
+    The given configuration must include a wavelength lambda and a signal-to-noise ratio
+    snr, and the exposure time are calculated at lambda for 101 equidistant SNR values
+    in the interval [0, 2 * snr]. The choice of 101 (rather than 100) values is
+    deliberate as it means that the given snr is one of the values. It has the index 50.
+
+    The function returns a tuple of the signal-to-noise ratios and corresponding
+    exposure times.
+
+    Parameters
+    ----------
+    configuration: Configuration
+        The configuration.
+
+    Returns
+    -------
+    tuple
+        A tuple of 101 signal-to-noise ratios and corresponding exposure times.
+    """
+    # Get the source and sky observation.
+    source = source_observation(configuration)
+    sky = sky_observation(configuration)
+
+    # Get the source and sky detection rates,
+    grating = cast(Grating, configuration.telescope.grating)
+    wavelengths_source, rates_source = detection_rates(
+        area=configuration.telescope.effective_mirror_area,
+        grating_angle=grating.grating_angle,
+        grating_constant=grating.grating_constant,
+        observation=source,
+    )
+    wavelengths_sky, rates_sky = detection_rates(
+        area=configuration.telescope.effective_mirror_area,
+        grating_angle=grating.grating_angle,
+        grating_constant=grating.grating_constant,
+        observation=sky,
+    )
+
+    # Collect the remaining relevant configuration parameters.
+    exposure = cast(Exposure, configuration.exposure)
+    e = exposure.exposures
+    snr_ = cast(SNR, exposure.snr)
+    requested_wavelength = snr_.wavelength
+    detector = cast(Detector, configuration.detector)
+    read_noise = detector.read_noise
+    samplings = detector.samplings
+    sampling_type = detector.sampling_type
+    r = readout_noise(
+        read_noise=read_noise, samplings=samplings, sampling_type=sampling_type
+    )
+
+    # Define the SNR values for which to calculate the exposure time.
+    sigma = np.linspace(0, 2 * float(snr_.snr), 101)
+
+    # Find the source and sky rate for the requested wavelength.
+    rates_source_spectrum = SpectralElement(
+        Empirical1D,
+        points=wavelengths_source,
+        lookup_table=rates_source.to(units.PHOTLAM * u.cm**2 * u.AA).value,
+    )
+    rate_source = rates_source_spectrum(requested_wavelength)
+    rates_sky_spectrum = SpectralElement(
+        Empirical1D,
+        points=wavelengths_sky,
+        lookup_table=rates_sky.to(units.PHOTLAM * u.cm**2 * u.AA).value,
+    )
+    rate_sky = rates_sky_spectrum(requested_wavelength)
+
+    # The exposure time t is defined by a quadratic equation r^2 + p t + q = 0.
+    p = -(sigma**2) * (rate_source + rate_sky) / (e * rate_source**2)
+    q = -(sigma**2) * r / (e * rate_source**2)
+    t = -(p / 2) + np.sqrt((p / 2) ** 2 - q)
+
+    # Add units and return the result.
+    return sigma * u.dimensionless_unscaled, t * u.s
