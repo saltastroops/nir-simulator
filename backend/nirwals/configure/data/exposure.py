@@ -32,7 +32,7 @@ def target_spectrum(configuration):
     sources_flux_count_rate = sources_observation(sources_observation.binset, flux_unit='count', area=area)
     target_counts = sources_flux_count_rate * exposure_time
 
-    return sources_observation.waveset, target_counts.value
+    return sources_observation.waveset.value, target_counts.value
 
 
 def get_imaging_mode_snr(configuration):

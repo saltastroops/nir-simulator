@@ -4,7 +4,7 @@ interface ScaleOptions {
     display: boolean;
     text: string;
   };
-  ticks:
+  ticks?:
     | {
         min: number;
         max: number;

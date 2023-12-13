@@ -1,5 +1,4 @@
 import { useMemo, useState } from "react";
-import "./InstrumentConfiguration.css";
 import SpectroscopyConfigurationPanel, {
   SpectroscopyConfiguration,
 } from "./SpectroscopyConfigurationPanel.tsx";
@@ -64,7 +63,11 @@ export function InstrumentConfigurationPanel({
       x: [],
       y: [],
       lineColor: "rgb(75, 192, 192)",
-      options: defaultLinePlotOptions("Wavelength (\u212B)", "Throughput", "Throughput"),
+      options: defaultLinePlotOptions(
+        "Wavelength (\u212B)",
+        "Throughput",
+        "Throughput",
+      ),
     },
     requested: false,
   });

@@ -35,6 +35,12 @@ export function button(extraClasses?: string) {
   return className;
 }
 
+export function getExponent(value: string) {
+  // Extract the exponent from the scientific notation
+  const match = value.match(/e([+-]?\d+)/);
+  return match ? parseInt(match[1], 10) : 0;
+}
+
 export function throughputFormData(setupData: SimulationSetupData) {
   return {
     mode: setupData.instrumentConfiguration.modeConfiguration.mode,

@@ -4,7 +4,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from nirwals.configure.data.throughput import get_configured_throughput_spectrum
 from nirwals.configure.data.spectrum import get_sources_spectrum, get_sky_spectrum
-from nirwals.configure.data.exposure import get_imaging_mode_snr, get_spectroscopy_mode_snr
+from nirwals.configure.data.exposure import get_imaging_mode_snr, get_spectroscopy_mode_snr, target_spectrum
 
 
 
@@ -37,9 +37,32 @@ def spectra(request):
 def exposure(request):
     parameters = json.loads(request.POST.get("data"))
     wavelength, snr = get_spectroscopy_mode_snr(parameters)
-    imaging_snr = get_imaging_mode_snr(parameters)
-    _, sky_flux_values = get_sky_spectrum(parameters)
+    waveset, counts = target_spectrum(parameters)
+
     data = {
-        "snr": {"x": wavelength.tolist(), "y": snr.tolist()},
+        "plots": [
+            {
+                "title": "Target Electrons",
+                "x": {
+                    "label": "Wavelength (\u212B)",
+                    "values": list(waveset)
+                },
+                "y": {
+                    "label": "Counts(e-)",
+                    "values": list(counts)
+                }
+            },
+            {
+                "title": "Spectroscopic SNR",
+                "x": {
+                    'label': "Wavelength (\u212B)",
+                    "values": wavelength.tolist()
+                },
+                "y": {
+                    'label': "SNR Per Spectral Bin",
+                    "values": snr.tolist()
+                }
+            }
+        ]
     }
     return JsonResponse(data)

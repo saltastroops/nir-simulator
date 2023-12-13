@@ -1,3 +1,4 @@
+import { useMemo, useState } from "react";
 import { Gain, GainDataType, GainPanel } from "./gain-panel/GainPanel.tsx";
 import {
   Sampling,
@@ -11,8 +12,9 @@ import {
 } from "./query-panel/SNRQueryTab.tsx";
 import { SNR, SNRDataType } from "./query-panel/ExposureTimeQueryTab.tsx";
 import { SimulationSetup } from "../Simulator.tsx";
-import {useState} from "react";
-import {exposure} from "../../services.ts";
+import { exposure } from "../../services.ts";
+import { defaultLinePlotOptions, LineOptions } from "../plots/PlotOptions.ts";
+import { AdditionalPlot, ExposurePlot } from "../plots/ExposurePlots.tsx";
 
 interface ExposureConfigurationParameters {
   gain: Gain;
@@ -26,6 +28,58 @@ type ExposureConfigurationData = {
   exposureTime?: ExposureTimeDataType;
   snr?: SNRDataType;
 };
+
+export interface ExposureChartContent {
+  targetElectrons: {
+    x: number[];
+    y: number[];
+    lineColor: string;
+    options: LineOptions;
+  };
+  additionalPlot: {
+    x: number[];
+    y: number[];
+    lineColor: string;
+    options: LineOptions;
+  };
+  requested: boolean;
+}
+
+export function defaultAdditionalPlotOptions(
+  xLabel: string,
+  yLabel: string,
+  title: string,
+): LineOptions {
+  return {
+    scales: {
+      x: {
+        type: "linear",
+        title: {
+          display: true,
+          text: xLabel,
+        },
+        ticks: {
+          min: 8000,
+          max: 18000,
+          stepSize: 1000,
+        },
+      },
+      y: {
+        type: "linear",
+        title: {
+          display: true,
+          text: yLabel,
+        },
+      },
+    },
+    plugins: {
+      title: {
+        display: true,
+        text: title,
+      },
+    },
+  };
+}
 
 export class ExposureConfiguration {
   public gain: Gain = new Gain();
@@ -74,10 +128,69 @@ export function ExposurePanel({ setup, update }: Props) {
 
   const [error, setError] = useState<string | null>(null);
 
+  const [chartContent, setChartContent] = useState<ExposureChartContent>({
+    targetElectrons: {
+      x: [],
+      y: [],
+      lineColor: "rgb(75, 192, 192)",
+      options: defaultLinePlotOptions(
+        "Wavelength (\u212B)",
+        "Counts(e-)",
+        "Target Electrons",
+      ),
+    },
+    additionalPlot: {
+      x: [],
+      y: [],
+      lineColor: "rgb(75, 192, 192)",
+      options: defaultLinePlotOptions("", "", ""),
+    },
+    requested: false,
+  });
+
+  const Chart = useMemo(
+    () => <ExposurePlot chartContent={chartContent} />,
+    [chartContent],
+  );
+
+  const AdditionalChart = useMemo(
+    () => <AdditionalPlot chartContent={chartContent} />,
+    [chartContent],
+  );
+
   const updatePlots = async () => {
     try {
       const exposureData = await exposure(setup);
-      console.log(exposureData);
+      const data = exposureData.plots[0];
+      const additional_data = exposureData.plots[1];
+
+      setChartContent((previousChartContent: ExposureChartContent) => {
+        const updatedTargetElectronsData = {
+          x: data.x.values,
+          y: data.y.values,
+          lineColor: previousChartContent.targetElectrons.lineColor,
+          options: defaultAdditionalPlotOptions(
+            data.x.label,
+            data.y.label,
+            data.title,
+          ),
+        };
+        const updatedAdditionalPlotData = {
+          x: additional_data.x.values,
+          y: additional_data.y.values,
+          lineColor: previousChartContent.targetElectrons.lineColor,
+          options: defaultAdditionalPlotOptions(
+            additional_data.x.label,
+            additional_data.y.label,
+            additional_data.title,
+          ),
+        };
+        return {
+          targetElectrons: updatedTargetElectronsData,
+          additionalPlot: updatedAdditionalPlotData,
+          requested: true,
+        };
+      });
     } catch (error) {
       setError("Data request failed.");
       console.error("Error fetching plot data:", error);
@@ -112,18 +225,22 @@ export function ExposurePanel({ setup, update }: Props) {
         </div>
         {/* Plot Section */}
         <div className="column">
-          {/*<div className="field chart-contain">*/}
-          {/*  <LinePlot*/}
-          {/*    chartContent={chartData}*/}
-          {/*    isOutdated={page.isOutdated && page.requested}*/}
-          {/*  />*/}
-          {/*</div>*/}
-          {/*<div className="field chart-contain">*/}
-          {/*  <LinePlot*/}
-          {/*    chartContent={chartData}*/}
-          {/*    isOutdated={page.isOutdated && page.requested}*/}
-          {/*  />*/}
-          {/*</div>*/}
+          <div className={!error ? "tile" : "tile notification is-danger"}>
+            <div className="chart-container">
+              {/*{chartContent.requested && (*/}
+              {/*  <div className="watermark">Outdated</div>*/}
+              {/*)}*/}
+              {Chart}
+            </div>
+          </div>
+          <div className={!error ? "tile" : "tile notification is-danger"}>
+            <div className="chart-container">
+              {/*{chartContent.requested && (*/}
+              {/*    <div className="watermark">Outdated</div>*/}
+              {/*)}*/}
+              {AdditionalChart}
+            </div>
+          </div>
         </div>
       </div>
     </div>
