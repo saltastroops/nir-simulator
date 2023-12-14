@@ -15,19 +15,19 @@ def get_configuration_filenames(configuration):
         FILES_BASE_DIR / "data_sheets" / "adjusted_program_datasheets" / "detectorqe.csv",
         FILES_BASE_DIR / "data_sheets" / "adjusted_program_datasheets" / "combinedtelescope.csv"
     ]
-    if configuration["instrumentConfiguration"]["modeConfiguration"]["mode"] == "Imaging":
+    if configuration["mode"] == "Imaging":
         if configuration["instrumentConfiguration"]["filter"] == "clear-filter":
             filenames.append(FILES_BASE_DIR  / "data_sheets" /"adjusted_program_datasheets"/"clearfiltertransmission.csv")
-        elif configuration["instrumentConfiguration"]["filter"] == "lwbf":
+        elif configuration["filter"] == "lwbf":
             filenames.append(FILES_BASE_DIR / "data_sheets" / "adjusted_program_datasheets" / "lwbftransmission.csv")
-    elif configuration["instrumentConfiguration"]["modeConfiguration"]["mode"] == "Spectroscopy":
-        if configuration["instrumentConfiguration"]["filter"] == "clear-filter":
+    elif configuration["mode"] == "Spectroscopy":
+        if configuration["filter"] == "clear-filter":
             filenames.append(FILES_BASE_DIR / "data_sheets" / "adjusted_program_datasheets" / "clearfiltertransmission.csv")
-        elif configuration["instrumentConfiguration"]["filter"] == "lwbf":
+        elif configuration["filter"] == "lwbf":
             filenames.append(FILES_BASE_DIR / "data_sheets" / "adjusted_program_datasheets" / "lwbftransmission.csv")
-        if configuration["instrumentConfiguration"]["modeConfiguration"]["grating"] == "950":
+        if configuration["grating"] == "950":
             filenames.append(
-                FILES_BASE_DIR / "data_sheets" / "adjusted_program_datasheets" / f"tempVPH{configuration['instrumentConfiguration']['modeConfiguration']['gratingAngle']}.csv")
+                FILES_BASE_DIR / "data_sheets" / "adjusted_program_datasheets" / f"tempVPH{configuration['grating_angle']}.csv")
     return list(set(filenames))
 
 
@@ -43,10 +43,10 @@ def get_configured_throughput_spectrum(configuration):
 
     data['throughput'] = throughput_spectrum(data['wavelength'])
 
-    if configuration["instrumentConfiguration"]["modeConfiguration"]["mode"] == "Spectroscopy":
-        slit_width = float(configuration["instrumentConfiguration"]["modeConfiguration"]["slitWidth"])
-        target_zd = float(configuration["earth"]["targetZenithDistance"]) * u.deg
-        seeing = float(configuration["earth"]["seeing"])
+    if configuration["mode"] == "Spectroscopy":
+        slit_width = float(configuration["slit_width"])
+        target_zd = float(configuration["target_zd"]) * u.deg
+        seeing = float(configuration["seeing"])
         sigma_squared = (1 / (8*np.log(2))) * (seeing**2 * (1 / np.cos(target_zd.to(u.rad)))**(6/5) + 0.6**2)
         slit_losses = 1 - np.exp(-(slit_width/2)**2/sigma_squared)
 
