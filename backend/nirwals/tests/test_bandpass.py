@@ -33,7 +33,7 @@ def test_atmospheric_transmission() -> Figure:
     return create_matplotlib_figure(
         wavelengths,
         extinction_values,
-        title=f"Atmospheric Extinction (zenith distance {zenith_distance})",
+        title=f"Atmospheric Transmission (zenith distance {zenith_distance})",
     )
 
 
