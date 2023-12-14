@@ -19,7 +19,7 @@ from synphot import (
 )
 
 from constants import get_minimum_wavelength, get_maximum_wavelength
-from nirwals.configuration import Source, Grating, Exposure, SNR
+from nirwals.configuration import Source, Grating, Exposure, SNR, Detector
 from nirwals.physics.exposure import (
     wavelength_resolution_element,
     pixel_wavelength_range,
@@ -29,6 +29,7 @@ from nirwals.physics.exposure import (
     readout_noise,
     snr,
     exposure_time,
+    detector_counts,
 )
 from nirwals.tests.utils import get_default_configuration, create_matplotlib_figure
 
@@ -398,6 +399,80 @@ def test_detection_rates(
     assert np.allclose(
         actual_rates[1][1:-1].to(u.cm**2 * u.AA * units.PHOTLAM).value,
         expected_rates[1][1:-1].to(u.cm**2 * u.AA * units.PHOTLAM).value,
+    )
+
+
+def test_detector_count_values(monkeypatch: MonkeyPatch) -> None:
+    # Define the relevant parameters.
+    area = 543210 * u.cm**2
+    exposures = 3
+    exposure_time = 123 * u.s
+    gain = 23
+    grating_angle = 35 * u.deg
+    grating_constant = 4 * u.micron
+    observation = _MockConstantObservation(flux=7 * units.PHOTLAM)
+
+    # Mock the detection rate.
+    wavelengths_ = np.array([9000, 13000, 17000]) * u.AA
+    detection_rates_ = np.array([92, 230, 46]) * units.PHOTLAM * u.AA * u.cm**2
+    dr_mock = MagicMock(return_value=(wavelengths_, detection_rates_))
+    monkeypatch.setattr("nirwals.physics.exposure.detection_rates", dr_mock)
+
+    # Calculate the detector counts.
+    wavelengths, counts = detector_counts(
+        area=area,
+        exposures=exposures,
+        exposure_time=exposure_time,
+        gain=gain,
+        grating_angle=grating_angle,
+        grating_constant=grating_constant,
+        observation=cast(Observation, observation),
+    )
+
+    # Sanity check: The correct parameter values were used.
+    dr_mock.assert_called_once_with(
+        area=area,
+        grating_angle=grating_angle,
+        grating_constant=grating_constant,
+        observation=observation,
+    )
+
+    # Check that the calculated counts are correct.
+    wavelength_values = wavelengths.to(u.AA).value
+    wavelength_values_ = wavelengths_.to(u.AA).value
+    count_values = counts.to(units.PHOTLAM * u.AA * u.cm**2 * u.s).value
+    assert np.allclose(wavelength_values, wavelength_values_)
+    expected_count_values = np.array(
+        [3 * 123 * 92 / 23, 3 * 123 * 230 / 23, 3 * 123 * 46 / 23]
+    )
+    assert np.allclose(count_values, expected_count_values)
+
+
+@pytest.mark.mpl_image_compare
+def test_detector_counts() -> Figure:
+    # Extract the required parameters from the default configuration.
+    configuration = get_default_configuration()
+    area = configuration.telescope.effective_mirror_area
+    detector = cast(Detector, configuration.detector)
+    exposure = cast(Exposure, configuration.exposure)
+    grating = cast(Grating, configuration.telescope.grating)
+
+    # Get the source observation.
+    source = source_observation(configuration)
+
+    # Calculate the detector counts.
+    wavelengths, counts = detector_counts(
+        area=area,
+        exposures=exposure.exposures,
+        exposure_time=cast(Quantity, exposure.exposure_time),
+        gain=detector.gain,
+        grating_angle=grating.grating_angle,
+        grating_constant=grating.grating_constant,
+        observation=source,
+    )
+
+    return create_matplotlib_figure(
+        wavelengths, counts, title="Detector Counts", ylabel="Counts"
     )
 
 

@@ -28,7 +28,7 @@ def get_default_configuration() -> Configuration:
         A default simulator configuration.
     """
     detector = Detector(
-        adu=2.04, full_well=83500, read_noise=24.6, samplings=1, sampling_type="Fowler"
+        full_well=83500, gain=2.04, read_noise=24.6, samplings=1, sampling_type="Fowler"
     )
     exposure = Exposure(exposures=1, exposure_time=100 * u.s, snr=None)
     moon = Moon(
@@ -70,6 +70,7 @@ def create_matplotlib_figure(
     x: Quantity,
     y: Quantity,
     title: str = "",
+    ylabel: str | None = None,
     left: float = 8000,
     right: float = 18000,
     bottom: float | None = None,
@@ -89,6 +90,8 @@ def create_matplotlib_figure(
         Wavelength and flux/throughput to plot.
     title: str, default: empty string
         Title of the figure.
+    ylabel: str, default: None
+        Label for the y-axis.
     left: float, default: 8000
         Minimum x value to display.
     right: float, default: 18000
@@ -136,13 +139,16 @@ def create_matplotlib_figure(
     else:
         ax.set_xlabel("Wavelength ({0})".format(xu))
 
-    yu = y.unit
-    if yu is u.dimensionless_unscaled:
-        ax.set_ylabel("Unitless")
-    elif yu.physical_type == "time":
-        ax.set_ylabel("Time ({0})".format(yu))
+    if ylabel:
+        ax.set_ylabel(ylabel)
     else:
-        ax.set_ylabel("Flux ({0})".format(yu))
+        yu = y.unit
+        if yu is u.dimensionless_unscaled:
+            ax.set_ylabel("Unitless")
+        elif yu.physical_type == "time":
+            ax.set_ylabel("Time ({0})".format(yu))
+        else:
+            ax.set_ylabel("Flux ({0})".format(yu))
 
     if title:
         ax.set_title(title)

@@ -301,6 +301,53 @@ def detection_rates(
     return bin_wavelengths, rates
 
 
+def detector_counts(
+    area: Quantity,
+    exposures: int,
+    exposure_time: u.s,
+    gain: float,
+    grating_angle: u.deg,
+    grating_constant: Quantity,
+    observation: Observation,
+) -> tuple[Quantity, Quantity]:
+    """
+    Return the number of counted for an observation.
+
+    The counts are calculated for the same bins which are used by the detection_rates
+    function. They are equal to the number of detected electrons divided by the gain.
+
+    Parameters
+    ----------
+    area: Quantity
+        Effective mirror area.
+    exposures: int
+        Number of exposures.
+    exposure_time: Quantity
+        Exposure time per exposure.
+    gain: float
+        Detector gain, i.e. the number of electrons per ADU.
+    grating_angle: Angle
+        Grating angle.
+    grating_constant: u.micron
+        The grating constant, i.e. the spacing between grooves.
+    observation: Observation
+        Observation.
+
+    Returns
+    -------
+    tuple[Quantity, Quantity]
+        A tuple with an array of wavelengths and an array of the corresponding detector
+        counts.
+    """
+    wavelengths, rates = detection_rates(
+        area=area,
+        grating_angle=grating_angle,
+        grating_constant=grating_constant,
+        observation=observation,
+    )
+    return wavelengths, exposures * exposure_time * rates / gain
+
+
 def readout_noise(
     read_noise: float, samplings: int, sampling_type: SamplingType
 ) -> float:

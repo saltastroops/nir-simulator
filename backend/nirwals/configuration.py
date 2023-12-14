@@ -173,16 +173,16 @@ class Detector:
 
     Parameters
     ----------
-    adu: float
-        Analog-digital unit.
     full_well: int
         CCD full well.
+    gain: float
+        Gain, i.e. electrons per ADU.
     read_noise: float
         Readout noise for a single read.
     """
 
-    adu: float
     full_well: int
+    gain: float
     read_noise: float
     samplings: int
     sampling_type: SamplingType
@@ -412,8 +412,8 @@ def configuration(data: dict[str, Any]) -> Configuration:
             raise ValueError(f"Unsupported sampling type: {sampling_type_data}")
 
         detector: Detector | None = Detector(
-            adu=float(exposure_configuration["gain"]["adu"]),
             full_well=int(exposure_configuration["gain"]["full_well"]),
+            gain=float(exposure_configuration["gain"]["adu"]),
             read_noise=float(exposure_configuration["gain"]["read_noise"]),
             samplings=int(exposure_configuration["sampling"]["number_of_samples"]),
             sampling_type=sampling_type,
