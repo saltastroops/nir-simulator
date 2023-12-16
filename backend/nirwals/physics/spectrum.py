@@ -170,12 +170,7 @@ def sky_spectrum() -> SourceSpectrum:
     SourceSpectrum
         The sky background, as received at the telescope.
     """
-    path = pathlib.Path(
-        get_file_base_dir()
-        / "data_sheets"
-        / "adjusted_program_datasheets"
-        / "1-1-nirsky.csv"
-    )
+    path = pathlib.Path(get_file_base_dir() / "nirsky.csv")
     with open(path, "rb") as f:
         wavelengths, fluxes = read_from_file(f, units.PHOTLAM)
 
