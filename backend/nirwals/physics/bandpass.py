@@ -33,7 +33,7 @@ def atmospheric_transmission(zenith_distance: u.deg) -> SpectralElement:
         The transmission curve.
     """
     # Get the extinction coefficients.
-    path = pathlib.Path(get_file_base_dir() / "atmospheric_extinction_coefficients.csv")
+    path = pathlib.Path(get_file_base_dir() / "atmospheric_extinction_coefficients.npz")
     with open(path, "rb") as f:
         wavelengths, kappa_values = read_from_file(f)
 
@@ -54,7 +54,7 @@ def detector_quantum_efficiency() -> SpectralElement:
     SpectralElement
         The quantum efficiency.
     """
-    path = pathlib.Path(get_file_base_dir() / "detector_quantum_efficiency.csv")
+    path = pathlib.Path(get_file_base_dir() / "detector_quantum_efficiency.npz")
     with open(path, "rb") as f:
         wavelengths, efficiencies = read_from_file(f)
     return SpectralElement(Empirical1D, points=wavelengths, lookup_table=efficiencies)
@@ -76,9 +76,9 @@ def filter_transmission(filter_name: Filter) -> SpectralElement:
     # Sanity check
     match filter_name:
         case "Clear":
-            filename = "clear_filter_transmission.csv"
+            filename = "clear_filter_transmission.npz"
         case "LWBF":
-            filename = "lwbf_transmission.csv"
+            filename = "lwbf_transmission.npz"
         case _:
             raise ValueError(f"Unsupported filter: {filter_name}")
 
@@ -211,7 +211,7 @@ def grating_efficiency(
         get_file_base_dir()
         / "gratings"
         / grating_name
-        / f"grating_{grating_name}_{angle_value}deg.csv"
+        / f"grating_{grating_name}_{angle_value}deg.npz"
     )
     with open(path, "rb") as f:
         wavelengths_, efficiencies_ = read_from_file(f)
@@ -249,7 +249,7 @@ def telescope_throughput() -> SpectralElement:
     SpectralElement
         The telescope throughput.
     """
-    path = pathlib.Path(get_file_base_dir() / "telescope_throughput.csv")
+    path = pathlib.Path(get_file_base_dir() / "telescope_throughput.npz")
     with open(path, "rb") as f:
         wavelengths, throughputs = read_from_file(f)
     return SpectralElement(Empirical1D, points=wavelengths, lookup_table=throughputs)

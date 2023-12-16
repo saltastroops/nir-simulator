@@ -94,7 +94,7 @@ def _galaxy(
     # Read in the galaxy spectrum from the relevant file.
     filename = (
         f"{age}_{galaxy_type}_type_"
-        f"{'emission' if with_emission_lines else 'no_emission'}.csv"
+        f"{'emission' if with_emission_lines else 'no_emission'}.npz"
     )
     file_path = get_file_base_dir() / "galaxies" / filename
     with open(file_path, "rb") as f:
@@ -170,7 +170,7 @@ def sky_spectrum() -> SourceSpectrum:
     SourceSpectrum
         The sky background, as received at the telescope.
     """
-    path = pathlib.Path(get_file_base_dir() / "nirsky.csv")
+    path = pathlib.Path(get_file_base_dir() / "nirsky.npz")
     with open(path, "rb") as f:
         wavelengths, fluxes = read_from_file(f, units.PHOTLAM)
 

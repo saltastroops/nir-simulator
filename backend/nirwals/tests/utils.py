@@ -1,5 +1,6 @@
 from io import BytesIO
 
+import numpy as np
 import pytest
 from astropy import units as u
 from astropy.units import Quantity
@@ -57,13 +58,12 @@ def get_default_configuration() -> Configuration:
 
 
 def get_default_datafile() -> BytesIO:
-    content = b"""\
-Wavelength,Value
-1000,1
-2000,1
-3000,1
-"""
-    return BytesIO(content)
+    x = np.array([1000, 2000, 3000])
+    y = np.array([1, 1, 1])
+    content = BytesIO()
+    np.savez(content, x=x, y=y)
+    content.seek(0)
+    return content
 
 
 def create_matplotlib_figure(
