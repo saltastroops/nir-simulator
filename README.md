@@ -165,3 +165,12 @@ with open(out_path, "w") as g:
     for w, k in zip(wavelengths, kappa_values):
         g.write(f"{w.to(u.AA).value},{k}\n")
 ```
+
+## Converting data files to the required format
+
+Using csv files for the data incurs a massive performance hit, and the performance of
+the Simulator can be improved by orders of magnitude by using NumPy's data format. On
+the other hand, csv files are more user-friendly. To allow for the best of both worlds,
+a script `numpyfy.py` is provided, which converts all csv files in the data folder to
+the required NumPy format. The data folder must be specified with the environment
+variable `FILE_BASE_DIR`.
