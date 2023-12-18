@@ -1,6 +1,16 @@
 import { SimulationSetupData } from "./components/Simulator.tsx";
-import { environment } from "./environments/environment.ts";
 import { throughputFormData } from "./components/utils.ts";
+
+function apiUrl() {
+  let url = import.meta.env.VITE_BACKEND_BASE_URL;
+  if (url === undefined) {
+    console.warn(
+      "The environment variable VITE_BACKEND_BASE_URL is not set. A reasonable default value based on the mode will be used, but you might have to set the variable in an environment file (see https://vitejs.dev/guide/env-and-mode.html).",
+    );
+    url = import.meta.env.MODE === "development" ? "http://localhost:8000" : "";
+  }
+  return url;
+}
 
 export async function spectra(setupData: SimulationSetupData) {
   const data = {
@@ -13,7 +23,7 @@ export async function spectra(setupData: SimulationSetupData) {
   const formData = new FormData();
   formData.append("data", JSON.stringify(data));
 
-  const response = await fetch(environment.apiUrl + "/api/spectra/", {
+  const response = await fetch(apiUrl() + "/api/spectra/", {
     method: "POST",
     body: formData,
   });
@@ -25,7 +35,7 @@ export async function throughput(setupData: SimulationSetupData) {
   const formData = new FormData();
   formData.append("data", JSON.stringify(data));
 
-  const response = await fetch(environment.apiUrl + "/api/throughput/", {
+  const response = await fetch(apiUrl() + "/api/throughput/", {
     method: "POST",
     body: formData,
   });

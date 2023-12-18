@@ -1,11 +1,19 @@
 version: '3'
 
 services:
-  web:
+  backend:
     build:
-      context: .
+      context: ./backend
     command: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+
+  frontend:
+    build:
+      context: ./frontend
+
+  nginx:
+    build:
+      context: ./nginx
+    depends_on:
+      - backend
     ports:
-      - "8000:8000"
-    volumes:
-      - ./data_sheets:/app/backend/data_sheets
+      - "7999:80"

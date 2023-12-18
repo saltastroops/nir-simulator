@@ -1,7 +1,3 @@
-# git
-.gitignore
-.git
-
 # Environments
 **/.env
 **/.venv
@@ -11,9 +7,6 @@
 **/ENV/
 **/env.bak/
 **/venv.bak/
-
-# Node
-**/node_modules/
 
 # Databases
 **/*.sqlite3

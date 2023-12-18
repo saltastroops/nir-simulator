@@ -27,6 +27,16 @@ npm run build
 
 Note: Currently files in the `public` folder won't be served by Django.
 
+### Environment variables
+
+The frontend requires the following environment variables.
+
+| Environment variable    | Description                                                                                                               |
+|-------------------------|---------------------------------------------------------------------------------------------------------------------------|
+| `VITE_BACKEND_BASE_URL` | Base URL for the backend. Example values might be http://localhost:800 for development or an empty string for production. |
+
+See [https://vitejs.dev/guide/env-and-mode.html#modes](https://vitejs.dev/guide/env-and-mode.html#modes) for how to set environment variables.
+
 ### Development tools
 
 * Python: black, ruff
