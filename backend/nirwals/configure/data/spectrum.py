@@ -43,7 +43,12 @@ def get_galaxy_flux_values(
 
     if galaxy_type in galaxy_types and age in age_types:
         filename = f"{age}_{galaxy_type}_type_{'emission' if has_emission_line else 'no_emission'}.csv"
-        file_path = "data" / "data_sheets" / "adjusted_program_datasheets" / filename
+        file_path = (
+            pathlib.Path("data")
+            / "data_sheets"
+            / "adjusted_program_datasheets"
+            / filename
+        )
         galaxy_wavelength, galaxy_flux = read_csv_file(file_path)
 
         galaxy_wavelength, galaxy_flux = get_redshifted_spectrum(
@@ -99,7 +104,9 @@ def get_sky_spectrum(form_data):
     num_points = 40001
     data = np.empty(num_points, dtype=[("wavelength", float), ("sky_flux", float)])
     filename = "1-1-nirsky.csv"
-    file_path = "data" / "data_sheets" / "adjusted_program_datasheets" / filename
+    file_path = (
+        pathlib.Path("data") / "data_sheets" / "adjusted_program_datasheets" / filename
+    )
 
     data["wavelength"], data["sky_flux"] = read_csv_file(file_path)
 
@@ -113,7 +120,7 @@ def get_sky_spectrum(form_data):
         == "true"
     ):
         filename = (
-            "data"
+            pathlib.Path("data")
             / "data_sheets"
             / "adjusted_program_datasheets"
             / "combinedtelescope.csv"
@@ -173,7 +180,7 @@ def get_sources_spectrum(form_data):
 
     if parameters["spectrumPlotOptions"]["includeAtmosphericExtinction"]:
         filename = (
-            "data"
+            pathlib.Path("data")
             / "data_sheets"
             / "adjusted_program_datasheets"
             / "nirskytransmission.csv"
@@ -186,7 +193,7 @@ def get_sources_spectrum(form_data):
             data["sources_flux"] = data["sources_flux"] * point_spread
     if parameters["spectrumPlotOptions"]["multiplyWithMirrorAreaAndEfficiency"]:
         filename = (
-            "data"
+            pathlib.Path("data")
             / "data_sheets"
             / "adjusted_program_datasheets"
             / "combinedtelescope.csv"

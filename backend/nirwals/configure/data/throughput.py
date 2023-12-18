@@ -26,8 +26,11 @@ def get_slit_modifier(constant):
 
 def get_affected_filenames(form_data):
     filenames = [
-        "data" / "data_sheets" / "adjusted_program_datasheets" / "detectorqe.csv",
-        "data"
+        pathlib.Path("data")
+        / "data_sheets"
+        / "adjusted_program_datasheets"
+        / "detectorqe.csv",
+        pathlib.Path("data")
         / "data_sheets"
         / "adjusted_program_datasheets"
         / "combinedtelescope.csv",
@@ -35,14 +38,14 @@ def get_affected_filenames(form_data):
     if form_data["mode"] == "Imaging":
         if form_data["filter"] == "clear-filter":
             filenames.append(
-                "data"
+                pathlib.Path("data")
                 / "data_sheets"
                 / "adjusted_program_datasheets"
                 / "clearfiltertransmission.csv"
             )
         elif form_data["filter"] == "lwbf":
             filenames.append(
-                "data"
+                pathlib.Path("data")
                 / "data_sheets"
                 / "adjusted_program_datasheets"
                 / "lwbftransmission.csv"
@@ -50,21 +53,21 @@ def get_affected_filenames(form_data):
     elif form_data["mode"] == "Spectroscopy":
         if form_data["filter"] == "clear-filter":
             filenames.append(
-                "data"
+                pathlib.Path("data")
                 / "data_sheets"
                 / "adjusted_program_datasheets"
                 / "clearfiltertransmission.csv"
             )
         elif form_data["filter"] == "lwbf":
             filenames.append(
-                "data"
+                pathlib.Path("data")
                 / "data_sheets"
                 / "adjusted_program_datasheets"
                 / "lwbftransmission.csv"
             )
         if form_data["grating"] == "950":
             filenames.append(
-                "data"
+                pathlib.Path("data")
                 / "data_sheets"
                 / "adjusted_program_datasheets"
                 / f"tempVPH{form_data['grating_angle']}.csv"
