@@ -13,7 +13,7 @@ export async function spectra(setupData: SimulationSetupData) {
   const formData = new FormData();
   formData.append("data", JSON.stringify(data));
 
-  const response = await fetch(environment.apiUrl + "/spectra/", {
+  const response = await fetch(environment.apiUrl + "/api/spectra/", {
     method: "POST",
     body: formData,
   });
@@ -25,7 +25,7 @@ export async function throughput(setupData: SimulationSetupData) {
   const formData = new FormData();
   formData.append("data", JSON.stringify(data));
 
-  const response = await fetch(environment.apiUrl + "/throughput/", {
+  const response = await fetch(environment.apiUrl + "/api/throughput/", {
     method: "POST",
     body: formData,
   });
