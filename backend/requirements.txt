@@ -21,6 +21,7 @@ exceptiongroup==1.2.0
 Flask==2.3.2
 Flask-Bootstrap==3.3.7.1
 fonttools==4.46.0
+gunicorn==21.2.0
 gwcs==0.19.0
 importlib-metadata==6.7.0
 iniconfig==2.0.0
