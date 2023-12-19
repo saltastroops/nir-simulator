@@ -74,6 +74,7 @@ celerybeat-schedule.*
 
 # Environments
 .env
+.env.*
 .venv
 env/
 bin/
@@ -136,6 +137,3 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-
-# NIRWALS Simulator
-backend/build/
