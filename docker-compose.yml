@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  backend:
+    build:
+      context: ./backend
+    command: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+
+  frontend:
+    build:
+      context: ./frontend
+
+  router:
+    build:
+      context: ./router
+    depends_on:
+      - backend
+    ports:
+      - "7999:80"

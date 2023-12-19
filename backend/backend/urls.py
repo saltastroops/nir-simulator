@@ -10,9 +10,7 @@ def home(request):
 
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
-    path("", home, name="home"),
-    path("__reload__/", include("django_browser_reload.urls")),
-    path("spectra/", spectra, name="spectra"),
-    path("throughput/", throughput, name="throughput"),
+    path("api/admin/", admin.site.urls),
+    path("api/spectra/", spectra, name="spectra"),
+    path("api/throughput/", throughput, name="throughput"),
 ]
