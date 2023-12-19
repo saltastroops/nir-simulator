@@ -10,9 +10,9 @@ services:
     build:
       context: ./frontend
 
-  nginx:
+  router:
     build:
-      context: ./nginx
+      context: ./router
     depends_on:
       - backend
     ports:
