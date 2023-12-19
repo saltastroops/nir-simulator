@@ -37,6 +37,15 @@ The frontend requires the following environment variables.
 
 See [https://vitejs.dev/guide/env-and-mode.html#modes](https://vitejs.dev/guide/env-and-mode.html#modes) for how to set environment variables.
 
+The backend requires the following environment variables, which you may set in an `.env` file in the `backend` directory.
+
+| Environment variable | Description                                                                                                               | Default       |
+|----------------------|---------------------------------------------------------------------------------------------------------------------------|---------------|
+| ALLOWED_HOSTS        | A list of strings representing the host/domain names that this Django site can serve, separated by whitespace characters. | Empty string. |
+| DEBUG                | Whether to run the server in debug mode.                                                                                  | 0             |
+
+The server is run in debug mode if and only if the `DEBUG` variable has the case-insensitive value "true", "yes" or "1".
+
 ### Development tools
 
 * Python: black, ruff
