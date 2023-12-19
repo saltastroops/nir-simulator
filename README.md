@@ -98,7 +98,7 @@ docker run hello-world
 If the nirwals user has no ssh key yet, create one with the following command (substituting `nirwals@example.com` with the correct email address):
 
 ```shell
-ssh-keygen -t ed25519 -C "nirwals@exampler"
+ssh-keygen -t ed25519 -C "nirwals@example.com"
 ```
 
 [Add the key to the relevant GitHub account](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account) for the simulator's repository.
@@ -107,6 +107,5 @@ Go to the home directory and clone the repository's main branch.
 
 ```shell
 cd ~
-git clone --branch main --single-branch git@github.com:saltastroops/nir-simulator.git
+git clone --branch main --single-branch --recurse-submodules git@github.com:saltastroops/nir-simulator.git
 ```
-
