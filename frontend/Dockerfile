@@ -11,9 +11,6 @@ RUN npm install
 # Copy all the code.
 COPY . .
 
-# Set the backend base URL to be an empty string.
-RUN echo "VITE_BACKEND_BASE_URL=" > .env.production
-
 # Build the website.
 RUN npm run build
 
