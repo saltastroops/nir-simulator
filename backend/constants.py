@@ -1,4 +1,3 @@
-import os
 import pathlib
 
 from astropy import units as u
@@ -56,7 +55,7 @@ def get_file_base_dir() -> pathlib.Path:
         The base directory for the data files.
     """
 
-    return pathlib.Path(os.environ["FILE_BASE_DIR"])
+    return pathlib.Path(__file__).parent / "data"
 
 
 def get_minimum_wavelength() -> u.AA:

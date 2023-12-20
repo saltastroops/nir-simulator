@@ -9,7 +9,7 @@ from astropy.units import Quantity
 
 
 # LWBF: Long Wavelength Blocking Filter
-Filter = Literal["Clear", "LWBF"]
+Filter = Literal["Clear Filter", "LWBF"]
 
 GalaxyAge = Literal["Old", "Young"]
 
@@ -381,23 +381,23 @@ def configuration(data: dict[str, Any]) -> Configuration:
     else:
         sun = None
 
-    if "instrument_setup" in data:
-        instrument_setup = data["instrument_setup"]
-
-        filter_name_data: str | None = instrument_setup["filter"]
+    if "filter" in data:
+        filter_name_data: str | None = data["filter"]
         if filter_name_data == "Clear Filter":
-            filter_name: Filter | None = "Clear"
+            filter_name: Filter | None = "Clear Filter"
         elif filter_name_data == "lwbf":
             filter_name = "LWBF"
         else:
             raise ValueError(f"Unsupported filter name: {filter_name_data}")
-
-        grating: Grating | None = Grating(
-            grating_angle=float(instrument_setup["grating_angle"]) * u.deg,
-            name=instrument_setup["grating"],
-        )
     else:
         filter_name = None
+
+    if "grating" in data:
+        grating: Grating | None = Grating(
+            grating_angle=float(data["grating_angle"]) * u.deg,
+            name=data["grating"],
+        )
+    else:
         grating = None
 
     if "exposure_configuration" in data:

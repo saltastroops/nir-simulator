@@ -75,7 +75,7 @@ def filter_transmission(filter_name: Filter) -> SpectralElement:
     """
     # Sanity check
     match filter_name:
-        case "Clear":
+        case "Clear Filter":
             filename = "clear_filter_transmission.npz"
         case "LWBF":
             filename = "lwbf_transmission.npz"
