@@ -41,7 +41,7 @@ def get_default_configuration() -> Configuration:
     sun = Sun(ecliptic_latitude=0 * u.deg, solar_elongation=180 * u.deg, year=2023)
     telescope = Telescope(
         effective_mirror_area=460000 * u.cm**2,
-        filter="Clear",
+        filter="Clear Filter",
         grating=Grating(grating_angle=45 * u.deg, name="950"),
     )
 

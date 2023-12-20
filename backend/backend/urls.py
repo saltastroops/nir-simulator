@@ -1,8 +1,8 @@
 from django.contrib import admin
 from django.shortcuts import render
-from django.urls import path, include
+from django.urls import path
 
-from nirwals.views import spectra, throughput
+from nirwals.views import spectrum_view, throughput_view
 
 
 def home(request):
@@ -11,6 +11,6 @@ def home(request):
 
 urlpatterns = [
     path("api/admin/", admin.site.urls),
-    path("api/spectra/", spectra, name="spectra"),
-    path("api/throughput/", throughput, name="throughput"),
+    path("api/spectra/", spectrum_view, name="spectrum"),
+    path("api/throughput/", throughput_view, name="throughput"),
 ]

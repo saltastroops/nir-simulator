@@ -50,7 +50,8 @@ export function throughputFormData(setupData: SimulationSetupData) {
     grating: setupData.instrumentConfiguration.modeConfiguration.grating,
     grating_angle:
       setupData.instrumentConfiguration.modeConfiguration.gratingAngle,
-    target_zd: setupData.earth.targetZenithDistance,
+    source: { type: setupData.source.type, spectrum: [] },
+    earth: setupData.earth,
   };
 }
 

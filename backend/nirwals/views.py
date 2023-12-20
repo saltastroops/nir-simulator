@@ -1,34 +1,48 @@
 import json
 
+from astropy import units as u
 from django.http import JsonResponse, HttpRequest
 from django.views.decorators.csrf import csrf_exempt
+from synphot import units
 
 from nirwals.configuration import configuration
-from nirwals.configure.data.throughput import get_throughput_plot_data
-from nirwals.configure.data.spectrum import get_sources_spectrum, get_sky_spectrum
+from nirwals.physics.bandpass import throughput
+from nirwals.physics.spectrum import source_spectrum, sky_spectrum
 
 
 @csrf_exempt
-def throughput(request: HttpRequest) -> JsonResponse:
-    configuration = json.loads(request.POST.get("data", None))
-    # Get plot data based on configuration options
-    wavelengths, throughputs = get_throughput_plot_data(configuration)
-    # Prepare data for response
+def throughput_view(request: HttpRequest) -> JsonResponse:
+    parameters = json.loads(request.POST.get("data", None))
+    config = configuration(parameters)
+    throughput_spectrum = throughput(config)
+    wavelengths = throughput_spectrum.waveset
+    throughputs = throughput_spectrum(wavelengths)
     data = {
-        "wavelengths": wavelengths.tolist(),
-        "throughputs": throughputs.tolist(),
+        "wavelengths": wavelengths.to(u.AA).value.tolist(),
+        "throughputs": throughputs.to(u.dimensionless_unscaled).value.tolist(),
     }
     return JsonResponse(data)
 
 
 @csrf_exempt
-def spectra(request: HttpRequest) -> JsonResponse:
+def spectrum_view(request: HttpRequest) -> JsonResponse:
     parameters = json.loads(request.POST.get("data", None))
-    wavelength, sources_flux_values = get_sources_spectrum(parameters)
-    _, sky_flux_values = get_sky_spectrum(parameters)
+    config = configuration(parameters)
+    source = source_spectrum(config)
+    source_wavelengths = source.waveset
+    source_fluxes = source(source_wavelengths)
+    sky = sky_spectrum()
+    sky_wavelengths = sky.waveset
+    sky_fluxes = sky(sky_wavelengths)
     data = {
-        "source": {"x": wavelength.tolist(), "y": sources_flux_values.tolist()},
-        "sky": {"x": wavelength.tolist(), "y": sky_flux_values.tolist()},
+        "source": {
+            "x": source_wavelengths.to(u.AA).value.tolist(),
+            "y": source_fluxes.to(units.PHOTLAM).value.tolist(),
+        },
+        "sky": {
+            "x": sky_wavelengths.to(u.AA).value.tolist(),
+            "y": sky_fluxes.to(units.PHOTLAM).value.tolist(),
+        },
     }
     return JsonResponse(data)
 
