@@ -74,8 +74,3 @@ docker compose up --build -d || {
   echo "The NIRWALS Simulator could not be launched." 1>&2
   exit 1
 }
-
-# Clean up.
-docker system prune -f || {
-  echo "WARNING: Pruning the Docker images and container failed."
-}
