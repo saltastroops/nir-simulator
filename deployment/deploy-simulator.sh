@@ -76,6 +76,6 @@ docker compose up --build -d || {
 }
 
 # Clean up.
-docker system prune || {
+docker system prune -f || {
   echo "WARNING: Pruning the Docker images and container failed."
 }
