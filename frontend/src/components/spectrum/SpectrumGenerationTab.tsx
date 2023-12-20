@@ -1,10 +1,5 @@
 import SourceForm, { Source } from "./SourceForm";
-import MoonPanel, { Moon } from "./MoonPanel.tsx";
-import SunPanel, { Sun } from "./SunPanel.tsx";
 import { Earth, EarthPanel } from "./EarthPanel.tsx";
-import SpectrumPlotOptionsPanel, {
-  SpectrumPlotOptions,
-} from "./SpectrumPlotOptionsPanel.tsx";
 import { button } from "../utils.ts";
 import { SimulationSetup } from "../Simulator.tsx";
 import { spectra } from "../../services.ts";
@@ -19,7 +14,7 @@ interface Props {
 }
 
 export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
-  const { source, sun, moon, earth, spectrumPlotOptions } = setup;
+  const { source, earth } = setup;
 
   const [sourceChartContent, setSourceChartContent] = useState<ChartContent>({
     chartData: {
