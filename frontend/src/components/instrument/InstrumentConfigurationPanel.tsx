@@ -64,7 +64,11 @@ export function InstrumentConfigurationPanel({
       x: [],
       y: [],
       lineColor: "rgb(75, 192, 192)",
-      options: defaultLinePlotOptions("Wavelength (\u212B)", "Throughput", "Throughput"),
+      options: defaultLinePlotOptions(
+        "Wavelength (\u212B)",
+        "Throughput",
+        "Throughput",
+      ),
     },
     requested: false,
   });
@@ -145,19 +149,19 @@ export function InstrumentConfigurationPanel({
             {/* instrument mode */}
             <div className="tile is-child box has-margin-top">
               <div className="field">
-                <div className="control">
-                  <label className="radio">
-                    <input
-                      type="radio"
-                      className="mr-2"
-                      name="configurationOptions"
-                      value="imaging-mode"
-                      checked={mode === "Imaging"}
-                      onChange={() => modeChange("Imaging")}
-                    />
-                    Imaging Mode
-                  </label>
-                </div>
+                {/*<div className="control">*/}
+                {/*  <label className="radio">*/}
+                {/*    <input*/}
+                {/*      type="radio"*/}
+                {/*      className="mr-2"*/}
+                {/*      name="configurationOptions"*/}
+                {/*      value="imaging-mode"*/}
+                {/*      checked={mode === "Imaging"}*/}
+                {/*      onChange={() => modeChange("Imaging")}*/}
+                {/*    />*/}
+                {/*    Imaging Mode*/}
+                {/*  </label>*/}
+                {/*</div>*/}
                 <div className="control">
                   <label className="radio">
                     <input
