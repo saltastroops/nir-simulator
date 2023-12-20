@@ -2,7 +2,7 @@ import { ExposureConfiguration } from "../ExposurePanel.tsx";
 import { Error } from "../../Error.tsx";
 import { input } from "../../utils.ts";
 
-type SamplingType = "Fowler Sampling" | "Up The Ramp Sampling";
+type SamplingType = "Fowler" | "Up The Ramp";
 interface SamplingParameters {
   numberOfSamples: string;
   samplingType: SamplingType;
@@ -15,7 +15,7 @@ export interface SamplingDataType {
 
 export class Sampling {
   public numberOfSamples = "15";
-  public samplingType: SamplingType = "Fowler Sampling";
+  public samplingType: SamplingType = "Fowler";
 
   public constructor(sampling?: SamplingParameters) {
     if (sampling) {
@@ -85,12 +85,9 @@ export function SamplingPanel({ exposureConfiguration, update }: Props) {
                 type="radio"
                 name="sampling-type"
                 value={"specified"}
-                onChange={() =>
-                  updateSamplingSetup("samplingType", "Fowler Sampling")
-                }
+                onChange={() => updateSamplingSetup("samplingType", "Fowler")}
                 checked={
-                  exposureConfiguration.sampling.samplingType ===
-                  "Fowler Sampling"
+                  exposureConfiguration.sampling.samplingType === "Fowler"
                 }
               />
               Fowler
@@ -107,11 +104,10 @@ export function SamplingPanel({ exposureConfiguration, update }: Props) {
                 name="sampling-type"
                 value={"specified"}
                 onChange={() =>
-                  updateSamplingSetup("samplingType", "Up The Ramp Sampling")
+                  updateSamplingSetup("samplingType", "Up The Ramp")
                 }
                 checked={
-                  exposureConfiguration.sampling.samplingType ===
-                  "Up The Ramp Sampling"
+                  exposureConfiguration.sampling.samplingType === "Up The Ramp"
                 }
               />
               Up the Ramp
@@ -124,7 +120,7 @@ export function SamplingPanel({ exposureConfiguration, update }: Props) {
       <div className="columns">
         <div className="column pt-0 pb-0">
           <div className="field">
-            <label className="label">Number of Samples</label>
+            <label>Number of Samples</label>
             <div className="control">
               <input
                 className={input("w-36")}

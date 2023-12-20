@@ -1,10 +1,12 @@
+import { getExponent } from "../utils.ts";
+
 interface ScaleOptions {
   type: string;
   title: {
     display: boolean;
     text: string;
   };
-  ticks:
+  ticks?:
     | {
         min: number;
         max: number;
@@ -24,12 +26,6 @@ interface PluginsOptions {
     display: boolean;
     text: string;
   };
-}
-
-function getExponent(value: string) {
-  // Extract the exponent from the scientific notation
-  const match = value.match(/e([+-]?\d+)/);
-  return match ? parseInt(match[1], 10) : 0;
 }
 
 export interface LineOptions {

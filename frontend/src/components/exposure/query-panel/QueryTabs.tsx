@@ -6,9 +6,14 @@ import { ExposureConfiguration } from "../ExposurePanel.tsx";
 interface Props {
   exposureConfiguration: ExposureConfiguration;
   update: (newSetup: ExposureConfiguration) => void;
+  updatePlots: () => void;
 }
 
-export function QueryTabs({ exposureConfiguration, update }: Props) {
+export function QueryTabs({
+  exposureConfiguration,
+  update,
+  updatePlots,
+}: Props) {
   const switchToComponent = (componentNumber: number) => {
     setActiveTab(componentNumber);
   };
@@ -47,6 +52,7 @@ export function QueryTabs({ exposureConfiguration, update }: Props) {
         <SNRQueryTab
           exposureTime={exposureConfiguration.exposureTime}
           update={updateQuery}
+          updatePlots={updatePlots}
         />
       )}
       {activeTab === 2 && (
