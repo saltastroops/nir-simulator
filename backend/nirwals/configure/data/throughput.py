@@ -90,7 +90,7 @@ def get_modifiers(configuration):
     data["throughput"] = np.ones(num_points)
 
     if configuration["mode"] == "Spectroscopy":
-        slit_width = float(configuration["slit_width"])
+        slit_width = 1
         target_zd = float(configuration["target_zd"])
         slit_losses = erf(
             (slit_width * np.sqrt(np.log(2)))
