@@ -1,5 +1,4 @@
 import { useMemo, useState } from "react";
-import "./InstrumentConfiguration.css";
 import SpectroscopyConfigurationPanel, {
   SpectroscopyConfiguration,
 } from "./SpectroscopyConfigurationPanel.tsx";
@@ -11,6 +10,7 @@ import { defaultLinePlotOptions, LineOptions } from "../plots/PlotOptions.ts";
 import { LinePlot } from "../plots/LinePlot.tsx";
 import { throughput } from "../../services.ts";
 import { SimulationSetup } from "../Simulator.tsx";
+import { button, select } from "../utils.ts";
 
 type ModeConfiguration = ImagingConfiguration | SpectroscopyConfiguration;
 
@@ -175,10 +175,11 @@ export function InstrumentConfigurationPanel({
             </div>
 
             {/* filter */}
-            <div className="control">
+            <div className="control pb-4">
               <label className="label">Filter</label>
-              <div className="select">
+              <div>
                 <select
+                  className={select("w-32")}
                   value={filter}
                   onChange={(event) =>
                     updateParameter("filter", event.target.value)
@@ -215,7 +216,7 @@ export function InstrumentConfigurationPanel({
             <div>
               <div className="tile">
                 <button
-                  className={!error ? "button" : "button is-danger"}
+                  className={button("ml-4 bg-green-600 text-white")}
                   onClick={updatePlot}
                 >
                   Update Throughput

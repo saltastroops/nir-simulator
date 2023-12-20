@@ -66,6 +66,134 @@ Add the new spectrum type to the `SpectrumType` definition in `src/types.ts`.
 
 Finally, add the new spectrum type to the `spectrumTypes` array in the `SpectrumSelector` component (in `src/components/spectrum/SpectrumSelector.tsx`).
 
+### Testing
+
+The tests use the `pytest-mpl` plugin for comparing plots. For this to work, you need to generate the baseline images first:
+
+```shell
+pytest --mpl-generate-path=baseline path/to/your/tests
+```
+
+You can then run (regression) tests on the plots by passing the `--mpl` and `--mpl-baseline-path` options:
+
+```shell
+pytest --mpl --mpl-baseline-path=baseline
+```
+
+At the time of writing, you cannot define the `mpl-baseline-path` option in the pytest INI file, but this is likely to change in the next release of pytest-mpl.
+
+The regression tests for plots must be marked with the `pytest.mark.mpl_image_compare` decorator and must return a Matplotlib figure. A utility function for creating figures is provided. Here is an example test.
+
+```python
+import pytest
+
+from astropy.units import Quantity
+
+from nirwals.configuration import Blackbody
+from nirwals.physics.spectrum import source_spectrum
+from nirwals.tests.utils import get_default_configuration, create_matplotlib_figure
+
+
+@pytest.mark.mpl_image_compare
+def test_blackbody(temperature: Quantity):
+    config = get_default_configuration()
+    config.source.spectrum = [Blackbody(magnitude=18, temperature=temperature)]
+    spectrum = source_spectrum(config)
+
+    wavelengths = spectrum.waveset
+    fluxes = spectrum(wavelengths)
+    return create_matplotlib_figure(wavelengths, fluxes, title="Blackbody")
+```
+
+## Finding the maxima of grating efficiencies
+
+The following code illustrates how you can find the wavelengths of the maxima for the
+grating efficiency curves.
+
+```python
+import pathlib
+
+import numpy as np
+
+from astropy import units as u
+
+from constants import get_file_base_dir
+from nirwals.physics.utils import read_from_file
+
+grating = "950"
+available_angles = [30 * u.deg, 35 * u.deg, 40 * u.deg, 45 * u.deg, 50 * u.deg]
+grating_parameters = []
+for angle in available_angles:
+    angle_value = round(angle.to(u.deg).value)
+    path = pathlib.Path(
+        get_file_base_dir()
+        / "gratings"
+        / grating
+        / f"grating_{grating}_{angle_value}deg.csv"
+    )
+    with open(path, "rb") as f:
+        wavelengths, efficiencies = read_from_file(f)
+        efficiency_values = efficiencies.value
+        index_of_maximum = np.argmax(efficiency_values)
+        grating_parameters.append(
+            f"({angle_value} * u.deg, {wavelengths[index_of_maximum].to(u.AA).value} * u.AA)"
+        )
+
+print(", ".join(grating_parameters))
+```
+
+## Converting atmospheric transmissions to extinction coefficients
+
+If a file with atmospheric transmission values is given, it can be converted to a file
+containing atmospheric extinction coefficients with code like the following.
+
+```python
+import math
+import pathlib
+
+import numpy as np
+from astropy import units as u
+
+from nirwals.physics.utils import read_from_file
+
+
+airmass = 1.5
+zenith_distance = math.acos(1 / airmass) * u.rad
+
+path = pathlib.Path(
+    "data/data_sheets/adjusted_program_datasheets/nirskytransmission.csv"
+)
+
+with open(path, "rb") as f:
+    wavelengths, transmissions = read_from_file(f)
+
+# Avoid infinite values due to taking the logarithm of 0.
+for i in range(len(transmissions)):
+    if transmissions[i] < 1e-10:
+        transmissions[i] = 1e-10
+
+# To convert from transmissions t to extinction coefficients kappa, we note that
+# kappa = -lg(t) / 0.4 sec(z) = -2.5 cos(z) lg(t).
+kappa_values = (
+    -2.5 * math.cos(zenith_distance.to(u.rad).value) * np.log10(transmissions)
+)
+
+# Save the atmospheric extinction coefficients in a new file
+out_path = "data/atmospheric_extinction_coefficients.csv"
+with open(out_path, "w") as g:
+    for w, k in zip(wavelengths, kappa_values):
+        g.write(f"{w.to(u.AA).value},{k}\n")
+```
+
+## Converting data files to the required format
+
+Using csv files for the data incurs a massive performance hit, and the performance of
+the Simulator can be improved by orders of magnitude by using NumPy's data format. On
+the other hand, csv files are more user-friendly. To allow for the best of both worlds,
+a script `numpyfy.py` is provided, which converts all csv files in the data folder to
+the required NumPy format. The data folder must be specified with the environment
+variable `FILE_BASE_DIR`.
+
 ## Deployment
 
 ### Setting up the server
