@@ -403,7 +403,7 @@ def configuration(data: dict[str, Any]) -> Configuration:
     if "exposure_configuration" in data:
         exposure_configuration = data["exposure_configuration"]
 
-        sampling_type_data: str = exposure_configuration["sampling"]["sampling_type"]
+        sampling_type_data: str = exposure_configuration["sampling"]["samplingType"]
         if sampling_type_data == "Fowler":
             sampling_type: SamplingType = "Fowler"
         elif sampling_type_data == "Up The Ramp":
@@ -412,33 +412,41 @@ def configuration(data: dict[str, Any]) -> Configuration:
             raise ValueError(f"Unsupported sampling type: {sampling_type_data}")
 
         detector: Detector | None = Detector(
-            full_well=int(exposure_configuration["gain"]["full_well"]),
+            full_well=int(exposure_configuration["gain"]["fullWell"]),
             gain=float(exposure_configuration["gain"]["adu"]),
-            read_noise=float(exposure_configuration["gain"]["read_noise"]),
-            samplings=int(exposure_configuration["sampling"]["number_of_samples"]),
+            read_noise=float(exposure_configuration["gain"]["readNoise"]),
+            samplings=int(exposure_configuration["sampling"]["numberOfSamples"]),
             sampling_type=sampling_type,
         )
 
-        exposure_time = (
-            float(exposure_configuration["exposure_time"]) * u.s
-            if "exposure_time" in exposure_configuration
-            else None
-        )
-        snr = (
-            SNR(
-                snr=float(exposure_configuration["snr"]),
-                wavelength=float(exposure_configuration["wavelength"]) * u.AA,
+        exposures = 0
+        if "exposureTime" in exposure_configuration:
+            exposures = int(
+                exposure_configuration["exposureTime"]["detectorIterations"]
             )
-            if "snr" in exposure_configuration
-            else None
-        )
+            exposure_time: Quantity | None = (
+                float(exposure_configuration["exposureTime"]["singleExposureTime"])
+                * u.s
+            )
+        else:
+            exposure_time = None
+
+        if "snr" in exposure_configuration:
+            exposures = 1
+            snr: SNR | None = SNR(
+                snr=float(exposure_configuration["snr"]["snr"]),
+                wavelength=float(exposure_configuration["snr"]["wavelength"]) * u.AA,
+            )
+        else:
+            snr = None
+
         if exposure_time is None and snr is None:
             raise ValueError("Either an exposure time or a SNR must be supplied.")
         if exposure_time is not None and snr is not None:
             raise ValueError("The exposure time and SNR are mutually exclusive.")
 
         exposure: Exposure | None = Exposure(
-            exposures=int(exposure_configuration["detector_iterations"]),
+            exposures=exposures,
             exposure_time=exposure_time,
             snr=snr,
         )
