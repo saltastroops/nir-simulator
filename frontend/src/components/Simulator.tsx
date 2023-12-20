@@ -116,6 +116,11 @@ export function Simulator() {
 
   return (
     <div className="text-md">
+      <div className="mt-4 mb-4 p-4 border border-orange-300 bg-yellow-50 text-orange-300 font-semibold">
+        The NIRWALS Simulator is still under development, and you may expect
+        significant changes over the next weeks. Please send bug reports,
+        suggestions etc. to salthelp (at) salt.ac.za.
+      </div>
       <div className="tabs">
         <ul>
           <li className="is-active" ref={spectrumLIRef}>
