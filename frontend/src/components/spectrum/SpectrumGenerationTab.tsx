@@ -29,7 +29,7 @@ export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
       options: defaultLinePlotOptions(
         "Wavelength (\u212B)",
         "Flux (photons sec\u002D\u00B9 \u212B cm\u002D\u00B2)",
-          "Source Spectrum"
+        "Source Spectrum",
       ),
     },
     requested: false,
@@ -49,23 +49,23 @@ export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
     chartData: {
       x: [],
       y: [],
-      lineColor: "rgb(75,100,192)" ,
+      lineColor: "rgb(75,100,192)",
       options: defaultLinePlotOptions(
-          "Wavelength (\u212B)",
-          "Flux (photons sec\u002D\u00B9 \u212B cm\u002D\u00B2)",
-          "Sky Background Spectrum"
+        "Wavelength (\u212B)",
+        "Flux (photons sec\u002D\u00B9 \u212B cm\u002D\u00B2)",
+        "Sky Background Spectrum",
       ),
     },
     requested: false,
   });
   const skyChart = useMemo(
-      () => (
-          <LinePlot
-              chartContent={skyChartContent}
-              isOutdated={false && skyChartContent.requested}
-          />
-      ),
-      [skyChartContent],
+    () => (
+      <LinePlot
+        chartContent={skyChartContent}
+        isOutdated={false && skyChartContent.requested}
+      />
+    ),
+    [skyChartContent],
   );
 
   const updatePlots = async () => {
@@ -117,20 +117,24 @@ export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
               update={(source: Source) => updateSetup("source", source)}
             />
           </fieldset>
-          <fieldset className="border border-solid border-gray-300 p-3 mt-4">
-            <legend>Solar Items</legend>
-            <SunPanel
-              sun={sun}
-              update={(sun: Sun) => updateSetup("sun", sun)}
-            />
-          </fieldset>
-          <fieldset className="border border-solid border-gray-300 p-3 mt-4">
-            <legend>Lunar Items</legend>
-            <MoonPanel
-              moon={moon}
-              update={(moon: Moon) => updateSetup("moon", moon)}
-            />
-          </fieldset>
+          <div className="mt-4 mb-4 p-2 border border-orange-300 bg-yellow-50 text-orange-300 font-semibold">
+            The NIRWALS Simulator currently uses the same atmospheric background
+            spectrum irrespective of solar and lunar conditions.
+          </div>
+          {/*<fieldset className="border border-solid border-gray-300 p-3 mt-4">*/}
+          {/*  <legend>Solar Items</legend>*/}
+          {/*  <SunPanel*/}
+          {/*    sun={sun}*/}
+          {/*    update={(sun: Sun) => updateSetup("sun", sun)}*/}
+          {/*  />*/}
+          {/*</fieldset>*/}
+          {/*<fieldset className="border border-solid border-gray-300 p-3 mt-4">*/}
+          {/*  <legend>Lunar Items</legend>*/}
+          {/*  <MoonPanel*/}
+          {/*    moon={moon}*/}
+          {/*    update={(moon: Moon) => updateSetup("moon", moon)}*/}
+          {/*  />*/}
+          {/*</fieldset>*/}
           <fieldset className="border border-solid border-gray-300 p-3 mt-4">
             <legend>Earthly Items</legend>
             <EarthPanel
@@ -138,15 +142,15 @@ export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
               update={(earth: Earth) => updateSetup("earth", earth)}
             />
           </fieldset>
-          <fieldset className="border border-solid border-gray-300 p-3 mt-4">
-            <legend>Source Plot Options</legend>
-            <SpectrumPlotOptionsPanel
-              spectrumPlotOptions={spectrumPlotOptions}
-              update={(options: SpectrumPlotOptions) =>
-                updateSetup("spectrumPlotOptions", options)
-              }
-            />
-          </fieldset>
+          {/*<fieldset className="border border-solid border-gray-300 p-3 mt-4">*/}
+          {/*  <legend>Source Plot Options</legend>*/}
+          {/*  <SpectrumPlotOptionsPanel*/}
+          {/*    spectrumPlotOptions={spectrumPlotOptions}*/}
+          {/*    update={(options: SpectrumPlotOptions) =>*/}
+          {/*      updateSetup("spectrumPlotOptions", options)*/}
+          {/*    }*/}
+          {/*  />*/}
+          {/*</fieldset>*/}
 
           <button
             className={button("mt-6 text-white bg-green-600")}
@@ -168,9 +172,9 @@ export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
           </div>
         </div>
         {error && (
-            <div className="tile">
-              <p className={"has-text-danger"}>{error}</p>
-            </div>
+          <div className="tile">
+            <p className={"has-text-danger"}>{error}</p>
+          </div>
         )}
       </div>
     </div>
