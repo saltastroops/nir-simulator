@@ -16,6 +16,13 @@ export function QueryTabs({
 }: Props) {
   const switchToComponent = (componentNumber: number) => {
     setActiveTab(componentNumber);
+
+    const activeQuery = componentNumber === 1 ? "SNR" : "ExposureTime";
+    const newExposureConfig = new ExposureConfiguration({
+      ...exposureConfiguration,
+      activeQuery,
+    });
+    update(newExposureConfig);
   };
 
   const [activeTab, setActiveTab] = useState(1);
@@ -59,6 +66,7 @@ export function QueryTabs({
         <ExposureTimeQueryTab
           snr={exposureConfiguration.snr}
           update={updateQuery}
+          updatePlots={updatePlots}
         />
       )}
     </>

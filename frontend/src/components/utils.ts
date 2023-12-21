@@ -41,39 +41,40 @@ export function getExponent(value: string) {
   return match ? parseInt(match[1], 10) : 0;
 }
 
+export function spectrumFormData(setupData: SimulationSetupData) {
+  return {
+    source: setupData.source,
+    moon: setupData.moon,
+    sun: setupData.sun,
+    earth: setupData.earth,
+    spectrum_plot_options: setupData.spectrumPlotOptions,
+  };
+}
+
 export function throughputFormData(setupData: SimulationSetupData) {
   return {
     mode: setupData.instrumentConfiguration.modeConfiguration.mode,
     filter: setupData.instrumentConfiguration.filter,
-    slit_type: setupData.instrumentConfiguration.modeConfiguration.slitType,
-    slit_width: setupData.instrumentConfiguration.modeConfiguration.slitWidth,
     grating: setupData.instrumentConfiguration.modeConfiguration.grating,
     grating_angle:
       setupData.instrumentConfiguration.modeConfiguration.gratingAngle,
-    target_zd: setupData.earth.targetZenithDistance,
+    source: { type: setupData.source.type, spectrum: [] },
+    earth: setupData.earth,
   };
 }
 
 export function exposureFormData(setupData: SimulationSetupData) {
   return {
-    seeing: 2,
-    target_zenith_distance: 37,
-    grating: 950,
-    grating_angle: 40,
-    slit_width: 1.5,
-    gain: {
-      read_noise: setupData.exposureConfiguration.gain.readNoise,
-      adu: setupData.exposureConfiguration.gain.adu,
-      full_well: setupData.exposureConfiguration.gain.fullWell,
-    },
-    sampling: {
-      sampling_type: setupData.exposureConfiguration.sampling.samplingType,
-      number_of_samples:
-        setupData.exposureConfiguration.sampling.numberOfSamples,
-    },
-    detector_iterations:
-      setupData.exposureConfiguration.exposureTime.detectorIterations,
-    exposure_time:
-      setupData.exposureConfiguration.exposureTime.singleExposureTime,
+    mode: setupData.instrumentConfiguration.modeConfiguration.mode,
+    filter: setupData.instrumentConfiguration.filter,
+    grating: setupData.instrumentConfiguration.modeConfiguration.grating,
+    grating_angle:
+      setupData.instrumentConfiguration.modeConfiguration.gratingAngle,
+    source: setupData.source,
+    moon: setupData.moon,
+    sun: setupData.sun,
+    earth: setupData.earth,
+    spectrum_plot_options: setupData.spectrumPlotOptions,
+    exposure_configuration: setupData.exposureConfiguration,
   };
 }

@@ -27,7 +27,10 @@ export class Source {
 
   public get data() {
     return {
-      spectrum: this.spectrum.map((s) => s.data),
+      spectrum: this.spectrum.map((s) => ({
+        ...s.data,
+        spectrumType: s.spectrumType,
+      })),
       type: this.type,
     };
   }

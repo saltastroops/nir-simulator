@@ -61,13 +61,10 @@ export class SNR {
 interface Props {
   snr: SNR;
   update: (key: "exposureTime" | "snr", snr: SNR) => void;
+  updatePlots: () => void;
 }
 
-export function ExposureTimeQueryTab({ snr, update }: Props) {
-  const updatePlot = () => {
-    console.log("Update plot method not implement"); // TODO update should come from ExposurePanel
-  };
-
+export function ExposureTimeQueryTab({ snr, update, updatePlots }: Props) {
   const updateSNR = (key: "wavelength" | "snr", value: string) => {
     update(
       "snr",
@@ -121,7 +118,7 @@ export function ExposureTimeQueryTab({ snr, update }: Props) {
 
       <div className="field ">
         <div className="control">
-          <button className="button is-link" onClick={() => updatePlot()}>
+          <button className="button is-link" onClick={updatePlots}>
             Solve for Exposure Time
           </button>
         </div>

@@ -9,7 +9,7 @@ from astropy.units import Quantity
 
 
 # LWBF: Long Wavelength Blocking Filter
-Filter = Literal["Clear", "LWBF"]
+Filter = Literal["Clear Filter", "LWBF"]
 
 GalaxyAge = Literal["Old", "Young"]
 
@@ -381,29 +381,29 @@ def configuration(data: dict[str, Any]) -> Configuration:
     else:
         sun = None
 
-    if "instrument_setup" in data:
-        instrument_setup = data["instrument_setup"]
-
-        filter_name_data: str | None = instrument_setup["filter"]
+    if "filter" in data:
+        filter_name_data: str | None = data["filter"]
         if filter_name_data == "Clear Filter":
-            filter_name: Filter | None = "Clear"
+            filter_name: Filter | None = "Clear Filter"
         elif filter_name_data == "lwbf":
             filter_name = "LWBF"
         else:
             raise ValueError(f"Unsupported filter name: {filter_name_data}")
-
-        grating: Grating | None = Grating(
-            grating_angle=float(instrument_setup["grating_angle"]) * u.deg,
-            name=instrument_setup["grating"],
-        )
     else:
         filter_name = None
+
+    if "grating" in data:
+        grating: Grating | None = Grating(
+            grating_angle=float(data["grating_angle"]) * u.deg,
+            name=data["grating"],
+        )
+    else:
         grating = None
 
     if "exposure_configuration" in data:
         exposure_configuration = data["exposure_configuration"]
 
-        sampling_type_data: str = exposure_configuration["sampling"]["sampling_type"]
+        sampling_type_data: str = exposure_configuration["sampling"]["samplingType"]
         if sampling_type_data == "Fowler":
             sampling_type: SamplingType = "Fowler"
         elif sampling_type_data == "Up The Ramp":
@@ -412,33 +412,41 @@ def configuration(data: dict[str, Any]) -> Configuration:
             raise ValueError(f"Unsupported sampling type: {sampling_type_data}")
 
         detector: Detector | None = Detector(
-            full_well=int(exposure_configuration["gain"]["full_well"]),
+            full_well=int(exposure_configuration["gain"]["fullWell"]),
             gain=float(exposure_configuration["gain"]["adu"]),
-            read_noise=float(exposure_configuration["gain"]["read_noise"]),
-            samplings=int(exposure_configuration["sampling"]["number_of_samples"]),
+            read_noise=float(exposure_configuration["gain"]["readNoise"]),
+            samplings=int(exposure_configuration["sampling"]["numberOfSamples"]),
             sampling_type=sampling_type,
         )
 
-        exposure_time = (
-            float(exposure_configuration["exposure_time"]) * u.s
-            if "exposure_time" in exposure_configuration
-            else None
-        )
-        snr = (
-            SNR(
-                snr=float(exposure_configuration["snr"]),
-                wavelength=float(exposure_configuration["wavelength"]) * u.AA,
+        exposures = 0
+        if "exposureTime" in exposure_configuration:
+            exposures = int(
+                exposure_configuration["exposureTime"]["detectorIterations"]
             )
-            if "snr" in exposure_configuration
-            else None
-        )
+            exposure_time: Quantity | None = (
+                float(exposure_configuration["exposureTime"]["singleExposureTime"])
+                * u.s
+            )
+        else:
+            exposure_time = None
+
+        if "snr" in exposure_configuration:
+            exposures = 1
+            snr: SNR | None = SNR(
+                snr=float(exposure_configuration["snr"]["snr"]),
+                wavelength=float(exposure_configuration["snr"]["wavelength"]) * u.AA,
+            )
+        else:
+            snr = None
+
         if exposure_time is None and snr is None:
             raise ValueError("Either an exposure time or a SNR must be supplied.")
         if exposure_time is not None and snr is not None:
             raise ValueError("The exposure time and SNR are mutually exclusive.")
 
         exposure: Exposure | None = Exposure(
-            exposures=int(exposure_configuration["detector_iterations"]),
+            exposures=exposures,
             exposure_time=exposure_time,
             snr=snr,
         )

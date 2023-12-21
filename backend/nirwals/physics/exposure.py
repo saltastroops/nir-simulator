@@ -301,20 +301,20 @@ def detection_rates(
     return bin_wavelengths, rates
 
 
-def detector_counts(
+def electrons(
     area: Quantity,
     exposures: int,
     exposure_time: u.s,
-    gain: float,
     grating_angle: u.deg,
     grating_constant: Quantity,
     observation: Observation,
 ) -> tuple[Quantity, Quantity]:
     """
-    Return the number of counted for an observation.
+    Return the number of electrons accumulated for an observation.
 
-    The counts are calculated for the same bins which are used by the detection_rates
-    function. They are equal to the number of detected electrons divided by the gain.
+    The electron counts are calculated for the same bins which are used by the
+    detection_rates function. They should not be confused with the detector counts,
+    for which you still would have to divide by the gain.
 
     Parameters
     ----------
@@ -324,8 +324,6 @@ def detector_counts(
         Number of exposures.
     exposure_time: Quantity
         Exposure time per exposure.
-    gain: float
-        Detector gain, i.e. the number of electrons per ADU.
     grating_angle: Angle
         Grating angle.
     grating_constant: u.micron
@@ -336,7 +334,7 @@ def detector_counts(
     Returns
     -------
     tuple[Quantity, Quantity]
-        A tuple with an array of wavelengths and an array of the corresponding detector
+        A tuple with an array of wavelengths and an array of the corresponding electron
         counts.
     """
     wavelengths, rates = detection_rates(
@@ -345,7 +343,42 @@ def detector_counts(
         grating_constant=grating_constant,
         observation=observation,
     )
-    return wavelengths, exposures * exposure_time * rates / gain
+    return wavelengths, exposures * exposure_time * rates
+
+
+def source_electrons(configuration: Configuration) -> tuple[Quantity, Quantity]:
+    """
+    Return the number of electrons accumulated due to source photons.
+
+    The electron counts are calculated for the same bins which are used by the
+    detection_rates function. They should not be confused with the detector counts,
+    for which you still would have to divide by the gain.
+
+    Parameters
+    ----------
+    configuration: Configuration
+        Simulator configuration.
+
+    Returns
+    -------
+    tuple[Quantity, Quantity]
+        A tuple with an array of wavelengths and an array of the corresponding electron
+        counts.
+    """
+    # Collect the required parameters.
+    area = configuration.telescope.effective_mirror_area
+    exposure = cast(Exposure, configuration.exposure)
+    grating = cast(Grating, configuration.telescope.grating)
+    observation = source_observation(configuration)
+
+    return electrons(
+        area=area,
+        exposures=exposure.exposures,
+        exposure_time=exposure.exposure_time,
+        grating_angle=grating.grating_angle,
+        grating_constant=grating.grating_constant,
+        observation=observation,
+    )
 
 
 def readout_noise(

@@ -21,7 +21,7 @@ export default function SpectrumSelector({ onSelect }: Props) {
     "Blackbody",
     "Galaxy",
     "Emission Line",
-    "User-Defined",
+    // "User-Defined",
   ];
   return (
     <div>
