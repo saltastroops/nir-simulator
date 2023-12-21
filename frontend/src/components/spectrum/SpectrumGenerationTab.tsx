@@ -71,8 +71,8 @@ export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
 
       setSourceChartContent((previousChartContent) => {
         const updatedChartData = {
-          x: sourceData.x,
-          y: sourceData.y,
+          x: sourceData.wavelengths,
+          y: sourceData.fluxes,
           lineColor: previousChartContent.chartData.lineColor,
           options: previousChartContent.chartData.options,
         };
@@ -85,8 +85,8 @@ export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
 
       setSkyChartContent((previousChartContent) => {
         const updatedChartData = {
-          x: skyData.x,
-          y: skyData.y,
+          x: skyData.wavelengths,
+          y: skyData.fluxes,
           lineColor: previousChartContent.chartData.lineColor,
           options: previousChartContent.chartData.options,
         };

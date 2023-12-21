@@ -54,12 +54,12 @@ def spectrum_view(request: HttpRequest) -> JsonResponse:
     )
     data = {
         "source": {
-            "x": plot_source_wavelengths,
-            "y": plot_source_fluxes,
+            "wavelengths": plot_source_wavelengths,
+            "fluxes": plot_source_fluxes,
         },
         "sky": {
-            "x": plot_sky_wavelengths,
-            "y": plot_sky_fluxes,
+            "wavelengths": plot_sky_wavelengths,
+            "fluxes": plot_sky_fluxes,
         },
     }
     return JsonResponse(data)
