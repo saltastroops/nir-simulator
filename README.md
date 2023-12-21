@@ -205,6 +205,7 @@ We assume the deployment server meets the following requirements:
 1. It is running under the latest version of Ubuntu.
 2. There is a user `nirwals`, and that user has sudo rights.
 3. The server has the ip address simulator.salt.ac.za.
+4. nginx is installed and running.
 
 First, install an ssh key on the server, so that you can connect without having to provide a password. This can be done with the `ssh-copy-id` command, which must be run on your own machine:
 
@@ -212,7 +213,7 @@ First, install an ssh key on the server, so that you can connect without having 
 ssh-copy-id nirwals@simulator.salt.ac.za
 ```
 
-Log in to the server and [install Docker](https://docs.docker.com/engine/install/ubuntu/). Once it is installed, check that the inmstallation was successful.
+Log in to the server and [install Docker](https://docs.docker.com/engine/install/ubuntu/). Once it is installed, check that the installation was successful.
 
 ```shell
 sudo docker run hello-world
@@ -228,6 +229,57 @@ Check that this had the desired effect:
 
 ```shell
 docker run hello-world
+```
+
+#### Setting up nginx
+
+Remove the default nginx configuration.
+
+```shell
+sudo rm /etc/nginx/sites-enabled/default
+sudo rm /etc/nginx/sites-available/default
+```
+
+Create a configuration file `/etc/nginx/sites-available/simulator.salt.ac.za.conf` with the following content.
+
+```
+server {
+    listen 80;
+
+    server_name simulator.salt.ac.za;
+
+    location / {
+        proxy_pass http://localhost:7999;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $host;
+        proxy_redirect off;
+    }
+}
+```
+
+Check that nginx is happy with the configuration.
+
+```shell
+sudo nginx -t
+```
+
+Restart nginx.
+
+```shell
+sudo service nginx restart
+```
+
+Install Certbot.
+
+```shell
+sudo snap install --classic certbot
+sudo ln -s /snap/bin/certbot /usr/bin/certbot
+```
+
+Get and install an SSL certificate.
+
+```shell
+sudo certbot --nginx
 ```
 
 #### Cloning the repository
