@@ -29,7 +29,7 @@ from nirwals.physics.exposure import (
     readout_noise,
     snr,
     exposure_time,
-    detector_counts,
+    electrons,
 )
 from nirwals.tests.utils import get_default_configuration, create_matplotlib_figure
 
@@ -419,11 +419,10 @@ def test_detector_count_values(monkeypatch: MonkeyPatch) -> None:
     monkeypatch.setattr("nirwals.physics.exposure.detection_rates", dr_mock)
 
     # Calculate the detector counts.
-    wavelengths, counts = detector_counts(
+    wavelengths, counts = electrons(
         area=area,
         exposures=exposures,
         exposure_time=exposure_time,
-        gain=gain,
         grating_angle=grating_angle,
         grating_constant=grating_constant,
         observation=cast(Observation, observation),
@@ -442,30 +441,26 @@ def test_detector_count_values(monkeypatch: MonkeyPatch) -> None:
     wavelength_values_ = wavelengths_.to(u.AA).value
     count_values = counts.to(units.PHOTLAM * u.AA * u.cm**2 * u.s).value
     assert np.allclose(wavelength_values, wavelength_values_)
-    expected_count_values = np.array(
-        [3 * 123 * 92 / 23, 3 * 123 * 230 / 23, 3 * 123 * 46 / 23]
-    )
+    expected_count_values = np.array([3 * 123 * 92, 3 * 123 * 230, 3 * 123 * 46])
     assert np.allclose(count_values, expected_count_values)
 
 
 @pytest.mark.mpl_image_compare
-def test_detector_counts() -> Figure:
+def test_electrons() -> Figure:
     # Extract the required parameters from the default configuration.
     configuration = get_default_configuration()
     area = configuration.telescope.effective_mirror_area
-    detector = cast(Detector, configuration.detector)
     exposure = cast(Exposure, configuration.exposure)
     grating = cast(Grating, configuration.telescope.grating)
 
     # Get the source observation.
     source = source_observation(configuration)
 
-    # Calculate the detector counts.
-    wavelengths, counts = detector_counts(
+    # Calculate the electron counts.
+    wavelengths, counts = electrons(
         area=area,
         exposures=exposure.exposures,
         exposure_time=cast(Quantity, exposure.exposure_time),
-        gain=detector.gain,
         grating_angle=grating.grating_angle,
         grating_constant=grating.grating_constant,
         observation=source,
