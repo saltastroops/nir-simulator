@@ -7,12 +7,14 @@ services:
     environment:
       - ALLOWED_HOSTS=simulator.salt.ac.za
       - DEBUG=0
+    restart: always
 
   frontend:
     build:
       context: ./frontend
     environment:
       - VITE_BACKEND_BASE_URL=
+    restart: always
 
   router:
     build:
@@ -21,3 +23,4 @@ services:
       - backend
     ports:
       - "7999:80"
+    restart: always
