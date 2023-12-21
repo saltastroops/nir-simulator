@@ -1,4 +1,5 @@
 import json
+from copy import deepcopy
 
 import numpy as np
 from astropy import units as u
@@ -10,8 +11,9 @@ from synphot import units
 from constants import get_minimum_wavelength, get_maximum_wavelength
 from nirwals.configuration import configuration
 from nirwals.physics.bandpass import throughput
-from nirwals.physics.exposure import electrons
+from nirwals.physics.exposure import electrons, source_electrons, snr, exposure_time
 from nirwals.physics.spectrum import source_spectrum, sky_spectrum
+from nirwals.utils import prepare_spectrum_plot_values
 
 
 @csrf_exempt
@@ -64,12 +66,36 @@ def exposure_view(request: HttpRequest) -> JsonResponse:
     # Is the SNR or the exposure time requested?
     is_snr_requested = config.exposure.snr is None
 
-    # Prepare data for response
-    wavelengths, counts = counts()
-    data = {"target_counts": {"wavelengths": wavelengths, "counts": [2, 3]}}
+    # Get the SNR values or exposure times, whichever is requested. If exposure times
+    # are requested, we also set the exposure time in the configuration to the one
+    # needed for the requested SNR, as we need to have an exposure time defined for
+    # getting the target electron counts.
+    data = {}
     if is_snr_requested:
-        data["snr"] = {"wavelengths": wavelengths, "snr_values": [42, 84]}
+        snr_wavelengths, snr_values = snr(config)
+        plot_snr_wavelengths, plot_snr_values = prepare_spectrum_plot_values(
+            snr_wavelengths, snr_values, u.dimensionless_unscaled
+        )
+        data["snr"] = {
+            "wavelengths": plot_snr_wavelengths,
+            "snr_values": plot_snr_values,
+        }
     else:
-        data["exposure_time"] = {"exposure_times": [0, 100], "snr_values": [0, 20]}
+        snr_values, exposure_times = exposure_time(config)
+        data["exposure_time"] = {
+            "snr_values": snr_values.to(u.dimensionless_unscaled).value.tolist(),
+            "exposure_times": exposure_times.to(u.s).value.tolist(),
+        }
+        config.exposure.exposure_time = exposure_times[50]
+
+    # Get the target electron counts.
+    electron_wavelengths, electron_counts = source_electrons(config)
+    plot_electron_wavelengths, plot_electron_counts = prepare_spectrum_plot_values(
+        electron_wavelengths, electron_counts, u.photon
+    )
+    data["target_electrons"] = {
+        "wavelengths": plot_electron_wavelengths,
+        "counts": plot_electron_counts,
+    }
 
     return JsonResponse(data)
