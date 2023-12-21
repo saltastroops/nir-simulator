@@ -13,7 +13,7 @@ import { SNR, SNRDataType } from "./query-panel/ExposureTimeQueryTab.tsx";
 import { SimulationSetup } from "../Simulator.tsx";
 import { useMemo, useState } from "react";
 import { defaultLinePlotOptions, LineOptions } from "../plots/PlotOptions.ts";
-import { exposureSNR } from "../../services.ts";
+import { exposure } from "../../services.ts";
 import { AdditionalPlot, ExposurePlot } from "../plots/ExposurePlot.tsx";
 
 interface ExposureConfigurationParameters {
@@ -21,7 +21,9 @@ interface ExposureConfigurationParameters {
   sampling: Sampling;
   exposureTime: ExposureTime;
   snr: SNR;
+  activeQuery: "SNR" | "ExposureTime";
 }
+
 type ExposureConfigurationData = {
   gain: GainDataType;
   sampling: SamplingDataType;
@@ -94,6 +96,7 @@ export class ExposureConfiguration {
       this.sampling = new Sampling(configuration.sampling);
       this.exposureTime = new ExposureTime(configuration.exposureTime);
       this.snr = new SNR(configuration.snr);
+      this.activeQuery = configuration.activeQuery;
     }
   }
 
@@ -104,10 +107,10 @@ export class ExposureConfiguration {
     };
 
     if (this.activeQuery === "SNR") {
-      data.snr = this.snr.data;
+      data.exposureTime = this.exposureTime.data;
     }
     if (this.activeQuery === "ExposureTime") {
-      data.exposureTime = this.exposureTime.data;
+      data.snr = this.snr.data;
     }
 
     return data;
@@ -132,8 +135,8 @@ export function ExposurePanel({ setup, update }: Props) {
       lineColor: "rgb(75, 192, 192)",
       options: defaultLinePlotOptions(
         "Wavelength (\u212B)",
-        "Counts(e-)",
-        "Target Electrons",
+        "Count",
+        "Electron Count (in spectral bin)",
       ),
     },
     additionalPlot: {
@@ -157,27 +160,45 @@ export function ExposurePanel({ setup, update }: Props) {
 
   const updatePlots = async () => {
     try {
-      const exposureData = await exposureSNR(setup);
-      const data = exposureData.target_electrons_plot;
-      const additional_data = exposureData.additional_plot;
+      const exposureData = await exposure(setup);
+      const data = exposureData.target_electrons;
+      const isSNRRequested = exposureData.snr !== undefined;
+      const additionalData = isSNRRequested
+        ? { x: exposureData.snr.wavelengths, y: exposureData.snr.snr_values }
+        : {
+            x: exposureData.exposure_time.exposure_times,
+            y: exposureData.exposure_time.snr_values,
+          };
+      const additionalOptions = isSNRRequested
+        ? {
+            title: "SNR (in spectral bin)",
+            xLabel: "Wavelength (\u212B)",
+            yLabel: "SNR",
+          }
+        : {
+            title: "SNR (in spectral bin)",
+            xLabel: "Exposure Time (sec)",
+            yLabel: "SNR",
+          };
 
       setChartContent((previousChartContent: ExposureChartContent) => {
         const updatedTargetElectronsData = {
-          x: data.wavelength,
+          x: data.wavelengths,
           y: data.counts,
           lineColor: previousChartContent.targetElectrons.lineColor,
           options: previousChartContent.targetElectrons.options,
         };
         const updatedAdditionalPlotData = {
-          x: additional_data.x.values,
-          y: additional_data.y.values,
+          x: additionalData.x,
+          y: additionalData.y,
           lineColor: previousChartContent.targetElectrons.lineColor,
           options: defaultAdditionalPlotOptions(
-            additional_data.x.label,
-            additional_data.y.label,
-            "Additional Plot",
+            additionalOptions.xLabel,
+            additionalOptions.yLabel,
+            additionalOptions.title,
           ),
         };
+        setError(null);
         return {
           targetElectrons: updatedTargetElectronsData,
           additionalPlot: updatedAdditionalPlotData,

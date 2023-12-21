@@ -1,13 +1,18 @@
 import json
+from typing import cast
 
+import numpy as np
 from astropy import units as u
 from django.http import JsonResponse, HttpRequest
 from django.views.decorators.csrf import csrf_exempt
 from synphot import units
 
-from nirwals.configuration import configuration
+from constants import get_minimum_wavelength, get_maximum_wavelength
+from nirwals.configuration import configuration, Exposure
 from nirwals.physics.bandpass import throughput
+from nirwals.physics.exposure import source_electrons, snr, exposure_time
 from nirwals.physics.spectrum import source_spectrum, sky_spectrum
+from nirwals.utils import prepare_spectrum_plot_values
 
 
 @csrf_exempt
@@ -30,6 +35,10 @@ def spectrum_view(request: HttpRequest) -> JsonResponse:
     config = configuration(parameters)
     source = source_spectrum(config)
     source_wavelengths = source.waveset
+    if source_wavelengths is None:
+        min_wavelength = get_minimum_wavelength().to(u.AA).value
+        max_wavelength = get_maximum_wavelength().to(u.AA).value
+        source_wavelengths = np.array([min_wavelength, max_wavelength]) * u.AA
     source_fluxes = source(source_wavelengths)
     sky = sky_spectrum()
     sky_wavelengths = sky.waveset
@@ -48,21 +57,45 @@ def spectrum_view(request: HttpRequest) -> JsonResponse:
 
 
 @csrf_exempt
-def solve_for_snr(request: HttpRequest) -> JsonResponse:
+def exposure_view(request: HttpRequest) -> JsonResponse:
     # Get plot data based on configuration options
-    configuration(request.POST.get("data", None))
-    json.loads(request.POST.get("data", None))
+    parameters = json.loads(request.POST.get("data", None))
+    config = configuration(parameters)
 
-    # Prepare data for response
-    wavelength, snr = [2, 3], [2, 3]
-    additional_plot = {
-        "x": {"label": "X-label", "values": [1, 2, 3, 4, 5]},
-        "y": {"label": "Y-label", "values": [2, 3, 5, 0, 4]},
-    }
+    # Is the SNR or the exposure time requested?
+    exposure = cast(Exposure, config.exposure)
+    is_snr_requested = exposure.snr is None
 
-    data = {
-        "target_electrons_plot": {"wavelength": list(wavelength), "counts": list(snr)},
-        "additional_plot": additional_plot,
+    # Get the SNR values or exposure times, whichever is requested. If exposure times
+    # are requested, we also set the exposure time in the configuration to the one
+    # needed for the requested SNR, as we need to have an exposure time defined for
+    # getting the target electron counts.
+    data = {}
+    if is_snr_requested:
+        snr_wavelengths, snr_values = snr(config)
+        plot_snr_wavelengths, plot_snr_values = prepare_spectrum_plot_values(
+            snr_wavelengths, snr_values, u.dimensionless_unscaled
+        )
+        data["snr"] = {
+            "wavelengths": plot_snr_wavelengths,
+            "snr_values": plot_snr_values,
+        }
+    else:
+        snr_values, exposure_times = exposure_time(config)
+        data["exposure_time"] = {
+            "snr_values": snr_values.to(u.dimensionless_unscaled).value.tolist(),
+            "exposure_times": exposure_times.to(u.s).value.tolist(),
+        }
+        exposure.exposure_time = exposure_times[50]
+
+    # Get the target electron counts.
+    electron_wavelengths, electron_counts = source_electrons(config)
+    plot_electron_wavelengths, plot_electron_counts = prepare_spectrum_plot_values(
+        electron_wavelengths, electron_counts, u.photon
+    )
+    data["target_electrons"] = {
+        "wavelengths": plot_electron_wavelengths,
+        "counts": plot_electron_counts,
     }
 
     return JsonResponse(data)
