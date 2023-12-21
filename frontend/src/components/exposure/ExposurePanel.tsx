@@ -135,8 +135,8 @@ export function ExposurePanel({ setup, update }: Props) {
       lineColor: "rgb(75, 192, 192)",
       options: defaultLinePlotOptions(
         "Wavelength (\u212B)",
-        "Counts",
-        "Source Detector Counts",
+        "Count",
+        "Electron Count (in spectral bin)",
       ),
     },
     additionalPlot: {
@@ -161,7 +161,7 @@ export function ExposurePanel({ setup, update }: Props) {
   const updatePlots = async () => {
     try {
       const exposureData = await exposure(setup);
-      const data = exposureData.target_counts;
+      const data = exposureData.target_electrons;
       const isSNRRequested = exposureData.snr !== undefined;
       const additionalData = isSNRRequested
         ? { x: exposureData.snr.wavelengths, y: exposureData.snr.snr_values }
@@ -171,14 +171,14 @@ export function ExposurePanel({ setup, update }: Props) {
           };
       const additionalOptions = isSNRRequested
         ? {
-            title: "SNR in a spectral bin",
+            title: "SNR (in spectral bin)",
             xLabel: "Wavelength (\u212B)",
-            yLabel: "SNR (in spectral bin)",
+            yLabel: "SNR",
           }
         : {
-            title: "SNR in a spectral bin",
+            title: "SNR (in spectral bin)",
             xLabel: "Exposure Time (sec)",
-            yLabel: "SNR (in spectral bin)",
+            yLabel: "SNR",
           };
 
       setChartContent((previousChartContent: ExposureChartContent) => {
@@ -198,6 +198,7 @@ export function ExposurePanel({ setup, update }: Props) {
             additionalOptions.title,
           ),
         };
+        setError(null);
         return {
           targetElectrons: updatedTargetElectronsData,
           additionalPlot: updatedAdditionalPlotData,

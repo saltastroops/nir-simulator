@@ -346,6 +346,41 @@ def electrons(
     return wavelengths, exposures * exposure_time * rates
 
 
+def source_electrons(configuration: Configuration) -> tuple[Quantity, Quantity]:
+    """
+    Return the number of electrons accumulated due to source photons.
+
+    The electron counts are calculated for the same bins which are used by the
+    detection_rates function. They should not be confused with the detector counts,
+    for which you still would have to divide by the gain.
+
+    Parameters
+    ----------
+    configuration: Configuration
+        Simulator configuration.
+
+    Returns
+    -------
+    tuple[Quantity, Quantity]
+        A tuple with an array of wavelengths and an array of the corresponding electron
+        counts.
+    """
+    # Collect the required parameters.
+    area = configuration.telescope.effective_mirror_area
+    exposure = cast(Exposure, configuration.exposure)
+    grating = cast(Grating, configuration.telescope.grating)
+    observation = source_observation(configuration)
+
+    return electrons(
+        area=area,
+        exposures=exposure.exposures,
+        exposure_time=exposure.exposure_time,
+        grating_angle=grating.grating_angle,
+        grating_constant=grating.grating_constant,
+        observation=observation,
+    )
+
+
 def readout_noise(
     read_noise: float, samplings: int, sampling_type: SamplingType
 ) -> float:

@@ -10,6 +10,7 @@ from synphot import units
 from constants import get_minimum_wavelength, get_maximum_wavelength
 from nirwals.configuration import configuration
 from nirwals.physics.bandpass import throughput
+from nirwals.physics.exposure import electrons
 from nirwals.physics.spectrum import source_spectrum, sky_spectrum
 
 
@@ -64,7 +65,7 @@ def exposure_view(request: HttpRequest) -> JsonResponse:
     is_snr_requested = config.exposure.snr is None
 
     # Prepare data for response
-    wavelengths, snr = [9000, 17000], [2, 3]
+    wavelengths, counts = counts()
     data = {"target_counts": {"wavelengths": wavelengths, "counts": [2, 3]}}
     if is_snr_requested:
         data["snr"] = {"wavelengths": wavelengths, "snr_values": [42, 84]}

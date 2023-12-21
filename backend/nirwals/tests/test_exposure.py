@@ -19,7 +19,7 @@ from synphot import (
 )
 
 from constants import get_minimum_wavelength, get_maximum_wavelength
-from nirwals.configuration import Source, Grating, Exposure, SNR, Detector
+from nirwals.configuration import Source, Grating, Exposure, SNR, Detector, GratingName
 from nirwals.physics.exposure import (
     wavelength_resolution_element,
     pixel_wavelength_range,
@@ -30,6 +30,7 @@ from nirwals.physics.exposure import (
     snr,
     exposure_time,
     electrons,
+    source_electrons,
 )
 from nirwals.tests.utils import get_default_configuration, create_matplotlib_figure
 
@@ -402,12 +403,11 @@ def test_detection_rates(
     )
 
 
-def test_detector_count_values(monkeypatch: MonkeyPatch) -> None:
+def test_electron_values(monkeypatch: MonkeyPatch) -> None:
     # Define the relevant parameters.
     area = 543210 * u.cm**2
     exposures = 3
     exposure_time = 123 * u.s
-    gain = 23
     grating_angle = 35 * u.deg
     grating_constant = 4 * u.micron
     observation = _MockConstantObservation(flux=7 * units.PHOTLAM)
@@ -467,7 +467,69 @@ def test_electrons() -> Figure:
     )
 
     return create_matplotlib_figure(
-        wavelengths, counts, title="Detector Counts", ylabel="Counts"
+        wavelengths, counts, title="Electron Counts", ylabel="Counts"
+    )
+
+
+def test_source_electron_values(monkeypatch: MonkeyPatch) -> None:
+    # Define the relevant parameters.
+    area = 543210 * u.cm**2
+    exposures = 7
+    exposure_time = 712 * u.s
+    grating_angle = 56 * u.deg
+    grating_constant = 1e-3 * u.mm
+    configuration = get_default_configuration()
+    configuration.telescope.effective_mirror_area = area
+    grating = cast(Grating, configuration.telescope.grating)
+    grating.grating_angle = grating_angle
+    grating.name = cast(GratingName, "1000")
+    exposure = cast(Exposure, configuration.exposure)
+    exposure.exposures = exposures
+    exposure.exposure_time = exposure_time
+    wavelength_values = np.array([9000, 15000])
+    electron_count_values = np.array([167, 89])
+
+    # Patch the relevant functions.
+    observation = _MockConstantObservation(flux=7 * units.PHOTLAM)
+    source_observation = MagicMock(return_value=observation)
+    monkeypatch.setattr(
+        "nirwals.physics.exposure.source_observation", source_observation
+    )
+    electrons = MagicMock(
+        return_value=(
+            wavelength_values * u.AA,
+            electron_count_values * u.dimensionless_unscaled,
+        )
+    )
+    monkeypatch.setattr("nirwals.physics.exposure.electrons", electrons)
+
+    # Sanity check: The relevant functions are called with the correct values.
+    wavelengths, electron_counts = source_electrons(configuration)
+    source_observation.assert_called_once_with(configuration)
+    electrons.assert_called_once_with(
+        area=area,
+        exposures=exposures,
+        exposure_time=exposure_time,
+        grating_angle=grating_angle,
+        grating_constant=grating_constant,
+        observation=observation,
+    )
+
+    # Check that the calculated values are correct, i.e. the ones returned by the
+    # electrons function.
+    assert np.allclose(wavelengths.to(u.AA).value, wavelength_values)
+    assert np.allclose(
+        electron_counts.to(u.dimensionless_unscaled).value, electron_count_values
+    )
+
+
+@pytest.mark.mpl_image_compare
+def test_source_electrons() -> Figure:
+    configuration = get_default_configuration()
+    wavelengths, electron_counts = source_electrons(configuration)
+
+    return create_matplotlib_figure(
+        wavelengths, electron_counts, title="Source Electrons", ylabel="Counts"
     )
 
 
