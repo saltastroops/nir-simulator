@@ -46,12 +46,12 @@ def test_prepare_spectrum_plot_values_no_resampling(monkeypatch: MonkeyPatch) ->
     monkeypatch.setattr("nirwals.utils.get_maximum_wavelength", lambda: 14000 * u.AA)
 
     wavelengths = (
-        np.array([9000, 9500, 9999.9, 10000.1, 12000, 13999.9, 14000.1, 16000]) * u.AA
+        np.array([9000, 9500, 9998.9, 10000, 12000, 14000, 14001.1, 16000]) * u.AA
     )
     counts = np.array([56, 42, 99, 16, 9, 77, 14, 84]) * u.photon
     xs, ys = prepare_spectrum_plot_values(wavelengths, counts, u.photon)
 
-    assert xs == [10000.1, 12000, 13999.9]
+    assert xs == [10000, 12000, 14000]
     assert ys == [16, 9, 77]
 
 

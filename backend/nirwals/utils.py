@@ -1,11 +1,5 @@
-from functools import lru_cache
-from pathlib import Path
-from typing import Any
-
 import numpy as np
-from specutils.manipulation import LinearInterpolatedResampler
 from astropy import units as u
-from specutils import Spectrum1D
 
 from constants import get_minimum_wavelength, get_maximum_wavelength
 
@@ -23,10 +17,11 @@ def prepare_spectrum_plot_values(
     ("y") values, and the units in which the dependent values should be plotted.
 
     All wavelengths outside the range from the minimum to the maximum supported
-    wavelength are ignored. If the remaining array is still longer than the maximum
-    number m of points to include in a plot, the wavelengths are resampled to m
-    equidistant wavelengths from the minimum to the maximum supported wavelength.
-    Linear interpolation is used to calculate the corresponding y values.
+    wavelength (plus a "grace range" opf 1 Angstrom at each boundary) are ignored. If
+    the remaining array is still longer than the maximum number m of points to
+    include in a plot, the wavelengths are resampled to m equidistant wavelengths
+    from the minimum to the maximum supported wavelength. Linear interpolation is
+    used to calculate the corresponding y values.
 
     The resulting wavelengths and y values are returned as Python lists. They are
     given in Angstrom (for the wavelengths) and the units specified by the y_units

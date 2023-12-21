@@ -1,17 +1,16 @@
 import json
-from copy import deepcopy
+from typing import cast
 
 import numpy as np
 from astropy import units as u
-from bokeh.plotting._plot import _get_num_minor_ticks
 from django.http import JsonResponse, HttpRequest
 from django.views.decorators.csrf import csrf_exempt
 from synphot import units
 
 from constants import get_minimum_wavelength, get_maximum_wavelength
-from nirwals.configuration import configuration
+from nirwals.configuration import configuration, Exposure
 from nirwals.physics.bandpass import throughput
-from nirwals.physics.exposure import electrons, source_electrons, snr, exposure_time
+from nirwals.physics.exposure import source_electrons, snr, exposure_time
 from nirwals.physics.spectrum import source_spectrum, sky_spectrum
 from nirwals.utils import prepare_spectrum_plot_values
 
@@ -64,7 +63,8 @@ def exposure_view(request: HttpRequest) -> JsonResponse:
     config = configuration(parameters)
 
     # Is the SNR or the exposure time requested?
-    is_snr_requested = config.exposure.snr is None
+    exposure = cast(Exposure, config.exposure)
+    is_snr_requested = exposure.snr is None
 
     # Get the SNR values or exposure times, whichever is requested. If exposure times
     # are requested, we also set the exposure time in the configuration to the one
@@ -86,7 +86,7 @@ def exposure_view(request: HttpRequest) -> JsonResponse:
             "snr_values": snr_values.to(u.dimensionless_unscaled).value.tolist(),
             "exposure_times": exposure_times.to(u.s).value.tolist(),
         }
-        config.exposure.exposure_time = exposure_times[50]
+        exposure.exposure_time = exposure_times[50]
 
     # Get the target electron counts.
     electron_wavelengths, electron_counts = source_electrons(config)

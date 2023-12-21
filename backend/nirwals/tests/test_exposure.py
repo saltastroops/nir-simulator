@@ -19,7 +19,7 @@ from synphot import (
 )
 
 from constants import get_minimum_wavelength, get_maximum_wavelength
-from nirwals.configuration import Source, Grating, Exposure, SNR, Detector, GratingName
+from nirwals.configuration import Source, Grating, Exposure, SNR, GratingName
 from nirwals.physics.exposure import (
     wavelength_resolution_element,
     pixel_wavelength_range,
