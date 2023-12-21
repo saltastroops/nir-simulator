@@ -22,9 +22,12 @@ def throughput_view(request: HttpRequest) -> JsonResponse:
     throughput_spectrum = throughput(config)
     wavelengths = throughput_spectrum.waveset
     throughputs = throughput_spectrum(wavelengths)
+    plot_wavelengths, plot_throughputs = prepare_spectrum_plot_values(
+        wavelengths, throughputs, u.dimensionless_unscaled
+    )
     data = {
-        "wavelengths": wavelengths.to(u.AA).value.tolist(),
-        "throughputs": throughputs.to(u.dimensionless_unscaled).value.tolist(),
+        "wavelengths": plot_wavelengths,
+        "throughputs": plot_throughputs,
     }
     return JsonResponse(data)
 
@@ -40,17 +43,23 @@ def spectrum_view(request: HttpRequest) -> JsonResponse:
         max_wavelength = get_maximum_wavelength().to(u.AA).value
         source_wavelengths = np.array([min_wavelength, max_wavelength]) * u.AA
     source_fluxes = source(source_wavelengths)
+    plot_source_wavelengths, plot_source_fluxes = prepare_spectrum_plot_values(
+        source_wavelengths, source_fluxes, units.PHOTLAM
+    )
     sky = sky_spectrum()
     sky_wavelengths = sky.waveset
     sky_fluxes = sky(sky_wavelengths)
+    plot_sky_wavelengths, plot_sky_fluxes = prepare_spectrum_plot_values(
+        sky_wavelengths, sky_fluxes, units.PHOTLAM
+    )
     data = {
         "source": {
-            "x": source_wavelengths.to(u.AA).value.tolist(),
-            "y": source_fluxes.to(units.PHOTLAM).value.tolist(),
+            "x": plot_source_wavelengths,
+            "y": plot_source_fluxes,
         },
         "sky": {
-            "x": sky_wavelengths.to(u.AA).value.tolist(),
-            "y": sky_fluxes.to(units.PHOTLAM).value.tolist(),
+            "x": plot_sky_wavelengths,
+            "y": plot_sky_fluxes,
         },
     }
     return JsonResponse(data)
