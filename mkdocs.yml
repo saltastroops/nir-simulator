@@ -1,0 +1,52 @@
+# yaml-language-server: $schema=https://squidfunk.github.io/mkdocs-material/schema.json
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - footnotes
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - tables
+  - toc:
+      permalink_title: Anchor link to this section for reference
+
+plugins:
+  - search
+
+repo_url: https://github.com/saltastroops/nir-simulator.git
+
+site_name: NIRWALS Simulator
+
+theme:
+  name: material
+  favicon: assets/favicon.png
+  features:
+    - navigation.expand
+    - navigation.sections
+    - navigation.tabs
+    - navigation.top
+    - search.highlight
+    - search.suggest
+    - toc.integrate
+  icon:
+    repo: fontawesome/brands/github
+  language: en
+  logo: assets/logo-salt.png
+  palette:
+    - scheme: default
+      toggle:
+        icon: material/toggle-switch-off-outline
+        name: Switch to dark mode
+      primary: indigo
+      accent: indigo
+    - scheme: slate
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to light mode
+      primary: black
+      accent: indigo
+
