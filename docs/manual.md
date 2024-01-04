@@ -55,6 +55,7 @@ The spectrum type "Galaxy" denotes a galaxy spectrum. The following parameters c
 | Age | The age of the galaxy. The available values are Young and Old. |
 | Redshift | The redshift of the galaxy. |
 
+The galaxy spectra are based on [GALEV evolutionary synthesis models](https://ui.adsabs.harvard.edu/abs/2009MNRAS.396..462K/abstract).
 
 #### Emission line
 
