@@ -1,3 +1,5 @@
+"""Functions related to throughput calculations."""
+
 import math
 import pathlib
 from typing import get_args, cast

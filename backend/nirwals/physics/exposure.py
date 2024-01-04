@@ -1,3 +1,5 @@
+"""Functions for signal-to-noise ratio calculations."""
+
 import math
 from typing import cast
 
@@ -389,7 +391,7 @@ def readout_noise(
 
     Parameters
     ----------
-    read noise: float
+    read_noise: float
         Read noise.
     samplings: int
         Number of samplings (per exposure).

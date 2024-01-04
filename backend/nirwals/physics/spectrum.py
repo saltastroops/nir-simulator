@@ -1,3 +1,5 @@
+"""Functions for generating the source and sky background spectra."""
+
 import pathlib
 from typing import get_args
 
