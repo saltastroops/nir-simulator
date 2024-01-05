@@ -1,4 +1,4 @@
-# Manual
+# User manual
 
 The NIRWALS Simulator is a browser-based tool, which you can access online at [https://simulator.salt.ac.za/](https://simulator.salt.ac.za/). It should run in any recent version of Firefox, Chrome or Safari.
 

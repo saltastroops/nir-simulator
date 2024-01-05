@@ -17,7 +17,7 @@ The NIRWALS Simulator is an online tool, which you can access at [https://simula
 
 ## User manual
 
-You can find details on how to use the simulator in the [user manual](manual.md).
+You can find details on how to use the simulator in the [user manual](user-manual.md).
 
 ## Physics and implementation
 
