@@ -413,7 +413,7 @@ def configuration(data: dict[str, Any]) -> Configuration:
 
         detector: Detector | None = Detector(
             full_well=int(exposure_configuration["gain"]["fullWell"]),
-            gain=float(exposure_configuration["gain"]["adu"]),
+            gain=float(exposure_configuration["gain"]["gain"]),
             read_noise=float(exposure_configuration["gain"]["readNoise"]),
             samplings=int(exposure_configuration["sampling"]["numberOfSamples"]),
             sampling_type=sampling_type,
