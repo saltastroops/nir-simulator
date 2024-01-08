@@ -9,7 +9,7 @@ interface Props {
 
 export function CustomGainPanel({ gain, update }: Props) {
   const updateGain = (
-    name: "adu" | "fullWell" | "readNoise",
+    name: "gain" | "fullWell" | "readNoise",
     value: string,
   ) => {
     update(
@@ -27,19 +27,19 @@ export function CustomGainPanel({ gain, update }: Props) {
           <div className="control">
             <input
               className={input("w-28")}
-              name={"adu"}
+              name={"gain"}
               type="text"
-              value={gain.adu}
-              onChange={(event) => updateGain("adu", event.target.value)}
+              value={gain.gain}
+              onChange={(event) => updateGain("gain", event.target.value)}
             />
           </div>
         </div>
         <div className="column pb-0 pl-0">e/ADU</div>
       </div>
-      {gain.errors["adu"] && (
+      {gain.errors["gain"] && (
         <div className="columns">
           <div className="column pt-0">
-            <Error error={gain.errors["adu"]} />
+            <Error error={gain.errors["gain"]} />
           </div>
         </div>
       )}
