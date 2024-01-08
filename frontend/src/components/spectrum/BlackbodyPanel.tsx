@@ -96,7 +96,7 @@ export default function BlackbodyPanel({ blackbody, update }: Props) {
 
         {/* temperature */}
         <label htmlFor={temperatureId} className={label("ml-5 mr-2")}>
-          Temperature
+          Temperature(K)
         </label>
         <input
           id={temperatureId}

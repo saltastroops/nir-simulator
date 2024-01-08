@@ -45,10 +45,10 @@ export class Gain {
     const data = this.data;
 
     const gain = data.gain;
-    const minAdu = 1;
+    const minGain = 1;
 
-    if (Number.isNaN(gain) || !Number.isInteger(gain) || gain < minAdu) {
-      errors.gain = `The gain must be an integer greater than or equal to ${minAdu}.`;
+    if (Number.isNaN(gain) || !Number.isInteger(gain) || gain < minGain) {
+      errors.gain = `The gain must be an integer greater than or equal to ${minGain}.`;
     }
 
     // Read Noise
