@@ -34,7 +34,7 @@ plugins:
           options:
             docstring_style: numpy
             show_if_no_docstring: true
-          paths: [backend]
+          paths: [../backend]
   - search
 
 repo_url: https://github.com/saltastroops/nir-simulator.git
@@ -71,5 +71,5 @@ theme:
       accent: indigo
 
 watch:
-  - backend/nirwals
+  - ../backend/nirwals
 
