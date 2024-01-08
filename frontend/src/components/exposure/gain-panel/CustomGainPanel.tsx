@@ -23,18 +23,19 @@ export function CustomGainPanel({ gain, update }: Props) {
   return (
     <div>
       <div className="columns is-gepless">
-        <div className="column pb-0">
+        <div className="column pl-4 pb-0">Gain:</div>
+        <div className="column pb-0 pl-0">
           <div className="control">
             <input
-              className={input("w-28")}
+              className={input("w-32")}
               name={"gain"}
               type="text"
               value={gain.gain}
               onChange={(event) => updateGain("gain", event.target.value)}
-            />
+            />{" "}
+            e/ADU
           </div>
         </div>
-        <div className="column pb-0 pl-0">e/ADU</div>
       </div>
       {gain.errors["gain"] && (
         <div className="columns">
@@ -44,7 +45,7 @@ export function CustomGainPanel({ gain, update }: Props) {
         </div>
       )}
       <div className="columns">
-        <div className="column pr-0 pb-0">Read Noise: </div>
+        <div className="column pl-4 pb-0">Read Noise: </div>
         <div className="column pb-0 pl-0">
           <div className="control">
             <input
@@ -67,7 +68,7 @@ export function CustomGainPanel({ gain, update }: Props) {
       )}
 
       <div className="columns">
-        <div className="column pr-0 pb-0">Full Well: </div>
+        <div className="column pl-4 pb-0">Full Well: </div>
         <div className="column pb-0 pl-0">
           <div className="control">
             <input

@@ -94,7 +94,7 @@ export function GainPanel({ exposureConfiguration, update }: Props) {
   return (
     <>
       <div className="columns">
-        <div className="column pr-0 is-two-fifths">
+        <div className="column pr-4 is-two-fifths">
           <GainSelector
             updateGain={updateGain}
             gain={exposureConfiguration.gain}
