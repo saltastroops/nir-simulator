@@ -8,6 +8,7 @@ export function NonEditableGainPanel({ gain }: Props) {
   return (
     <div>
       <div className="columns">
+        <div className="column ">Gain:</div>
         <div className="column ">{gain.gain} e/ADU</div>
       </div>
       <div className="columns">
