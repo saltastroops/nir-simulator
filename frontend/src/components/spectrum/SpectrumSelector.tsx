@@ -25,17 +25,27 @@ export default function SpectrumSelector({ onSelect }: Props) {
   ];
   return (
     <div>
-      <select value={selectedType} onChange={onChange} className={select()}>
-        {spectrumTypes.map((spectrumType) => (
-          <option key={spectrumType}>{spectrumType}</option>
-        ))}
-      </select>
-      <button
-        className={button("ml-4 bg-green-600 text-white")}
-        onClick={onClick}
-      >
-        Add
-      </button>
+      <div className="flex  items-center">
+        <div>
+          <select
+            value={selectedType}
+            onChange={onChange}
+            className={select("w-36")}
+          >
+            {spectrumTypes.map((spectrumType) => (
+              <option key={spectrumType}>{spectrumType}</option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <button
+            className={button("ml-4 bg-green-600 text-white")}
+            onClick={onClick}
+          >
+            Add
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
