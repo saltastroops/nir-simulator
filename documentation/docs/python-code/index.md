@@ -115,7 +115,7 @@ The wavelength resolution is given by
 $$
 \Delta\lambda = \phi_{\rm fibre}\frac{f_{\rm tel}}{f_{\rm col}}\sigma\cos\alpha
 $$
-Now let $i$ be the smallest integer vwith $i\cdot{\rm d}\lambda \gt \Delta\lambda$. Then for calculating the SNR at one of the bin wavelengths $\lambda_{k}$, we need to add the count rates in the $i$ bins around that wavelength.
+Now let $i$ be the smallest integer with $i\cdot{\rm d}\lambda \gt \Delta\lambda$. Then for calculating the SNR at one of the bin wavelengths $\lambda_{k}$, we need to add the count rates in the $i$ bins around that wavelength.
 
 We therefore need to create a [sliding window view](https://numpy.org/devdocs/reference/generated/numpy.lib.stride_tricks.sliding_window_view.html) and then sum over the view's items. The resulting array $C$ will have $i-1$ fewer items than $N$. The count rate relevant for the SNR at $\lambda_{k}$ is $C[k - {\rm floor}(i / 2)]$, as illustrated in the image below.
 

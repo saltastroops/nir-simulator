@@ -115,11 +115,11 @@ Hence atmospheric extinction can be described with a modification factor
 $$
 \epsilon_{\rm atm}(\lambda) = 10^{-0.4\kappa(\lambda)\sec z}
 $$
-The extinction coefficient $\kappa$ is provided by means of a csv file.
+The extinction coefficient $\kappa$ is provided by means of a csv file, which is based on a sky transmission spectrum taken at Mauna Kea.
 
-### Background
+### Sky background
 
-The background is read from a file. Currently solar and lunar properties are not taken into consideration.
+The sky background is read from a file, and it is based on a sky emission spectrum from Mauna Kea. Currently, solar and lunar properties are not taken into consideration.
 
 ## Propagation through the telescope
 
