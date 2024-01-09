@@ -47,7 +47,8 @@ export class SNR {
     const snr = data.snr;
     const minSnr = 1;
     if (Number.isNaN(snr) || snr < minSnr) {
-      errors.snr = `The signal-to-noise ratio must be a number greater than or equal to ${minSnr}.`;
+      errors.snr = `The signal-to-noise ratio must be a number greater than or equal to
+       ${minSnr}.`;
     }
 
     return errors;
