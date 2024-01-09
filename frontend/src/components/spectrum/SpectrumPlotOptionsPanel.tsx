@@ -30,7 +30,7 @@ export class SpectrumPlotOptions {
 }
 
 interface Props {
-  spectrumPlotOptions: SpectrumPlotOptions;
+  spectrumPlotOptions: any;
   update: (spectrumPlotOptions: SpectrumPlotOptions) => void;
 }
 
@@ -55,9 +55,9 @@ export default function SpectrumPlotOptionsPanel({
 
   return (
     <div>
-      {/* include atmospheric extinction? */}
-      <div>
-        <label>
+      <div className="field w-80">
+        {/* include atmospheric extinction? */}
+        <div className="control">
           <input
             type="checkbox"
             value="extinction"
@@ -67,12 +67,10 @@ export default function SpectrumPlotOptionsPanel({
             }
           />
           <span className="ml-2">Include atmospheric extinction</span>
-        </label>
-      </div>
+        </div>
 
-      {/* multiply with mirror area and efficiency */}
-      <div>
-        <label>
+        {/* multiply with mirror area and efficiency */}
+        <div className="control">
           <input
             type="checkbox"
             value="areaAndEfficiency"
@@ -85,12 +83,10 @@ export default function SpectrumPlotOptionsPanel({
             }
           />
           <span className="ml-2">Multiply with mirror area and efficiency</span>
-        </label>
-      </div>
+        </div>
 
-      {/* calculate flux in seeing disk */}
-      <div>
-        <label>
+        {/* calculate flux in seeing disk */}
+        <div className="control">
           <input
             type="checkbox"
             value="extinction"
@@ -100,7 +96,7 @@ export default function SpectrumPlotOptionsPanel({
             }
           />
           <span className="ml-2">Calculate flux in seeing disk</span>
-        </label>
+        </div>
       </div>
     </div>
   );

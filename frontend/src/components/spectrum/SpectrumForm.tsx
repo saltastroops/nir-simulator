@@ -18,7 +18,7 @@ export default function SpectrumForm({
         onClick={remove}
       >
         <div>
-          <i className="fa-solid fa-xmark text-xs"></i>
+          <i className="fa-regular fa-circle-xmark"></i>
         </div>
       </div>
       {children}

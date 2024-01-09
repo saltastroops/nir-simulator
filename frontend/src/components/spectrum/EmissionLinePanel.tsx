@@ -1,6 +1,6 @@
 import { Spectrum } from "../../types";
 import Errors from "../Errors.tsx";
-import { input, label } from "../utils.ts";
+import { input } from "../utils.ts";
 
 let idCounter = 0;
 
@@ -112,56 +112,64 @@ export default function EmissionLinePanel({ emissionLine, update }: Props) {
 
   return (
     <div>
-      <div className="flex items-center">
-        {/* central wavelength */}
-        <label htmlFor={centralWavelengthId} className={label("mr-2")}>
-          Central Wavelength
-        </label>
-        <input
-          id={centralWavelengthId}
-          className={input("w-16")}
-          type="text"
-          value={centralWavelength}
-          onChange={(event) =>
-            updateParameter("centralWavelength", event.target.value)
-          }
-        />
+      {/* central wavelength */}
+      <div className="field">
+        <label htmlFor={centralWavelengthId}>Central Wavelength</label>
+        <div className="control">
+          <input
+            id={centralWavelengthId}
+            className={input("w-48")}
+            type="text"
+            value={centralWavelength}
+            onChange={(event) =>
+              updateParameter("centralWavelength", event.target.value)
+            }
+          />
+        </div>
+      </div>
 
-        {/* FWHM */}
-        <label htmlFor={fwhmId} className={label("ml-5 mr-2")}>
-          FWHM
-        </label>
-        <input
-          id={fwhmId}
-          className={input("w-16")}
-          type="text"
-          value={fwhm}
-          onChange={(event) => updateParameter("fwhm", event.target.value)}
-        />
+      {/* FWHM */}
+      <div className="field">
+        <label htmlFor={fwhmId}>FWHM</label>
+        <div className="control">
+          <input
+            id={fwhmId}
+            className={input("w-48")}
+            type="text"
+            value={fwhm}
+            onChange={(event) => updateParameter("fwhm", event.target.value)}
+          />
+        </div>
+      </div>
 
-        {/* flux */}
-        <label htmlFor={fluxId} className={label("ml-5 mr-2")}>
-          Flux
-        </label>
-        <input
-          id={fluxId}
-          className={input("w-16")}
-          type="text"
-          value={flux}
-          onChange={(event) => updateParameter("flux", event.target.value)}
-        />
+      {/* flux */}
+      <div className="field">
+        <label htmlFor={fluxId}>Flux</label>
+        <div className="control">
+          <input
+            id={fluxId}
+            className={input("w-48")}
+            type="text"
+            value={flux}
+            onChange={(event) => updateParameter("flux", event.target.value)}
+          />
+        </div>
+      </div>
 
-        {/* Redshift */}
-        <label htmlFor={redshiftId} className={label("ml-5 mr-2")}>
-          Redshift
-        </label>
-        <input
-          id={redshiftId}
-          className={input("w-12")}
-          type="text"
-          value={redshift}
-          onChange={(event) => updateParameter("redshift", event.target.value)}
-        />
+      {/* Redshift */}
+      <div className="field">
+        <label htmlFor={redshiftId}>Redshift</label>
+        <div className="control">
+          <input
+            id={redshiftId}
+            className={input("w-48")}
+            type="text"
+            value={redshift}
+            onChange={(event) =>
+              updateParameter("redshift", event.target.value)
+            }
+          />
+        </div>
       </div>
 
       {/* errors */}

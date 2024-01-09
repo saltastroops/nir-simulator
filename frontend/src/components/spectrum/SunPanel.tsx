@@ -1,4 +1,4 @@
-import { input, label } from "../utils.ts";
+import { input } from "../utils.ts";
 import Errors from "../Errors.tsx";
 
 interface SunParameters {
@@ -97,43 +97,49 @@ export default function SunPanel({ sun, update }: Props) {
 
   return (
     <div>
-      <div className="flex items-center">
+      <div>
         {/* year */}
-        <label htmlFor="observation-year" className={label("mr-2")}>
-          Obs. Year
-        </label>
-        <input
-          id="observation-year"
-          className={input("w-16")}
-          value={year}
-          onChange={(event) => updateParameter("year", event.target.value)}
-        />
+        <div className="field">
+          <label htmlFor="observation-year">Obs. Year</label>
+          <div className="control">
+            <input
+              id="observation-year"
+              className={input("w-48")}
+              value={year}
+              onChange={(event) => updateParameter("year", event.target.value)}
+            />
+          </div>
+        </div>
 
         {/* solar elongation */}
-        <label htmlFor="solar-elongation" className={label("ml-5 mr-2")}>
-          Solar Elongation
-        </label>
-        <input
-          id="solar-elongation"
-          className={input("w-12")}
-          value={solarElongation}
-          onChange={(event) =>
-            updateParameter("solarElongation", event.target.value)
-          }
-        />
+        <div className="field">
+          <label htmlFor="solar-elongation">Solar Elongation</label>
+          <div className="control">
+            <input
+              id="solar-elongation"
+              className={input("w-48")}
+              value={solarElongation}
+              onChange={(event) =>
+                updateParameter("solarElongation", event.target.value)
+              }
+            />
+          </div>
+        </div>
 
         {/* ecliptic latitude */}
-        <label htmlFor="ecliptioc-latitude" className={label("ml-5 mr-2")}>
-          Ecliptic Latitude
-        </label>
-        <input
-          id="ecliptic-latitude"
-          className={input("w-12")}
-          value={eclipticLatitude}
-          onChange={(event) =>
-            updateParameter("eclipticLatitude", event.target.value)
-          }
-        />
+        <div className="field">
+          <label htmlFor="ecliptioc-latitude">Ecliptic Latitude</label>
+          <div className="control">
+            <input
+              id="ecliptic-latitude"
+              className={input("w-48")}
+              value={eclipticLatitude}
+              onChange={(event) =>
+                updateParameter("eclipticLatitude", event.target.value)
+              }
+            />
+          </div>
+        </div>
       </div>
 
       {/* errors */}

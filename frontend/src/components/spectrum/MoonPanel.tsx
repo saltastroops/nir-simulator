@@ -1,4 +1,4 @@
-import { input, label } from "../utils.ts";
+import { input } from "../utils.ts";
 import Errors from "../Errors.tsx";
 
 interface MoonParameters {
@@ -102,43 +102,49 @@ export default function MoonPanel({ moon, update }: Props) {
 
   return (
     <div>
-      <div className="flex items-center">
+      <div>
         {/* zenith distance */}
-        <label htmlFor="lunar-zenith-distance" className={label("mr-2")}>
-          Moon ZD
-        </label>
-        <input
-          id="lunar-zenith-distance"
-          className={input("w-12")}
-          value={zenithDistance}
-          onChange={(event) =>
-            updateParameter("zenithDistance", event.target.value)
-          }
-        />
+        <div className="field">
+          <label htmlFor="lunar-zenith-distance">Moon ZD</label>
+          <div className="control">
+            <input
+              id="lunar-zenith-distance"
+              className={input("w-48")}
+              value={zenithDistance}
+              onChange={(event) =>
+                updateParameter("zenithDistance", event.target.value)
+              }
+            />
+          </div>
+        </div>
 
         {/* phase */}
-        <label htmlFor="lunar-phase" className={label("ml-5 mr-2")}>
-          Lunar Phase
-        </label>
-        <input
-          id="lunar-phase"
-          className={input("w-12")}
-          value={phase}
-          onChange={(event) => updateParameter("phase", event.target.value)}
-        />
+        <div className="field">
+          <label htmlFor="lunar-phase">Lunar Phase</label>
+          <div className="control">
+            <input
+              id="lunar-phase"
+              className={input("w-48")}
+              value={phase}
+              onChange={(event) => updateParameter("phase", event.target.value)}
+            />
+          </div>
+        </div>
 
         {/* lunar elongation */}
-        <label htmlFor="lunar-elongation" className={label("ml-5 mr-2")}>
-          Lunar Elongation
-        </label>
-        <input
-          id="lunar-elongation"
-          className={input("w-12")}
-          value={lunarElongation}
-          onChange={(event) =>
-            updateParameter("lunarElongation", event.target.value)
-          }
-        />
+        <div className="field">
+          <label htmlFor="lunar-elongation">Lunar Elongation</label>
+          <div className="control">
+            <input
+              id="lunar-elongation"
+              className={input("w-48")}
+              value={lunarElongation}
+              onChange={(event) =>
+                updateParameter("lunarElongation", event.target.value)
+              }
+            />
+          </div>
+        </div>
       </div>
 
       {/* errors */}
@@ -150,27 +156,35 @@ export default function MoonPanel({ moon, update }: Props) {
       )}
 
       {/* quick select */}
-      <div className="mt-2">
-        <span className="mr-3">Quick Select:</span>
-        <span
-          className="text-sky-500 cursor-pointer mr-3"
-          onClick={() => updateMoon("180", "180", "180")}
-        >
-          Dark Moon
-        </span>
-        <span
-          className="text-sky-500 cursor-pointer mr-3"
-          onClick={() => updateMoon("75", "90", "90")}
-        >
-          Grey Moon
-        </span>
-        <span
-          className="text-sky-500 cursor-pointer mr-3"
-          onClick={() => updateMoon("25", "25", "25")}
-        >
-          Bright Moon
-        </span>
-      </div>
+      <fieldset className="border border-solid border-gray-200 p-2 mt-3">
+        <legend>Quick Select</legend>
+        <div className="field">
+          <div className="control">
+            <span
+              className="text-sky-500 cursor-pointer mr-3"
+              onClick={() => updateMoon("180", "180", "180")}
+            >
+              Dark Moon
+            </span>
+          </div>
+          <div className="control">
+            <span
+              className="text-sky-500 cursor-pointer mr-3"
+              onClick={() => updateMoon("75", "90", "90")}
+            >
+              Grey Moon
+            </span>
+          </div>
+          <div className="control">
+            <span
+              className="text-sky-500 cursor-pointer mr-3"
+              onClick={() => updateMoon("25", "25", "25")}
+            >
+              Bright Moon
+            </span>
+          </div>
+        </div>
+      </fieldset>
     </div>
   );
 }
