@@ -70,6 +70,10 @@ git pull || {
 }
 
 # Launch the Simulator.
+cd deployment || {
+  echo "Could not cd into deployment directory." 1>&2
+  exit 1
+}
 docker compose up --build -d || {
   echo "The NIRWALS Simulator could not be launched." 1>&2
   exit 1

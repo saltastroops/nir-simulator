@@ -194,6 +194,17 @@ a script `numpyfy.py` is provided, which converts all csv files in the data fold
 the required NumPy format. The data folder must be specified with the environment
 variable `FILE_BASE_DIR`.
 
+## Documentation
+
+The documentation is generated with [Material for MkDocs](https://squidfunk.github.io/mkdocs-material/). For convenience, the required Python packages are included in the `requirements.txt` file for the backend. You can locally view the documentation by running
+
+```shell
+cd documentation
+mkdocs serve
+```
+
+The pages are updated in the browser whenever you change the documentation or the backend Python code. You can also build the site with the `mkdocs build` command. However, the built site should *not* be put under version control; the deployment takes care of building the site.
+
 ## Deployment
 
 ### Setting up the server

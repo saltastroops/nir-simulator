@@ -11,12 +11,12 @@ ENV PYTHONUNBUFFERED 1
 # This is done before copying all the code to avoid re-running the step if the
 # dependencies havve not changed.
 WORKDIR /app
-COPY requirements.txt .
+COPY backend/requirements.txt .
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
 # Copy the code.
-COPY . .
+COPY backend .
 
 EXPOSE 8000
 
