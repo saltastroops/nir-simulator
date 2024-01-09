@@ -7,26 +7,26 @@ export type GainType = "Faint" | "Bright" | "Custom";
 
 export interface GainParameters {
   gainType: GainType;
-  adu: string;
+  gain: string;
   readNoise: string;
   fullWell: string;
 }
 
 export interface GainDataType {
-  adu: number;
+  gain: number;
   readNoise: number;
   fullWell: number;
 }
 export class Gain {
   public gainType: GainType = "Faint";
-  public adu = "2.04";
+  public gain = "2.04";
   public readNoise = "17";
   public fullWell = "60000";
 
   public constructor(gains?: GainParameters) {
     if (gains) {
       this.gainType = gains.gainType;
-      this.adu = gains.adu;
+      this.gain = gains.gain;
       this.readNoise = gains.readNoise;
       this.fullWell = gains.fullWell;
     }
@@ -34,7 +34,7 @@ export class Gain {
 
   public get data(): GainDataType {
     return {
-      adu: parseInt(this.adu, 10),
+      gain: parseInt(this.gain, 10),
       readNoise: parseFloat(this.readNoise),
       fullWell: parseInt(this.fullWell, 10),
     };
@@ -44,11 +44,11 @@ export class Gain {
     const errors: Record<string, string> = {};
     const data = this.data;
 
-    const adu = data.adu;
-    const minAdu = 1;
+    const gain = data.gain;
+    const minGain = 1;
 
-    if (Number.isNaN(adu) || !Number.isInteger(adu) || adu < minAdu) {
-      errors.adu = `The ADU must be an integer greater than or equal to ${minAdu}.`;
+    if (Number.isNaN(gain) || !Number.isInteger(gain) || gain < minGain) {
+      errors.gain = `The gain must be an integer greater than or equal to ${minGain}.`;
     }
 
     // Read Noise
@@ -94,7 +94,7 @@ export function GainPanel({ exposureConfiguration, update }: Props) {
   return (
     <>
       <div className="columns">
-        <div className="column pr-0 is-two-fifths">
+        <div className="column pr-4 is-two-fifths">
           <GainSelector
             updateGain={updateGain}
             gain={exposureConfiguration.gain}

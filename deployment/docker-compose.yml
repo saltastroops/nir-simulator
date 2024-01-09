@@ -1,0 +1,37 @@
+version: '3'
+
+services:
+  backend:
+    build:
+      context: ..
+      dockerfile: deployment/Dockerfile-backend
+    environment:
+      - ALLOWED_HOSTS=simulator.salt.ac.za
+      - DEBUG=0
+    restart: always
+
+  documentation:
+    build:
+      context: ..
+      dockerfile: deployment/Dockerfile-documentation
+    restart: always
+
+  frontend:
+    build:
+      context: ..
+      dockerfile: deployment/Dockerfile-frontend
+    environment:
+      - VITE_BACKEND_BASE_URL=
+    restart: always
+
+  router:
+    build:
+      context: ..
+      dockerfile: deployment/Dockerfile-router
+    depends_on:
+      - backend
+      - documentation
+      - frontend
+    ports:
+      - "7999:80"
+    restart: always

@@ -1,3 +1,5 @@
+"""Utility functions."""
+
 from typing import Tuple, BinaryIO
 
 import numpy as np
@@ -11,7 +13,7 @@ def read_from_file(
     """
     Read wavelengths and corresponding values from a file.
 
-    The file must be in Numpy's .npz format, abd it must contain arrays called "x" and
+    The file must be in Numpy's .npz format, and it must contain arrays called "x" and
     "y". The x array is used for the wavelengths, which are supposed to be given in
     Angstrom. The values in the y array are supposed to be given in the unit specified
     by the unit parameter. If no unit is given, the values are assumed to be

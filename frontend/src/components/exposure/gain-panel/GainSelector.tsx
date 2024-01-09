@@ -8,20 +8,20 @@ interface Props {
 export function GainSelector({ updateGain, gain }: Props) {
   const faintGain = {
     gainType: "Faint",
-    adu: "2.04",
+    gain: "2.04",
     readNoise: "17",
     fullWell: "60000",
   };
   const brightGain = {
     gainType: "Bright",
-    adu: "5.74",
+    gain: "5.74",
     readNoise: "20",
     fullWell: "120000",
   };
   const update = (value: GainType) => {
     let newGainValues = {
       gainType: "Custom",
-      adu: gain.adu,
+      gain: gain.gain,
       readNoise: gain.readNoise,
       fullWell: gain.fullWell,
     };

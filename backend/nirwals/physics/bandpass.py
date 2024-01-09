@@ -1,3 +1,5 @@
+"""Functions related to throughput calculations."""
+
 import math
 import pathlib
 from typing import get_args, cast
@@ -100,7 +102,7 @@ def fibre_throughput(
     which is covered by the fibre, assuming the source is located at the centre of the
     fibre. The seeing disk includes atmospheric and telescope seeing.
 
-    For a diffuse source the throughput is 1, as losses abd gains due to seeing cancel.
+    For a diffuse source the throughput is 1, as losses and gains due to seeing cancel.
 
     Parameters
     ----------
