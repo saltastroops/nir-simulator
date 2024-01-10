@@ -93,7 +93,7 @@ export function ExposureTimeQueryTab({ snr, update, updatePlots }: Props) {
       </div>
 
       <div className="field">
-        <label>SNR Requested at Which Wavelength?</label>
+        <label>SNR Requested at Which Wavelength? (Å)</label>
         <div className="control">
           <input
             className={input("w-52")}

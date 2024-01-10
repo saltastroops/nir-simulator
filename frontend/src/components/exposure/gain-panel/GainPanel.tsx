@@ -92,15 +92,15 @@ export function GainPanel({ exposureConfiguration, update }: Props) {
     );
   };
   return (
-    <>
-      <div className="columns">
-        <div className="column pr-4 is-two-fifths">
+    <div>
+      <div className="flex">
+        <div className="" style={{ minWidth: "160px" }}>
           <GainSelector
             updateGain={updateGain}
             gain={exposureConfiguration.gain}
           />
         </div>
-        <div className="column pl-0">
+        <div className="">
           {(exposureConfiguration.gain.gainType === "Bright" ||
             exposureConfiguration.gain.gainType === "Faint") && (
             <NonEditableGainPanel gain={exposureConfiguration.gain} />
@@ -113,6 +113,6 @@ export function GainPanel({ exposureConfiguration, update }: Props) {
           )}
         </div>
       </div>
-    </>
+    </div>
   );
 }

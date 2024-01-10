@@ -37,7 +37,7 @@ export function QueryTabs({
   };
 
   return (
-    <>
+    <div>
       <div className="tabs is-boxed">
         <ul>
           <li className={activeTab === 1 ? "is-active" : ""}>
@@ -69,6 +69,6 @@ export function QueryTabs({
           updatePlots={updatePlots}
         />
       )}
-    </>
+    </div>
   );
 }

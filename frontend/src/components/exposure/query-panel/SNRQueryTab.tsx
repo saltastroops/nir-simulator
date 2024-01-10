@@ -84,7 +84,7 @@ export function SNRQueryTab({ exposureTime, update, updatePlots }: Props) {
   return (
     <>
       <div className="field">
-        <label>Exposure Time</label>
+        <label>Exposure Time (seconds)</label>
         <div className="control">
           <input
             className={input("w-52")}

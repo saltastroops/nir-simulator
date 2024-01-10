@@ -7,17 +7,17 @@ interface Props {
 export function NonEditableGainPanel({ gain }: Props) {
   return (
     <div>
-      <div className="columns">
-        <div className="column ">Gain:</div>
-        <div className="column ">{gain.gain} e/ADU</div>
+      <div className="flex" style={{ minWidth: "140px" }}>
+        <div className="">Gain:</div>
+        <div className="pl-2 ">{gain.gain} e/ADU</div>
       </div>
-      <div className="columns">
-        <div className="column ">Read Noise: </div>
-        <div className="column "> {gain.readNoise} e</div>
+      <div className="flex">
+        <div className="">Read Noise: </div>
+        <div className="pl-2 "> {gain.readNoise}</div>
       </div>
-      <div className="columns">
-        <div className="column ">Full Well: </div>
-        <div className="column ">{gain.fullWell} e</div>
+      <div className="flex">
+        <div className="">Full Well: </div>
+        <div className="pl-2">{gain.fullWell} e</div>
       </div>
     </div>
   );

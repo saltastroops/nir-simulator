@@ -103,7 +103,7 @@ export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
 
   return (
     <div className="columns">
-      <div className="column is-one-fifth">
+      <div className="column is-one-fifth" style={{ minWidth: "280px" }}>
         <div className="bg-gray-50">
           <fieldset className="border border-solid border-gray-300 p-3">
             <legend>Source Spectrum</legend>

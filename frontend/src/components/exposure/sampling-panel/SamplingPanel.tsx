@@ -75,7 +75,7 @@ export function SamplingPanel({ exposureConfiguration, update }: Props) {
     );
   };
   return (
-    <>
+    <div>
       <div className="columns">
         <div className="column pb-1">
           <div className="control">
@@ -121,7 +121,7 @@ export function SamplingPanel({ exposureConfiguration, update }: Props) {
         <div className="column pt-0 pb-0">
           <div className="field">
             <label>Number of Samples</label>
-            <div className="control">
+            <div className="control pb-2">
               <input
                 className={input("w-36")}
                 type="text"
@@ -142,6 +142,6 @@ export function SamplingPanel({ exposureConfiguration, update }: Props) {
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 }

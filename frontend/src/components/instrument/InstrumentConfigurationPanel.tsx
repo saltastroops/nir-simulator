@@ -144,100 +144,109 @@ export function InstrumentConfigurationPanel({
   return (
     <div>
       <div className="columns">
-        <div className="column is-one-fifth">
-          <div className="tile is-parent is-vertical notification">
+        <div className="column is-one-fifth" style={{ minWidth: "250px" }}>
+          <div className="bg-gray-50">
             {/* instrument mode */}
-            <div className="tile is-child box has-margin-top">
-              <div className="field">
-                {/*<div className="control">*/}
-                {/*  <label className="radio">*/}
-                {/*    <input*/}
-                {/*      type="radio"*/}
-                {/*      className="mr-2"*/}
-                {/*      name="configurationOptions"*/}
-                {/*      value="imaging-mode"*/}
-                {/*      checked={mode === "Imaging"}*/}
-                {/*      onChange={() => modeChange("Imaging")}*/}
-                {/*    />*/}
-                {/*    Imaging Mode*/}
-                {/*  </label>*/}
-                {/*</div>*/}
-                <div className="control">
-                  <label className="radio">
-                    <input
-                      type="radio"
-                      className="mr-2"
-                      name="configurationOptions"
-                      value="spectroscopy-mode"
-                      checked={mode === "Spectroscopy"}
-                      onChange={() => modeChange("Spectroscopy")}
-                    />
-                    Spectroscopy Mode
-                  </label>
+            <fieldset className="border border-solid border-gray-300 p-3">
+              <legend>Instrument Mode</legend>
+              <div>
+                <div className="field">
+                  {/*<div className="control">*/}
+                  {/*  <label className="radio">*/}
+                  {/*    <input*/}
+                  {/*      type="radio"*/}
+                  {/*      className="mr-2"*/}
+                  {/*      name="configurationOptions"*/}
+                  {/*      value="imaging-mode"*/}
+                  {/*      checked={mode === "Imaging"}*/}
+                  {/*      onChange={() => modeChange("Imaging")}*/}
+                  {/*    />*/}
+                  {/*    Imaging Mode*/}
+                  {/*  </label>*/}
+                  {/*</div>*/}
+                  <div className="control">
+                    <label className="radio">
+                      <input
+                        type="radio"
+                        className="mr-2"
+                        name="configurationOptions"
+                        value="spectroscopy-mode"
+                        checked={mode === "Spectroscopy"}
+                        onChange={() => modeChange("Spectroscopy")}
+                      />
+                      Spectroscopy Mode
+                    </label>
+                  </div>
                 </div>
               </div>
-            </div>
-
+            </fieldset>
             {/* filter */}
-            <div className="control pb-4">
-              <label className="label">Filter</label>
+            <fieldset className="border border-solid border-gray-300 p-3">
+              <legend>Filter</legend>
               <div>
-                <select
-                  className={select("w-32")}
-                  value={filter}
-                  onChange={(event) =>
-                    updateParameter("filter", event.target.value)
-                  }
-                  name="filter"
-                >
-                  <option value={"clear-filter"}>Clear Filter</option>
-                  <option value={"lwbf"}>LWBF</option>
-                </select>
+                <div className={"field"}>
+                  <select
+                    className={select("w-32 control")}
+                    value={filter}
+                    onChange={(event) =>
+                      updateParameter("filter", event.target.value)
+                    }
+                    name="filter"
+                  >
+                    <option value={"clear-filter"}>Clear Filter</option>
+                    <option value={"lwbf"}>LWBF</option>
+                  </select>
+                </div>
               </div>
-            </div>
+            </fieldset>
 
             {/* imaging configuration */}
-            {mode === "Imaging" && <ImagingConfigurationPanel />}
+            {mode === "Imaging" && (
+              <fieldset className="border border-solid border-gray-300 p-3">
+                <legend> Imaging Mode</legend>
+                <ImagingConfigurationPanel />
+              </fieldset>
+            )}
 
             {/* spectroscopy configuration */}
             {mode === "Spectroscopy" && (
-              <SpectroscopyConfigurationPanel
-                spectroscopyConfiguration={
-                  modeConfiguration as SpectroscopyConfiguration
-                }
-                update={(
-                  spectroscopyConfiguration: SpectroscopyConfiguration,
-                ) =>
-                  updateParameter(
-                    "modeConfiguration",
-                    spectroscopyConfiguration,
-                  )
-                }
-              />
+              <fieldset className="border border-solid border-gray-300 p-3">
+                <legend>Spectroscopy</legend>
+                <SpectroscopyConfigurationPanel
+                  spectroscopyConfiguration={
+                    modeConfiguration as SpectroscopyConfiguration
+                  }
+                  update={(
+                    spectroscopyConfiguration: SpectroscopyConfiguration,
+                  ) =>
+                    updateParameter(
+                      "modeConfiguration",
+                      spectroscopyConfiguration,
+                    )
+                  }
+                />
+              </fieldset>
             )}
 
             {/* update the plot */}
             <div>
-              <div className="tile">
-                <button
-                  className={button("ml-4 bg-green-600 text-white")}
-                  onClick={updatePlot}
-                >
-                  Update Throughput
-                </button>
-              </div>
-              {error && (
-                <div className="tile">
-                  <p className={"has-text-danger"}>{error}</p>
-                </div>
-              )}
+              <button
+                className={button(" mt-3 bg-green-600 text-white")}
+                onClick={updatePlot}
+              >
+                Update Throughput
+              </button>
+
+              {error && <p className={"has-text-danger"}>{error}</p>}
             </div>
           </div>
         </div>
 
-        <div className="column notification">
-          <div className={!error ? "tile" : "tile notification is-danger"}>
-            {Chart}
+        <div className="column">
+          <div className="bg-gray-50">
+            <div className={!error ? "tile" : "tile notification is-danger"}>
+              {Chart}
+            </div>
           </div>
         </div>
       </div>

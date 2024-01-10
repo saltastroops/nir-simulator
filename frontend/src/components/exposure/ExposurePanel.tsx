@@ -215,25 +215,32 @@ export function ExposurePanel({ setup, update }: Props) {
     <div>
       <div className="columns">
         {/* Controls Section */}
-        <div className="column is-one-quarter">
-          <div className="notification m-2">
-            <GainPanel
-              exposureConfiguration={setup.exposureConfiguration}
-              update={updateExposureConfiguration}
-            />
-          </div>
-          <div className="notification m-2">
-            <SamplingPanel
-              exposureConfiguration={setup.exposureConfiguration}
-              update={updateExposureConfiguration}
-            />
-          </div>
-          <div className={"bg-gray-100 p-4 m-2 mt-7"}>
-            <QueryTabs
-              exposureConfiguration={setup.exposureConfiguration}
-              update={updateExposureConfiguration}
-              updatePlots={updatePlots}
-            />
+        <div className="column is-one-fifth" style={{ minWidth: "385px" }}>
+          <div className="bg-gray-50">
+            <fieldset className="border border-solid border-gray-300 p-3 mb-4">
+              <legend>Gain</legend>
+              <GainPanel
+                exposureConfiguration={setup.exposureConfiguration}
+                update={updateExposureConfiguration}
+              />
+            </fieldset>
+
+            <fieldset className="border border-solid border-gray-300 p-3 mb-4">
+              <legend>Sampling</legend>
+              <SamplingPanel
+                exposureConfiguration={setup.exposureConfiguration}
+                update={updateExposureConfiguration}
+              />
+            </fieldset>
+
+            <fieldset className="border border-solid border-gray-300 p-3">
+              <legend>Query</legend>
+              <QueryTabs
+                exposureConfiguration={setup.exposureConfiguration}
+                update={updateExposureConfiguration}
+                updatePlots={updatePlots}
+              />
+            </fieldset>
           </div>
         </div>
         {/* Plot Section */}
