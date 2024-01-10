@@ -22,7 +22,7 @@ from nirwals.configuration import (
     Filter,
     Source,
     Grating,
-    SamplingType,
+    SamplingMode,
     Exposure,
     Detector,
     SNR,
@@ -384,7 +384,7 @@ def source_electrons(configuration: Configuration) -> tuple[Quantity, Quantity]:
 
 
 def readout_noise(
-    read_noise: float, samplings: int, sampling_type: SamplingType
+    read_noise: float, samplings: int, sampling_mode: SamplingMode
 ) -> float:
     """
     Return the readout noise for a single exposure.
@@ -395,15 +395,15 @@ def readout_noise(
         Read noise.
     samplings: int
         Number of samplings (per exposure).
-    sampling_type: SamplingType
-        Sampling type, such as "Fowler".
+    sampling_mode: SamplingMode
+        Sampling mode, such as "Fowler".
 
     Returns
     -------
     float
         The readout noise.
     """
-    match sampling_type:
+    match sampling_mode:
         case "Fowler":
             return read_noise**2 / (samplings / 2)
         case "Up-the-Ramp":
@@ -494,9 +494,9 @@ def snr(configuration: Configuration) -> tuple[Quantity, Quantity]:
     detector = cast(Detector, configuration.detector)
     read_noise = detector.read_noise
     samplings = detector.samplings
-    sampling_type = detector.sampling_type
+    sampling_mode = detector.sampling_mode
     r = readout_noise(
-        read_noise=read_noise, samplings=samplings, sampling_type=sampling_type
+        read_noise=read_noise, samplings=samplings, sampling_mode=sampling_mode
     )
 
     # Calculate the SNR.
@@ -559,9 +559,9 @@ def exposure_time(configuration: Configuration) -> tuple[Quantity, Quantity]:
     detector = cast(Detector, configuration.detector)
     read_noise = detector.read_noise
     samplings = detector.samplings
-    sampling_type = detector.sampling_type
+    sampling_mode = detector.sampling_mode
     r = readout_noise(
-        read_noise=read_noise, samplings=samplings, sampling_type=sampling_type
+        read_noise=read_noise, samplings=samplings, sampling_mode=sampling_mode
     )
 
     # Define the SNR values for which to calculate the exposure time.
