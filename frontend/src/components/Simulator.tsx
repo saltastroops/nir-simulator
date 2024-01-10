@@ -132,6 +132,11 @@ export function Simulator() {
           <li ref={exposureLIRef}>
             <a onClick={() => switchToIndex(3)}>Make an Exposure</a>
           </li>
+          <li>
+            <a href="https://simulator.salt.ac.za/docs/" target="_blank">
+              Documentation
+            </a>
+          </li>
         </ul>
       </div>
       <div ref={spectrumDivRef} style={{ display: "block" }}>
