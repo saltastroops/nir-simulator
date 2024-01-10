@@ -100,7 +100,7 @@ export default function BlackbodyPanel({ blackbody, update }: Props) {
       </div>
       {/* temperature */}
       <div className="field">
-        <label htmlFor={temperatureId}>Temperature (K)</label>
+        <label htmlFor={temperatureId}>Temperature</label>
         <div className="control">
           <input
             id={temperatureId}

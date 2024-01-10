@@ -25,7 +25,7 @@ export default function SpectrumSelector({ onSelect }: Props) {
   ];
   return (
     <div>
-      <div className="flex  items-center">
+      <div className="flex items-center">
         <div>
           <select
             value={selectedType}

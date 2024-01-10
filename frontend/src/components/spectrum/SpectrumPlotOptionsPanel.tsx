@@ -30,7 +30,7 @@ export class SpectrumPlotOptions {
 }
 
 interface Props {
-  spectrumPlotOptions: any;
+  spectrumPlotOptions: SpectrumPlotOptions;
   update: (spectrumPlotOptions: SpectrumPlotOptions) => void;
 }
 

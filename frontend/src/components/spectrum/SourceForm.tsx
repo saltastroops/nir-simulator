@@ -148,7 +148,7 @@ export default function SourceForm({ source, update }: Props) {
       ))}
 
       {/* source type */}
-      <div className="relative border border-gray-200 p-2 mt-3">
+      <div className="border border-gray-200 p-2 mt-3">
         <div className="field">
           <div className="control">
             <label>
