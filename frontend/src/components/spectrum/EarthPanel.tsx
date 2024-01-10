@@ -1,4 +1,4 @@
-import { input, label } from "../utils.ts";
+import { input } from "../utils.ts";
 import Errors from "../Errors.tsx";
 
 interface EarthParameters {
@@ -93,43 +93,47 @@ export function EarthPanel({ earth, update }: Props) {
 
   return (
     <div>
-      <div className="flex items-center">
+      <div className="field">
         {/* target zenith distance */}
-        <label htmlFor="obsercvation-year" className={label("mr-2")}>
-          Target ZD
-        </label>
-        <input
-          id="observation-year"
-          className={input("w-12")}
-          value={targetZenithDistance}
-          onChange={(event) =>
-            updateParameter("targetZenithDistance", event.target.value)
-          }
-        />
+        <label htmlFor="obsercvation-year">Target ZD</label>
+        <div className="control">
+          <input
+            id="observation-year"
+            className={input("w-48")}
+            value={targetZenithDistance}
+            onChange={(event) =>
+              updateParameter("targetZenithDistance", event.target.value)
+            }
+          />
+        </div>
+      </div>
 
-        {/* mirror area */}
-        <label htmlFor="mirror-area" className={label("ml-5 mr-2")}>
-          Effective mirror area
-        </label>
-        <input
-          id="mirror-area"
-          className={input("w-24")}
-          value={mirrorArea}
-          onChange={(event) =>
-            updateParameter("mirrorArea", event.target.value)
-          }
-        />
+      {/* mirror area */}
+      <div className="field">
+        <label htmlFor="mirror-area">Effective mirror area</label>
+        <div className="control">
+          <input
+            id="mirror-area"
+            className={input("w-48")}
+            value={mirrorArea}
+            onChange={(event) =>
+              updateParameter("mirrorArea", event.target.value)
+            }
+          />
+        </div>
+      </div>
 
-        {/* seeing */}
-        <label htmlFor="seeing" className={label("ml-5 mr-2")}>
-          Seeing
-        </label>
-        <input
-          id="seeing"
-          className={input("w-12")}
-          value={seeing}
-          onChange={(event) => updateParameter("seeing", event.target.value)}
-        />
+      {/* seeing */}
+      <div className="field">
+        <label htmlFor="seeing">Seeing</label>
+        <div className="control">
+          <input
+            id="seeing"
+            className={input("w-48")}
+            value={seeing}
+            onChange={(event) => updateParameter("seeing", event.target.value)}
+          />
+        </div>
       </div>
 
       {/*errors */}

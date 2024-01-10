@@ -1,6 +1,6 @@
 import { Spectrum } from "../../types";
 import Errors from "../Errors.tsx";
-import { input, label, select } from "../utils.ts";
+import { input, select } from "../utils.ts";
 
 let idCounter = 0;
 
@@ -107,64 +107,74 @@ export default function GalaxyPanel({ galaxy, update }: Props) {
 
   return (
     <div>
-      <div className="flex items-center">
-        {/* magnitude */}
-        <label htmlFor={magnitudeId} className={label("mr-2")}>
-          Apparent Magnitude
-        </label>
-        <input
-          id={magnitudeId}
-          className={input("w-12")}
-          type="text"
-          value={magnitude}
-          onChange={(event) => updateParameter("magnitude", event.target.value)}
-        />
+      {/* magnitude */}
+      <div className="field">
+        <label htmlFor={magnitudeId}>Apparent Magnitude</label>
+        <div className="control">
+          <input
+            id={magnitudeId}
+            className={input("w-48")}
+            type="text"
+            value={magnitude}
+            onChange={(event) =>
+              updateParameter("magnitude", event.target.value)
+            }
+          />
+        </div>
+      </div>
 
-        {/* galaxy type */}
-        <label htmlFor={typeId} className={label("ml-5 mr-2")}>
-          Type
-        </label>
-        <select
-          id={typeId}
-          value={type}
-          className={select("w-16")}
-          onChange={(event) => updateParameter("type", event.target.value)}
-        >
-          {GALAXY_TYPES.map((type) => (
-            <option key={type} value={type}>
-              {type}
-            </option>
-          ))}
-        </select>
+      {/* galaxy type */}
+      <div className="field">
+        <label htmlFor={typeId}>Type</label>
+        <div className="control">
+          <select
+            id={typeId}
+            value={type}
+            className={select("w-48")}
+            onChange={(event) => updateParameter("type", event.target.value)}
+          >
+            {GALAXY_TYPES.map((type) => (
+              <option key={type} value={type}>
+                {type}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
 
-        {/* age */}
-        <label htmlFor={ageId} className={label("ml-5 mr-2")}>
-          Age
-        </label>
-        <select
-          id={ageId}
-          value={age}
-          className={select("w-24")}
-          onChange={(event) => updateParameter("age", event.target.value)}
-        >
-          {GALAXY_AGES.map((age) => (
-            <option key={age} value={age}>
-              {age}
-            </option>
-          ))}
-        </select>
+      {/* age */}
+      <div className="field">
+        <label htmlFor={ageId}>Age</label>
+        <div className="control">
+          <select
+            id={ageId}
+            value={age}
+            className={select("w-48")}
+            onChange={(event) => updateParameter("age", event.target.value)}
+          >
+            {GALAXY_AGES.map((age) => (
+              <option key={age} value={age}>
+                {age}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
 
-        {/* Redshift */}
-        <label htmlFor={redshiftId} className="ml-4 mr-2">
-          Redshift
-        </label>
-        <input
-          id={redshiftId}
-          className={input("w-12")}
-          type="text"
-          value={redshift}
-          onChange={(event) => updateParameter("redshift", event.target.value)}
-        />
+      {/* Redshift */}
+      <div className="field">
+        <label htmlFor={redshiftId}>Redshift</label>
+        <div className="control">
+          <input
+            id={redshiftId}
+            className={input("w-48")}
+            type="text"
+            value={redshift}
+            onChange={(event) =>
+              updateParameter("redshift", event.target.value)
+            }
+          />
+        </div>
       </div>
 
       {/* errors */}

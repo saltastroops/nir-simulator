@@ -130,7 +130,7 @@ export default function SourceForm({ source, update }: Props) {
   };
 
   return (
-    <>
+    <div>
       {/* spectrum */}
       <SpectrumSelector
         onSelect={(type: SpectrumType) => addToSourceSpectrum(type)}
@@ -148,30 +148,37 @@ export default function SourceForm({ source, update }: Props) {
       ))}
 
       {/* source type */}
-      <div className="mt-4">
-        <label>
-          <input
-            type="radio"
-            className="cursor-pointer"
-            name="source-type"
-            value="Point"
-            onChange={() => updateSourceType("Point")}
-            checked={source.type === "Point"}
-          />
-          <span className="ml-2">This is a point source</span>
-        </label>
-        <label>
-          <input
-            type="radio"
-            className="ml-5 cursor-pointer"
-            name="source-type"
-            value="Diffuse"
-            onChange={() => updateSourceType("Diffuse")}
-            checked={source.type === "Diffuse"}
-          />
-          <span className="ml-2">This is a diffuse source</span>
-        </label>
+      <div className="border border-gray-200 p-2 mt-3">
+        <div className="field">
+          <div className="control">
+            <label>
+              <input
+                type="radio"
+                className="cursor-pointer"
+                name="source-type"
+                value="Point"
+                onChange={() => updateSourceType("Point")}
+                checked={source.type === "Point"}
+              />
+              <span className="ml-2">This is a point source</span>
+            </label>
+          </div>
+
+          <div className="control">
+            <label>
+              <input
+                type="radio"
+                className="cursor-pointer"
+                name="source-type"
+                value="Diffuse"
+                onChange={() => updateSourceType("Diffuse")}
+                checked={source.type === "Diffuse"}
+              />
+              <span className="ml-2">This is a diffuse source</span>
+            </label>
+          </div>
+        </div>
       </div>
-    </>
+    </div>
   );
 }
