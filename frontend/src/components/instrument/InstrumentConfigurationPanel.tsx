@@ -234,7 +234,7 @@ export function InstrumentConfigurationPanel({
                 className={button(" mt-3 bg-green-600 text-white")}
                 onClick={updatePlot}
               >
-                Update Throughput
+                Show Throughput
               </button>
 
               {error && <p className={"has-text-danger"}>{error}</p>}

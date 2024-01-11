@@ -120,7 +120,7 @@ export function ExposureTimeQueryTab({ snr, update, updatePlots }: Props) {
       <div className="field ">
         <div className="control">
           <button className="button is-link" onClick={updatePlots}>
-            Solve for Exposure Time
+            Show Exposure Time
           </button>
         </div>
       </div>
