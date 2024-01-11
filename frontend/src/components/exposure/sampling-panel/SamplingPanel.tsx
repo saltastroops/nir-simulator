@@ -2,31 +2,31 @@ import { ExposureConfiguration } from "../ExposurePanel.tsx";
 import { Error } from "../../Error.tsx";
 import { input } from "../../utils.ts";
 
-type SamplingType = "Fowler" | "Up The Ramp";
+type SamplingMode = "Fowler" | "Up The Ramp";
 interface SamplingParameters {
   numberOfSamples: string;
-  samplingType: SamplingType;
+  samplingMode: SamplingMode;
 }
 
 export interface SamplingDataType {
   numberOfSamples: number;
-  samplingType: SamplingType;
+  samplingMode: SamplingMode;
 }
 
 export class Sampling {
   public numberOfSamples = "15";
-  public samplingType: SamplingType = "Fowler";
+  public samplingMode: SamplingMode = "Fowler";
 
   public constructor(sampling?: SamplingParameters) {
     if (sampling) {
       this.numberOfSamples = sampling.numberOfSamples;
-      this.samplingType = sampling.samplingType;
+      this.samplingMode = sampling.samplingMode;
     }
   }
   public get data(): SamplingDataType {
     return {
       numberOfSamples: parseInt(this.numberOfSamples, 10),
-      samplingType: this.samplingType,
+      samplingMode: this.samplingMode,
     };
   }
 
@@ -61,7 +61,7 @@ export function SamplingPanel({ exposureConfiguration, update }: Props) {
     updateSamplingSetup("numberOfSamples", value);
   };
   const updateSamplingSetup = (
-    key: "numberOfSamples" | "samplingType",
+    key: "numberOfSamples" | "samplingMode",
     value: string,
   ) => {
     update(
@@ -83,11 +83,11 @@ export function SamplingPanel({ exposureConfiguration, update }: Props) {
               <input
                 className="mr-2"
                 type="radio"
-                name="sampling-type"
+                name="sampling-mode"
                 value={"specified"}
-                onChange={() => updateSamplingSetup("samplingType", "Fowler")}
+                onChange={() => updateSamplingSetup("samplingMode", "Fowler")}
                 checked={
-                  exposureConfiguration.sampling.samplingType === "Fowler"
+                  exposureConfiguration.sampling.samplingMode === "Fowler"
                 }
               />
               Fowler
@@ -101,13 +101,13 @@ export function SamplingPanel({ exposureConfiguration, update }: Props) {
               <input
                 className="mr-2"
                 type="radio"
-                name="sampling-type"
+                name="sampling-mode"
                 value={"specified"}
                 onChange={() =>
-                  updateSamplingSetup("samplingType", "Up The Ramp")
+                  updateSamplingSetup("samplingMode", "Up The Ramp")
                 }
                 checked={
-                  exposureConfiguration.sampling.samplingType === "Up The Ramp"
+                  exposureConfiguration.sampling.samplingMode === "Up The Ramp"
                 }
               />
               Up the Ramp
