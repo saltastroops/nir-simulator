@@ -213,10 +213,10 @@ export function ExposurePanel({ setup, update }: Props) {
 
   return (
     <div>
-      <div className="columns">
+      <div className="flex">
         {/* Controls Section */}
-        <div className="column is-one-fifth" style={{ minWidth: "385px" }}>
-          <div className="bg-gray-50">
+        <div className="mr-2 ml-2">
+          <div className="bg-gray-50 p-2">
             <fieldset className="border border-solid border-gray-300 p-3 mb-4">
               <legend>Gain</legend>
               <GainPanel
@@ -244,21 +244,25 @@ export function ExposurePanel({ setup, update }: Props) {
           </div>
         </div>
         {/* Plot Section */}
-        <div className="column">
-          <div className={!error ? "tile" : "tile notification is-danger"}>
-            <div className="chart-container">
-              {/*{chartContent.requested && (*/}
-              {/*  <div className="watermark">Outdated</div>*/}
-              {/*)}*/}
-              {Chart}
+        <div className="ml-2">
+          <div className="bg-gray-50 p-2">
+            <div className={!error ? "" : "bg-red-300"}>
+              <div className="chart-container">
+                {/*{chartContent.requested && (*/}
+                {/*  <div className="watermark">Outdated</div>*/}
+                {/*)}*/}
+                {Chart}
+              </div>
             </div>
           </div>
-          <div className={!error ? "tile" : "tile notification is-danger"}>
-            <div className="chart-container">
-              {/*{chartContent.requested && (*/}
-              {/*    <div className="watermark">Outdated</div>*/}
-              {/*)}*/}
-              {AdditionalChart}
+          <div className="bg-gray-50 mt-2 p-2">
+            <div className={!error ? "" : "bg-red-300"}>
+              <div className="chart-container">
+                {/*{chartContent.requested && (*/}
+                {/*    <div className="watermark">Outdated</div>*/}
+                {/*)}*/}
+                {AdditionalChart}
+              </div>
             </div>
           </div>
         </div>

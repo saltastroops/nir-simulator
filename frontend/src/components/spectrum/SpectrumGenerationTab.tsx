@@ -23,7 +23,7 @@ export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
       lineColor: "rgb(255, 0, 0)",
       options: defaultLinePlotOptions(
         "Wavelength (\u212B)",
-        "Flux (photons sec\u002D\u00B9 \u212B\u002D\u00B9 cm\u002D\u00B2)",
+        "Flux",
         "Source Spectrum",
       ),
     },
@@ -47,7 +47,7 @@ export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
       lineColor: "rgb(75,100,192)",
       options: defaultLinePlotOptions(
         "Wavelength (\u212B)",
-        "Flux (photons sec\u002D\u00B9 \u212B\u002D\u00B9 cm\u002D\u00B2)",
+        "Flux",
         "Sky Background Spectrum",
       ),
     },
@@ -68,13 +68,19 @@ export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
       const spectraData = await spectra(setup);
       const sourceData = spectraData.source;
       const skyData = spectraData.sky;
+      const fluxUnits =
+        source.type == "Point" ? "erg/(cm² s)" : "erg/(cm² s arcsec²)";
 
       setSourceChartContent((previousChartContent) => {
         const updatedChartData = {
           x: sourceData.wavelengths,
           y: sourceData.fluxes,
           lineColor: previousChartContent.chartData.lineColor,
-          options: previousChartContent.chartData.options,
+          options: defaultLinePlotOptions(
+            "Wavelength (\u212B)",
+            `Flux (${fluxUnits})`,
+            "Sky Background Spectrum",
+          ),
         };
         setError(null);
         return {
@@ -88,7 +94,11 @@ export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
           x: skyData.wavelengths,
           y: skyData.fluxes,
           lineColor: previousChartContent.chartData.lineColor,
-          options: previousChartContent.chartData.options,
+          options: defaultLinePlotOptions(
+            "Wavelength (\u212B)",
+            `Flux (${fluxUnits})`,
+            "Sky Background Spectrum",
+          ),
         };
         return {
           chartData: updatedChartData,
@@ -102,9 +112,9 @@ export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
   };
 
   return (
-    <div className="columns">
-      <div className="column is-one-fifth" style={{ minWidth: "280px" }}>
-        <div className="bg-gray-50">
+    <div className="flex">
+      <div className="mr-2 ml-2">
+        <div className="bg-gray-50 p-2">
           <fieldset className="border border-solid border-gray-300 p-3">
             <legend>Source Spectrum</legend>
             <SourceForm
@@ -154,24 +164,20 @@ export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
           >
             Show Spectrum
           </button>
+          {error && (
+            <div>
+              <p className={"has-text-danger"}>{error}</p>
+            </div>
+          )}
         </div>
       </div>
-      <div className="column">
-        <div className="bg-gray-50">
-          <div className={!error ? "tile" : "tile notification is-danger"}>
-            {sourceChart}
-          </div>
+      <div className="ml-2">
+        <div className="bg-gray-50 p-2">
+          <div className={!error ? "" : "bg-red-300"}>{sourceChart}</div>
         </div>
-        <div className="bg-gray-50 mt-2">
-          <div className={!error ? "tile" : "tile notification is-danger"}>
-            {skyChart}
-          </div>
+        <div className="bg-gray-50 mt-2 p-2">
+          <div className={!error ? "" : "bg-red-300"}>{skyChart}</div>
         </div>
-        {error && (
-          <div className="tile">
-            <p className={"has-text-danger"}>{error}</p>
-          </div>
-        )}
       </div>
     </div>
   );

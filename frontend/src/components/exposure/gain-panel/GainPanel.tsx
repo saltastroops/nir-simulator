@@ -94,13 +94,13 @@ export function GainPanel({ exposureConfiguration, update }: Props) {
   return (
     <div>
       <div className="flex">
-        <div className="" style={{ minWidth: "160px" }}>
+        <div className="mr-2 p-1">
           <GainSelector
             updateGain={updateGain}
             gain={exposureConfiguration.gain}
           />
         </div>
-        <div className="">
+        <div className="ml-2 p-1">
           {(exposureConfiguration.gain.gainType === "Bright" ||
             exposureConfiguration.gain.gainType === "Faint") && (
             <NonEditableGainPanel gain={exposureConfiguration.gain} />

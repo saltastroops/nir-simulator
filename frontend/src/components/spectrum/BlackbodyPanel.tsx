@@ -89,7 +89,7 @@ export default function BlackbodyPanel({ blackbody, update }: Props) {
         <div className="control">
           <input
             id={magnitudeId}
-            className={input("relative")}
+            className={input("")}
             type="text"
             value={magnitude}
             onChange={(event) =>
@@ -104,7 +104,7 @@ export default function BlackbodyPanel({ blackbody, update }: Props) {
         <div className="control">
           <input
             id={temperatureId}
-            className={input("relative")}
+            className={input("")}
             type="text"
             value={temperature}
             onChange={(event) =>

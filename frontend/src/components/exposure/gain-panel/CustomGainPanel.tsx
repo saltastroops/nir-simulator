@@ -35,10 +35,8 @@ export function CustomGainPanel({ gain, update }: Props) {
         </div>
       </div>
       {gain.errors["gain"] && (
-        <div className="columns">
-          <div className="column pt-0 pb-0">
-            <Error error={gain.errors["gain"]} />
-          </div>
+        <div>
+          <Error error={gain.errors["gain"]} />
         </div>
       )}
       <div className="field">
@@ -55,10 +53,8 @@ export function CustomGainPanel({ gain, update }: Props) {
       </div>
 
       {gain.errors["readNoise"] && (
-        <div className="columns">
-          <div className="column pt-0 pb-0">
-            <Error error={gain.errors["readNoise"]} />
-          </div>
+        <div>
+          <Error error={gain.errors["readNoise"]} />
         </div>
       )}
 
@@ -75,10 +71,8 @@ export function CustomGainPanel({ gain, update }: Props) {
         </div>
       </div>
       {gain.errors["fullWell"] && (
-        <div className="columns">
-          <div className="column pt-0 pb-0">
-            <Error error={gain.errors["fullWell"]} />
-          </div>
+        <div>
+          <Error error={gain.errors["fullWell"]} />
         </div>
       )}
     </div>

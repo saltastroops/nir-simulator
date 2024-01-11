@@ -76,8 +76,8 @@ export function SamplingPanel({ exposureConfiguration, update }: Props) {
   };
   return (
     <div>
-      <div className="columns">
-        <div className="column pb-1">
+      <div className="flex">
+        <div className="ml-2 p-1">
           <div className="control">
             <label className="radio">
               <input
@@ -95,7 +95,7 @@ export function SamplingPanel({ exposureConfiguration, update }: Props) {
             <img src={"/images/Fowler.jpg"} alt="Logo" />
           </div>
         </div>
-        <div className="column pb-1">
+        <div className="ml-2 p-1">
           <div className="control">
             <label className="radio">
               <input
@@ -117,25 +117,24 @@ export function SamplingPanel({ exposureConfiguration, update }: Props) {
           </div>
         </div>
       </div>
-      <div className="columns">
-        <div className="column pt-0 pb-0">
-          <div className="field">
-            <label>Number of Samples</label>
-            <div className="control pb-2">
-              <input
-                className={input("w-36")}
-                type="text"
-                name={"numberOfSamples"}
-                value={exposureConfiguration.sampling.numberOfSamples}
-                onChange={(event) => updateSamplesNumber(event.target.value)}
-              />
-            </div>
+      <div className="ml-2 p-1">
+        <div className="field">
+          <label>Number of Samples</label>
+          <div className="control pb-2">
+            <input
+              className={input("w-36")}
+              type="text"
+              name={"numberOfSamples"}
+              value={exposureConfiguration.sampling.numberOfSamples}
+              onChange={(event) => updateSamplesNumber(event.target.value)}
+            />
           </div>
         </div>
       </div>
+
       {exposureConfiguration.sampling.errors["numberOfSamples"] && (
-        <div className="columns">
-          <div className="column pt-0">
+        <div>
+          <div className="ml-2">
             <Error
               error={exposureConfiguration.sampling.errors["numberOfSamples"]}
             />

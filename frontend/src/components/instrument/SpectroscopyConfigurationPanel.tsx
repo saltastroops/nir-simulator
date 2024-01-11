@@ -50,7 +50,7 @@ export default function SpectroscopyConfigurationPanel({
     <div>
       <div className="field">
         <div className="control pb-2">
-          <label>Grating</label>
+          <label>Grating (lines per mm)</label>
           <div>
             <select
               className={select("w-32")}

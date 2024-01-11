@@ -143,9 +143,9 @@ export function InstrumentConfigurationPanel({
 
   return (
     <div>
-      <div className="columns">
-        <div className="column is-one-fifth" style={{ minWidth: "250px" }}>
-          <div className="bg-gray-50">
+      <div className="flex">
+        <div className="mr-2 ml-2">
+          <div className="bg-gray-50 p-2">
             {/* instrument mode */}
             <fieldset className="border border-solid border-gray-300 p-3">
               <legend>Instrument Mode</legend>
@@ -165,7 +165,7 @@ export function InstrumentConfigurationPanel({
                   {/*  </label>*/}
                   {/*</div>*/}
                   <div className="control">
-                    <label className="radio">
+                    <label className="radio flex">
                       <input
                         type="radio"
                         className="mr-2"
@@ -174,7 +174,7 @@ export function InstrumentConfigurationPanel({
                         checked={mode === "Spectroscopy"}
                         onChange={() => modeChange("Spectroscopy")}
                       />
-                      Spectroscopy Mode
+                      Spectroscopy&nbsp;Mode
                     </label>
                   </div>
                 </div>
@@ -242,11 +242,9 @@ export function InstrumentConfigurationPanel({
           </div>
         </div>
 
-        <div className="column">
-          <div className="bg-gray-50">
-            <div className={!error ? "tile" : "tile notification is-danger"}>
-              {Chart}
-            </div>
+        <div className="ml-2">
+          <div className="bg-gray-50 p-2">
+            <div className={!error ? "" : "bg-red-300"}>{Chart}</div>
           </div>
         </div>
       </div>
