@@ -123,7 +123,7 @@ export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
             />
           </fieldset>
 
-          <div className="mt-4 mb-4 p-2 border border-orange-300 bg-yellow-50 text-orange-300 font-semibold">
+          <div className="mt-4 mb-4 p-2 border border-orange-300 bg-yellow-50 text-orange-300 font-semibold max-w-[350px]">
             The NIRWALS Simulator currently uses the same atmospheric background
             spectrum irrespective of solar and lunar conditions.
           </div>
@@ -171,7 +171,7 @@ export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
           )}
         </div>
       </div>
-      <div className="ml-2">
+      <div className="ml-2 w-full">
         <div className="bg-gray-50 p-2">
           <div className={!error ? "" : "bg-red-300"}>{sourceChart}</div>
         </div>

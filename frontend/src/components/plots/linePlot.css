@@ -1,7 +1,6 @@
 .chart-container {
     position: relative;
-    width: 910px;
-    height: 460px;
+    width: 100%;
     padding: 5px;
 }
 
