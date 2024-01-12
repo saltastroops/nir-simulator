@@ -116,7 +116,7 @@ export default function EmissionLinePanel({
   const fluxId = `flux-${idCounter}`;
   const redshiftId = `redshift-${idCounter}`;
   const fluxUnits =
-    sourceType == "Point" ? "erg/(cm² s)" : "erg/(cm² s arcsec²)";
+    sourceType == "Point" ? "erg/(cm² s Å)" : "erg/(cm² s arcsec² Å)";
 
   return (
     <div>

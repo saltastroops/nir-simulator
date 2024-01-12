@@ -22,7 +22,7 @@ export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
       y: [],
       lineColor: "rgb(255, 0, 0)",
       options: defaultLinePlotOptions(
-        "Wavelength (\u212B)",
+        "Wavelength (Å)",
         "Flux",
         "Source Spectrum",
       ),
@@ -46,7 +46,7 @@ export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
       y: [],
       lineColor: "rgb(75,100,192)",
       options: defaultLinePlotOptions(
-        "Wavelength (\u212B)",
+        "Wavelength (Å)",
         "Flux",
         "Sky Background Spectrum",
       ),
@@ -69,7 +69,7 @@ export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
       const sourceData = spectraData.source;
       const skyData = spectraData.sky;
       const fluxUnits =
-        source.type == "Point" ? "erg/(cm² s)" : "erg/(cm² s arcsec²)";
+        source.type == "Point" ? "erg/(cm² s Å)" : "erg/(cm² s arcsec² Å)";
 
       setSourceChartContent((previousChartContent) => {
         const updatedChartData = {
@@ -77,7 +77,7 @@ export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
           y: sourceData.fluxes,
           lineColor: previousChartContent.chartData.lineColor,
           options: defaultLinePlotOptions(
-            "Wavelength (\u212B)",
+            "Wavelength (Å)",
             `Flux (${fluxUnits})`,
             "Sky Background Spectrum",
           ),
@@ -95,7 +95,7 @@ export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
           y: skyData.fluxes,
           lineColor: previousChartContent.chartData.lineColor,
           options: defaultLinePlotOptions(
-            "Wavelength (\u212B)",
+            "Wavelength (Å)",
             `Flux (${fluxUnits})`,
             "Sky Background Spectrum",
           ),

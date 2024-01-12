@@ -29,6 +29,7 @@ interface PluginsOptions {
 }
 
 export interface LineOptions {
+  maintainAspectRatio: boolean;
   scales: ScalesOptions;
   plugins: PluginsOptions;
 }
@@ -38,6 +39,7 @@ export function defaultLinePlotOptions(
   title: string,
 ): LineOptions {
   return {
+    maintainAspectRatio: false,
     scales: {
       x: {
         type: "linear",

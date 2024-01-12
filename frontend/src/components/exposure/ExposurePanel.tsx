@@ -53,6 +53,7 @@ export function defaultAdditionalPlotOptions(
   title: string,
 ): LineOptions {
   return {
+    maintainAspectRatio: false,
     scales: {
       x: {
         type: "linear",
@@ -134,7 +135,7 @@ export function ExposurePanel({ setup, update }: Props) {
       y: [],
       lineColor: "rgb(75, 192, 192)",
       options: defaultLinePlotOptions(
-        "Wavelength (\u212B)",
+        "Wavelength (Å)",
         "Count",
         "Electron Count (in spectral bin)",
       ),
@@ -172,7 +173,7 @@ export function ExposurePanel({ setup, update }: Props) {
       const additionalOptions = isSNRRequested
         ? {
             title: "SNR (in spectral bin)",
-            xLabel: "Wavelength (\u212B)",
+            xLabel: "Wavelength (Å)",
             yLabel: "SNR",
           }
         : {
@@ -215,7 +216,7 @@ export function ExposurePanel({ setup, update }: Props) {
     <div>
       <div className="flex">
         {/* Controls Section */}
-        <div className="mr-2 ml-2">
+        <div className="mr-2 ml-2 max-w-[378px]">
           <div className="bg-gray-50 p-2">
             <fieldset className="border border-solid border-gray-300 p-3 mb-4">
               <legend>Gain</legend>
@@ -244,7 +245,7 @@ export function ExposurePanel({ setup, update }: Props) {
           </div>
         </div>
         {/* Plot Section */}
-        <div className="ml-2">
+        <div className="ml-2 w-full">
           <div className="bg-gray-50 p-2">
             <div className={!error ? "" : "bg-red-300"}>
               <div className="chart-container">

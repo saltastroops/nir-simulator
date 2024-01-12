@@ -65,7 +65,7 @@ export function InstrumentConfigurationPanel({
       y: [],
       lineColor: "rgb(75, 192, 192)",
       options: defaultLinePlotOptions(
-        "Wavelength (\u212B)",
+        "Wavelength (Å)",
         "Throughput",
         "Throughput",
       ),
@@ -242,7 +242,7 @@ export function InstrumentConfigurationPanel({
           </div>
         </div>
 
-        <div className="ml-2">
+        <div className="ml-2 w-full">
           <div className="bg-gray-50 p-2">
             <div className={!error ? "" : "bg-red-300"}>{Chart}</div>
           </div>
