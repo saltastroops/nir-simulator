@@ -79,7 +79,7 @@ export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
           options: defaultLinePlotOptions(
             "Wavelength (Å)",
             `Flux (${fluxUnits})`,
-            "Sky Background Spectrum",
+            "Source Spectrum",
           ),
         };
         setError(null);
