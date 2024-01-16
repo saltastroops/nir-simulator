@@ -1,6 +1,7 @@
 import { Spectrum } from "../../types";
 import Errors from "../Errors.tsx";
 import { input } from "../utils.ts";
+import { SourceType } from "./SourceForm.tsx";
 
 let idCounter = 0;
 
@@ -87,10 +88,15 @@ export class EmissionLine implements Spectrum {
 
 interface Props {
   emissionLine: EmissionLine;
+  sourceType: SourceType;
   update: (spectrum: Spectrum) => void;
 }
 
-export default function EmissionLinePanel({ emissionLine, update }: Props) {
+export default function EmissionLinePanel({
+  emissionLine,
+  sourceType,
+  update,
+}: Props) {
   const { centralWavelength, fwhm, flux, redshift, errors } = emissionLine;
 
   const updateParameter = (parameter: string, newValue: string) => {
@@ -109,12 +115,14 @@ export default function EmissionLinePanel({ emissionLine, update }: Props) {
   const fwhmId = `fwhm-${idCounter}`;
   const fluxId = `flux-${idCounter}`;
   const redshiftId = `redshift-${idCounter}`;
+  const fluxUnits =
+    sourceType == "Point" ? "erg/(cm² s Å)" : "erg/(cm² s arcsec² Å)";
 
   return (
     <div>
       {/* central wavelength */}
       <div className="field">
-        <label htmlFor={centralWavelengthId}>Central Wavelength</label>
+        <label htmlFor={centralWavelengthId}>Central Wavelength (Å)</label>
         <div className="control">
           <input
             id={centralWavelengthId}
@@ -130,7 +138,7 @@ export default function EmissionLinePanel({ emissionLine, update }: Props) {
 
       {/* FWHM */}
       <div className="field">
-        <label htmlFor={fwhmId}>FWHM</label>
+        <label htmlFor={fwhmId}>FWHM (Å)</label>
         <div className="control">
           <input
             id={fwhmId}
@@ -144,7 +152,7 @@ export default function EmissionLinePanel({ emissionLine, update }: Props) {
 
       {/* flux */}
       <div className="field">
-        <label htmlFor={fluxId}>Flux</label>
+        <label htmlFor={fluxId}>Flux ({fluxUnits})</label>
         <div className="control">
           <input
             id={fluxId}

@@ -109,7 +109,7 @@ export default function GalaxyPanel({ galaxy, update }: Props) {
     <div>
       {/* magnitude */}
       <div className="field">
-        <label htmlFor={magnitudeId}>Apparent Magnitude</label>
+        <label htmlFor={magnitudeId}>Apparent Magnitude (J Band)</label>
         <div className="control">
           <input
             id={magnitudeId}

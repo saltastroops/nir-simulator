@@ -53,6 +53,7 @@ function makeSpectrum(type: SpectrumType): Spectrum {
 
 function makeSpectrumForm(
   spectrum: Spectrum,
+  sourceType: SourceType,
   update: (spectrum: Spectrum) => void,
 ): ReactElement {
   switch (spectrum.spectrumType) {
@@ -66,6 +67,7 @@ function makeSpectrumForm(
       return (
         <EmissionLinePanel
           emissionLine={spectrum as EmissionLine}
+          sourceType={sourceType}
           update={update}
         />
       );
@@ -141,7 +143,7 @@ export default function SourceForm({ source, update }: Props) {
           remove={() => removeFromSourceSpectrum(index)}
           key={index}
         >
-          {makeSpectrumForm(spectrum, (spectrum) => {
+          {makeSpectrumForm(spectrum, source.type, (spectrum) => {
             updateSourceSpectrum(index, spectrum);
           })}
         </SpectrumForm>

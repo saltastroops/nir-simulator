@@ -84,12 +84,12 @@ export default function BlackbodyPanel({ blackbody, update }: Props) {
       {/* magnitude */}
       <div className="field">
         <label htmlFor={magnitudeId} className={label("mr-2")}>
-          Apparent Magnitude
+          Apparent Magnitude (J Band)
         </label>
         <div className="control">
           <input
             id={magnitudeId}
-            className={input("w-48")}
+            className={input("")}
             type="text"
             value={magnitude}
             onChange={(event) =>
@@ -100,11 +100,11 @@ export default function BlackbodyPanel({ blackbody, update }: Props) {
       </div>
       {/* temperature */}
       <div className="field">
-        <label htmlFor={temperatureId}>Temperature</label>
+        <label htmlFor={temperatureId}>Temperature (K)</label>
         <div className="control">
           <input
             id={temperatureId}
-            className={input("w-48")}
+            className={input("")}
             type="text"
             value={temperature}
             onChange={(event) =>

@@ -95,7 +95,7 @@ export function EarthPanel({ earth, update }: Props) {
     <div>
       <div className="field">
         {/* target zenith distance */}
-        <label htmlFor="obsercvation-year">Target ZD</label>
+        <label htmlFor="obsercvation-year">Target ZD (degrees)</label>
         <div className="control">
           <input
             id="observation-year"
@@ -110,7 +110,7 @@ export function EarthPanel({ earth, update }: Props) {
 
       {/* mirror area */}
       <div className="field">
-        <label htmlFor="mirror-area">Effective mirror area</label>
+        <label htmlFor="mirror-area">Effective mirror area (cm²)</label>
         <div className="control">
           <input
             id="mirror-area"
@@ -125,7 +125,7 @@ export function EarthPanel({ earth, update }: Props) {
 
       {/* seeing */}
       <div className="field">
-        <label htmlFor="seeing">Seeing</label>
+        <label htmlFor="seeing">Seeing (arcseconds)</label>
         <div className="control">
           <input
             id="seeing"

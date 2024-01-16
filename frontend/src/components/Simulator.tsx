@@ -139,6 +139,7 @@ export function Simulator() {
           </li>
         </ul>
       </div>
+
       <div ref={spectrumDivRef} style={{ display: "block" }}>
         <SpectrumGenerationTab setup={setup} updateSetup={updateSetup} />
       </div>

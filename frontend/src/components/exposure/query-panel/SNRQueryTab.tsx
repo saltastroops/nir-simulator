@@ -84,7 +84,7 @@ export function SNRQueryTab({ exposureTime, update, updatePlots }: Props) {
   return (
     <>
       <div className="field">
-        <label>Exposure Time</label>
+        <label>Exposure Time (seconds)</label>
         <div className="control">
           <input
             className={input("w-52")}
@@ -124,7 +124,7 @@ export function SNRQueryTab({ exposureTime, update, updatePlots }: Props) {
       <div className="field ">
         <div className="control">
           <button className="button is-link" onClick={updatePlots}>
-            Solve for Signal to Noise
+            Show Signal to Noise
           </button>
         </div>
       </div>

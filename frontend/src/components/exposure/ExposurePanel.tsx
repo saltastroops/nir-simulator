@@ -53,6 +53,7 @@ export function defaultAdditionalPlotOptions(
   title: string,
 ): LineOptions {
   return {
+    maintainAspectRatio: false,
     scales: {
       x: {
         type: "linear",
@@ -134,7 +135,7 @@ export function ExposurePanel({ setup, update }: Props) {
       y: [],
       lineColor: "rgb(75, 192, 192)",
       options: defaultLinePlotOptions(
-        "Wavelength (\u212B)",
+        "Wavelength (Å)",
         "Count",
         "Electron Count (in spectral bin)",
       ),
@@ -172,7 +173,7 @@ export function ExposurePanel({ setup, update }: Props) {
       const additionalOptions = isSNRRequested
         ? {
             title: "SNR (in spectral bin)",
-            xLabel: "Wavelength (\u212B)",
+            xLabel: "Wavelength (Å)",
             yLabel: "SNR",
           }
         : {
@@ -213,45 +214,56 @@ export function ExposurePanel({ setup, update }: Props) {
 
   return (
     <div>
-      <div className="columns">
+      <div className="flex">
         {/* Controls Section */}
-        <div className="column is-one-quarter">
-          <div className="notification m-2">
-            <GainPanel
-              exposureConfiguration={setup.exposureConfiguration}
-              update={updateExposureConfiguration}
-            />
-          </div>
-          <div className="notification m-2">
-            <SamplingPanel
-              exposureConfiguration={setup.exposureConfiguration}
-              update={updateExposureConfiguration}
-            />
-          </div>
-          <div className={"bg-gray-100 p-4 m-2 mt-7"}>
-            <QueryTabs
-              exposureConfiguration={setup.exposureConfiguration}
-              update={updateExposureConfiguration}
-              updatePlots={updatePlots}
-            />
+        <div className="mr-2 ml-2 max-w-[378px]">
+          <div className="bg-gray-50 p-2">
+            <fieldset className="border border-solid border-gray-300 p-3 mb-4">
+              <legend>Gain</legend>
+              <GainPanel
+                exposureConfiguration={setup.exposureConfiguration}
+                update={updateExposureConfiguration}
+              />
+            </fieldset>
+
+            <fieldset className="border border-solid border-gray-300 p-3 mb-4">
+              <legend>Sampling</legend>
+              <SamplingPanel
+                exposureConfiguration={setup.exposureConfiguration}
+                update={updateExposureConfiguration}
+              />
+            </fieldset>
+
+            <fieldset className="border border-solid border-gray-300 p-3">
+              <legend>Query</legend>
+              <QueryTabs
+                exposureConfiguration={setup.exposureConfiguration}
+                update={updateExposureConfiguration}
+                updatePlots={updatePlots}
+              />
+            </fieldset>
           </div>
         </div>
         {/* Plot Section */}
-        <div className="column">
-          <div className={!error ? "tile" : "tile notification is-danger"}>
-            <div className="chart-container">
-              {/*{chartContent.requested && (*/}
-              {/*  <div className="watermark">Outdated</div>*/}
-              {/*)}*/}
-              {Chart}
+        <div className="ml-2 w-full">
+          <div className="bg-gray-50 p-2">
+            <div className={!error ? "" : "bg-red-300"}>
+              <div className="chart-container">
+                {/*{chartContent.requested && (*/}
+                {/*  <div className="watermark">Outdated</div>*/}
+                {/*)}*/}
+                {Chart}
+              </div>
             </div>
           </div>
-          <div className={!error ? "tile" : "tile notification is-danger"}>
-            <div className="chart-container">
-              {/*{chartContent.requested && (*/}
-              {/*    <div className="watermark">Outdated</div>*/}
-              {/*)}*/}
-              {AdditionalChart}
+          <div className="bg-gray-50 mt-2 p-2">
+            <div className={!error ? "" : "bg-red-300"}>
+              <div className="chart-container">
+                {/*{chartContent.requested && (*/}
+                {/*    <div className="watermark">Outdated</div>*/}
+                {/*)}*/}
+                {AdditionalChart}
+              </div>
             </div>
           </div>
         </div>
