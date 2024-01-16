@@ -47,7 +47,7 @@ export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
       lineColor: "rgb(75,100,192)",
       options: defaultLinePlotOptions(
         "Wavelength (Å)",
-        "Flux",
+        "Flux (erg/(cm² s arcsec² Å)",
         "Sky Background Spectrum",
       ),
     },
@@ -94,11 +94,7 @@ export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
           x: skyData.wavelengths,
           y: skyData.fluxes,
           lineColor: previousChartContent.chartData.lineColor,
-          options: defaultLinePlotOptions(
-            "Wavelength (Å)",
-            `Flux (${fluxUnits})`,
-            "Sky Background Spectrum",
-          ),
+          options: previousChartContent.chartData.options,
         };
         return {
           chartData: updatedChartData,
