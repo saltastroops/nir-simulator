@@ -1,6 +1,6 @@
 import "./linePlot.css";
 import { Line } from "react-chartjs-2";
-import { ExposureChartContent } from "../exposure/ExposurePanel.tsx";
+import { ExposureChartContent } from "../exposure/ExposureTab.tsx";
 
 interface Props {
   chartContent: ExposureChartContent;

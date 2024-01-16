@@ -1,12 +1,13 @@
 import SourceForm, { Source } from "./SourceForm";
 import { Earth, EarthPanel } from "./EarthPanel.tsx";
-import { button } from "../utils.ts";
+import { button, exposureFormData } from "../utils.ts";
 import { SimulationSetup } from "../Simulator.tsx";
 import { spectra } from "../../services.ts";
 import { useMemo, useState } from "react";
 import { defaultLinePlotOptions } from "../plots/PlotOptions.ts";
 import { LinePlot } from "../plots/LinePlot.tsx";
-import { ChartContent } from "../instrument/InstrumentConfigurationPanel.tsx";
+import { ChartContent } from "../instrument/InstrumentConfigurationTab.tsx";
+import { isEqual } from "lodash";
 
 interface Props {
   setup: SimulationSetup;
@@ -33,12 +34,7 @@ export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
   });
   const [error, setError] = useState<string | null>(null);
   const sourceChart = useMemo(
-    () => (
-      <LinePlot
-        chartContent={sourceChartContent}
-        isOutdated={false && sourceChartContent.requested}
-      />
-    ),
+    () => <LinePlot chartContent={sourceChartContent} />,
     [sourceChartContent],
   );
 
@@ -56,12 +52,7 @@ export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
     requested: false,
   });
   const skyChart = useMemo(
-    () => (
-      <LinePlot
-        chartContent={skyChartContent}
-        isOutdated={false && skyChartContent.requested}
-      />
-    ),
+    () => <LinePlot chartContent={skyChartContent} />,
     [skyChartContent],
   );
 
@@ -96,6 +87,7 @@ export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
           lineColor: previousChartContent.chartData.lineColor,
           options: previousChartContent.chartData.options,
         };
+        setPlotMetadata(currentMetadata);
         return {
           chartData: updatedChartData,
           requested: true,
@@ -107,9 +99,14 @@ export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
     }
   };
 
+  const [plotMetadata, setPlotMetadata] = useState({} as any);
+
+  const currentMetadata = exposureFormData(setup);
+  const isPlotOutdated = !isEqual(currentMetadata, plotMetadata);
+
   return (
-    <div className="flex">
-      <div className="mr-2 ml-2">
+    <div className="flex flex-col md:flex-row">
+      <div className="mr-2 ml-2 max-w-[378px] mb-3">
         <div className="bg-gray-50 p-2">
           <fieldset className="border border-solid border-gray-300 p-3">
             <legend>Source Spectrum</legend>
@@ -168,12 +165,38 @@ export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
         </div>
       </div>
       <div className="ml-2 w-full">
-        <div className="bg-gray-50 p-2">
-          <div className={!error ? "" : "bg-red-300"}>{sourceChart}</div>
-        </div>
-        <div className="bg-gray-50 mt-2 p-2">
-          <div className={!error ? "" : "bg-red-300"}>{skyChart}</div>
-        </div>
+        {!sourceChartContent.requested && (
+          <div className={"relative md:h-screen"}>
+            <p className={"absolute top-10 left-10 m-4"}>
+              Press the "Show Spectrum" to generate the plots
+            </p>
+          </div>
+        )}
+
+        {sourceChartContent.requested && (
+          <div>
+            <div className="bg-gray-50 p-2">
+              <div className={!error ? "" : "bg-red-300"}>
+                <div className="chart-container">
+                  {isPlotOutdated && sourceChartContent.requested && (
+                    <div className="watermark">Outdated</div>
+                  )}
+                  {sourceChart}
+                </div>
+              </div>
+            </div>
+            <div className="bg-gray-50 mt-2 p-2">
+              <div className={!error ? "" : "bg-red-300"}>
+                <div className="chart-container">
+                  {isPlotOutdated && sourceChartContent.requested && (
+                    <div className="watermark">Outdated</div>
+                  )}
+                  {skyChart}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

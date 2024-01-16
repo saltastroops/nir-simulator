@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ExposureTime, SNRQueryTab } from "./SNRQueryTab.tsx";
 import { ExposureTimeQueryTab, SNR } from "./ExposureTimeQueryTab.tsx";
-import { ExposureConfiguration } from "../ExposurePanel.tsx";
+import { ExposureConfiguration } from "../ExposureTab.tsx";
 
 interface Props {
   exposureConfiguration: ExposureConfiguration;

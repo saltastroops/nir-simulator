@@ -15,6 +15,8 @@ import { useMemo, useState } from "react";
 import { defaultLinePlotOptions, LineOptions } from "../plots/PlotOptions.ts";
 import { exposure } from "../../services.ts";
 import { AdditionalPlot, ExposurePlot } from "../plots/ExposurePlot.tsx";
+import { exposureFormData } from "../utils.ts";
+import { isEqual } from "lodash";
 
 interface ExposureConfigurationParameters {
   gain: Gain;
@@ -123,7 +125,7 @@ interface Props {
   update: (params: ExposureConfiguration) => void;
 }
 
-export function ExposurePanel({ setup, update }: Props) {
+export function ExposureTab({ setup, update }: Props) {
   const updateExposureConfiguration = (
     newExposureConfiguration: ExposureConfigurationParameters,
   ) => {
@@ -154,10 +156,15 @@ export function ExposurePanel({ setup, update }: Props) {
   );
   const [error, setError] = useState<string | null>(null);
 
+  const [plotMetadata, setPlotMetadata] = useState({} as any);
+  const currentMetadata = exposureFormData(setup);
+  const isPlotOutdated = !isEqual(currentMetadata, plotMetadata);
+
   const AdditionalChart = useMemo(
     () => <AdditionalPlot chartContent={chartContent} />,
     [chartContent],
   );
+  console.log(setup);
 
   const updatePlots = async () => {
     try {
@@ -181,6 +188,8 @@ export function ExposurePanel({ setup, update }: Props) {
             xLabel: "Exposure Time (sec)",
             yLabel: "SNR",
           };
+
+      setPlotMetadata(currentMetadata);
 
       setChartContent((previousChartContent: ExposureChartContent) => {
         const updatedTargetElectronsData = {
@@ -214,9 +223,9 @@ export function ExposurePanel({ setup, update }: Props) {
 
   return (
     <div>
-      <div className="flex">
+      <div className="flex flex-col md:flex-row">
         {/* Controls Section */}
-        <div className="mr-2 ml-2 max-w-[378px]">
+        <div className="mr-2 ml-2 max-w-[378px] mb-3">
           <div className="bg-gray-50 p-2">
             <fieldset className="border border-solid border-gray-300 p-3 mb-4">
               <legend>Gain</legend>
@@ -241,31 +250,51 @@ export function ExposurePanel({ setup, update }: Props) {
                 update={updateExposureConfiguration}
                 updatePlots={updatePlots}
               />
+              {error && <p className={"has-text-danger"}>{error}</p>}
             </fieldset>
           </div>
         </div>
         {/* Plot Section */}
         <div className="ml-2 w-full">
-          <div className="bg-gray-50 p-2">
-            <div className={!error ? "" : "bg-red-300"}>
-              <div className="chart-container">
-                {/*{chartContent.requested && (*/}
-                {/*  <div className="watermark">Outdated</div>*/}
-                {/*)}*/}
-                {Chart}
+          {!chartContent.requested && (
+            <div className={"relative md:h-screen"}>
+              {setup.exposureConfiguration.activeQuery === "SNR" && (
+                <p className={"absolute top-10 left-10 m-4"}>
+                  Press the "Show Signal to Noise" to generate the plots
+                </p>
+              )}
+              {setup.exposureConfiguration.activeQuery === "ExposureTime" && (
+                <p className={"absolute top-10 left-10 m-4"}>
+                  Press the "Show Exposure Time" to generate the plots
+                </p>
+              )}
+            </div>
+          )}
+
+          {chartContent.requested && (
+            <div>
+              <div className="bg-gray-50 p-2">
+                <div className={!error ? "" : "bg-red-300"}>
+                  <div className="chart-container">
+                    {chartContent.requested && isPlotOutdated && (
+                      <div className="watermark">Outdated</div>
+                    )}
+                    {Chart}
+                  </div>
+                </div>
+              </div>
+              <div className="bg-gray-50 mt-2 p-2">
+                <div className={!error ? "" : "bg-red-300"}>
+                  <div className="chart-container">
+                    {chartContent.requested && isPlotOutdated && (
+                      <div className="watermark">Outdated</div>
+                    )}
+                    {AdditionalChart}
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-          <div className="bg-gray-50 mt-2 p-2">
-            <div className={!error ? "" : "bg-red-300"}>
-              <div className="chart-container">
-                {/*{chartContent.requested && (*/}
-                {/*    <div className="watermark">Outdated</div>*/}
-                {/*)}*/}
-                {AdditionalChart}
-              </div>
-            </div>
-          </div>
+          )}
         </div>
       </div>
     </div>
