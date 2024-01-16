@@ -15,6 +15,8 @@ interface Props {
 
 export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
   const { source, earth } = setup;
+  const fluxUnits =
+    source.type == "Point" ? "erg/(cm² s Å)" : "erg/(cm² s arcsec² Å)";
 
   const [sourceChartContent, setSourceChartContent] = useState<ChartContent>({
     chartData: {
@@ -23,7 +25,7 @@ export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
       lineColor: "rgb(255, 0, 0)",
       options: defaultLinePlotOptions(
         "Wavelength (Å)",
-        "Flux",
+        `Flux(${fluxUnits})`,
         "Source Spectrum",
       ),
     },
@@ -68,8 +70,6 @@ export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
       const spectraData = await spectra(setup);
       const sourceData = spectraData.source;
       const skyData = spectraData.sky;
-      const fluxUnits =
-        source.type == "Point" ? "erg/(cm² s Å)" : "erg/(cm² s arcsec² Å)";
 
       setSourceChartContent((previousChartContent) => {
         const updatedChartData = {
