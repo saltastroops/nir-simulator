@@ -145,7 +145,7 @@ export function InstrumentConfigurationTab({
 
   return (
     <div>
-      <div className="flex flex-col md:flex-row">
+      <div className="flex flex-col items-center md:flex-row  md:items-start">
         <div className="mr-2 ml-2 max-w-[378px] mb-3">
           <div className="bg-gray-50 p-2">
             {/* instrument mode */}
@@ -246,9 +246,9 @@ export function InstrumentConfigurationTab({
 
         <div className="ml-2 w-full">
           {!chartContent.requested && (
-            <div className={"relative md:h-screen"}>
-              <p className={"absolute top-10 left-10 m-4"}>
-                Press the "Show Throughput" to generate the plots
+            <div>
+              <p className={"hidden m-4 md:block"}>
+                Press the "Show Throughput" button to generate the plots
               </p>
             </div>
           )}

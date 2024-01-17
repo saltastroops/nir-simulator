@@ -164,7 +164,6 @@ export function ExposureTab({ setup, update }: Props) {
     () => <AdditionalPlot chartContent={chartContent} />,
     [chartContent],
   );
-  console.log(setup);
 
   const updatePlots = async () => {
     try {
@@ -223,7 +222,7 @@ export function ExposureTab({ setup, update }: Props) {
 
   return (
     <div>
-      <div className="flex flex-col md:flex-row">
+      <div className="flex flex-col items-center md:flex-row md:items-start">
         {/* Controls Section */}
         <div className="mr-2 ml-2 max-w-[378px] mb-3">
           <div className="bg-gray-50 p-2">
@@ -257,15 +256,15 @@ export function ExposureTab({ setup, update }: Props) {
         {/* Plot Section */}
         <div className="ml-2 w-full">
           {!chartContent.requested && (
-            <div className={"relative md:h-screen"}>
+            <div>
               {setup.exposureConfiguration.activeQuery === "SNR" && (
-                <p className={"absolute top-10 left-10 m-4"}>
-                  Press the "Show Signal to Noise" to generate the plots
+                <p className={"hidden m-4 md:block"}>
+                  Press the "Show Signal to Noise" button to generate the plots
                 </p>
               )}
               {setup.exposureConfiguration.activeQuery === "ExposureTime" && (
-                <p className={"absolute top-10 left-10 m-4"}>
-                  Press the "Show Exposure Time" to generate the plots
+                <p className={"hidden m-4 md:block"}>
+                  Press the "Show Exposure Time" button to generate the plots
                 </p>
               )}
             </div>

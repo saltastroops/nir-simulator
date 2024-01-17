@@ -1,6 +1,6 @@
 import SourceForm, { Source } from "./SourceForm";
 import { Earth, EarthPanel } from "./EarthPanel.tsx";
-import { button, exposureFormData } from "../utils.ts";
+import { button, spectrumFormData } from "../utils.ts";
 import { SimulationSetup } from "../Simulator.tsx";
 import { spectra } from "../../services.ts";
 import { useMemo, useState } from "react";
@@ -101,11 +101,11 @@ export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
 
   const [plotMetadata, setPlotMetadata] = useState({} as any);
 
-  const currentMetadata = exposureFormData(setup);
+  const currentMetadata = spectrumFormData(setup);
   const isPlotOutdated = !isEqual(currentMetadata, plotMetadata);
 
   return (
-    <div className="flex flex-col md:flex-row">
+    <div className="flex flex-col items-center md:flex-row  md:items-start">
       <div className="mr-2 ml-2 max-w-[378px] mb-3">
         <div className="bg-gray-50 p-2">
           <fieldset className="border border-solid border-gray-300 p-3">
@@ -166,9 +166,9 @@ export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
       </div>
       <div className="ml-2 w-full">
         {!sourceChartContent.requested && (
-          <div className={"relative md:h-screen"}>
-            <p className={"absolute top-10 left-10 m-4"}>
-              Press the "Show Spectrum" to generate the plots
+          <div>
+            <p className={"hidden m-4 md:block"}>
+              Press the "Show Spectrum" button to generate the plots
             </p>
           </div>
         )}
