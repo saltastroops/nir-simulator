@@ -96,6 +96,7 @@ def source_observation(configuration: Configuration) -> Observation:
             grating_angle=grating.grating_angle,
             grating_constant=grating.grating_constant,
         ),
+        force="extrap"
     )
 
 
