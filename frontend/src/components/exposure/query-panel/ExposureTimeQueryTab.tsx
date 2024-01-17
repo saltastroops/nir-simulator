@@ -4,27 +4,32 @@ import { input } from "../../utils.ts";
 interface SNRParameters {
   snr: string;
   wavelength: string;
+  detectorIterations: string;
 }
 
 export interface SNRDataType {
   snr: number;
   wavelength: number;
+  detectorIterations: number;
 }
 
 export class SNR {
   public snr = "10";
   public wavelength = "13000";
+  public detectorIterations = "1";
 
   public constructor(snr?: SNRParameters) {
     if (snr) {
       this.snr = snr.snr;
       this.wavelength = snr.wavelength;
+      this.detectorIterations = snr.detectorIterations;
     }
   }
   public get data(): SNRDataType {
     return {
       snr: parseFloat(this.snr),
       wavelength: parseFloat(this.wavelength),
+      detectorIterations: parseFloat(this.detectorIterations),
     };
   }
   public get errors() {
@@ -50,6 +55,16 @@ export class SNR {
       errors.snr = `The signal-to-noise ratio must be a number greater than or equal to
        ${minSnr}.`;
     }
+    // Detector Iterations
+    const detectorIterations = data.detectorIterations;
+    const minDetectorIterations = 1;
+    if (
+      Number.isNaN(detectorIterations) ||
+      detectorIterations < minDetectorIterations
+    ) {
+      errors.detectorIterations = `The detector iterations must be a number greater than or equal to
+       ${minDetectorIterations}.`;
+    }
 
     return errors;
   }
@@ -66,7 +81,10 @@ interface Props {
 }
 
 export function ExposureTimeQueryTab({ snr, update, updatePlots }: Props) {
-  const updateSNR = (key: "wavelength" | "snr", value: string) => {
+  const updateSNR = (
+    key: "wavelength" | "snr" | "detectorIterations",
+    value: string,
+  ) => {
     update(
       "snr",
       new SNR({
@@ -113,6 +131,28 @@ export function ExposureTimeQueryTab({ snr, update, updatePlots }: Props) {
           </span>
           {snr.errors["wavelength"] && (
             <Error error={snr.errors["wavelength"]} />
+          )}
+        </div>
+      </div>
+
+      <div className="field">
+        <label>Detector Iterations</label>
+        <div className="control">
+          <input
+            className={input("w-52")}
+            type="text"
+            name={"detectorIterations"}
+            value={snr.detectorIterations}
+            onChange={(event) =>
+              updateSNR("detectorIterations", event.target.value)
+            }
+          />
+          {snr.errors["detectorIterations"] && (
+            <div className="columns">
+              <div className="column">
+                <Error error={snr.errors["detectorIterations"]} />
+              </div>
+            </div>
           )}
         </div>
       </div>

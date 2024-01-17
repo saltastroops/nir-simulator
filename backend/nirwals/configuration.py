@@ -432,7 +432,9 @@ def configuration(data: dict[str, Any]) -> Configuration:
             exposure_time = None
 
         if "snr" in exposure_configuration:
-            exposures = 1
+            exposures = int(
+                exposure_configuration["snr"]["detectorIterations"]
+            )
             snr: SNR | None = SNR(
                 snr=float(exposure_configuration["snr"]["snr"]),
                 wavelength=float(exposure_configuration["snr"]["wavelength"]) * u.AA,
