@@ -1,7 +1,7 @@
 import { GainSelector } from "./GainSelector.tsx";
 import { NonEditableGainPanel } from "./NonEditableGainPanel.tsx";
 import { CustomGainPanel } from "./CustomGainPanel.tsx";
-import { ExposureConfiguration } from "../ExposurePanel.tsx";
+import { ExposureConfiguration } from "../ExposureTab.tsx";
 
 export type GainType = "Faint" | "Bright" | "Custom";
 
