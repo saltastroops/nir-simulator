@@ -178,7 +178,7 @@ export function ExposurePanel({ setup, update }: Props) {
           }
         : {
             title: "SNR (in spectral bin)",
-            xLabel: "Exposure Time (sec)",
+            xLabel: "Exposure Time (sec, per exposure)",
             yLabel: "SNR",
           };
 

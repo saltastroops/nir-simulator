@@ -169,12 +169,13 @@ Afterwards you can click the Solve for Signal to Noise button to view a plot of 
 
 ### Calculating the exposure time
 
-On the other hand, if you want to calculate the SNR at a given wavelength as a function of exposure time, you have to select the Solve for Exposure Time tab and specify the following parameters.
+On the other hand, if you want to calculate the SNR at a given wavelength as a function of exposure time (per single exposure), you have to select the Solve for Exposure Time tab and specify the following parameters.
 
-| Parameter     | Description                                                                                       |
-|---------------|---------------------------------------------------------------------------------------------------|
-| Requested SNR | The SNR value you need. This is used to decide what SNR range to include in the plot (see below). |
-| Wavelength    | The wavelength at which the SNR should be calculated.                                             |
+| Parameter           | Description                                                                                       |
+|---------------------|---------------------------------------------------------------------------------------------------|
+| Requested SNR       | The SNR value you need. This is used to decide what SNR range to include in the plot (see below). |
+| Wavelength          | The wavelength at which the SNR should be calculated.                                             |
+| Detector Iterations | The number of exposures to take.                                                                  |
 
 You may use the Central Wavelength link to populate the wavelength input field with the midpoint of the considered wavelength range.
 
