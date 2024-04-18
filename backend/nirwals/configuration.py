@@ -383,7 +383,7 @@ def configuration(data: dict[str, Any]) -> Configuration:
 
     if "filter" in data:
         filter_name_data: str | None = data["filter"]
-        if filter_name_data == "clear-filter":
+        if filter_name_data == "Clear Filter":
             filter_name: Filter | None = "Clear Filter"
         elif filter_name_data == "lwbf":
             filter_name = "LWBF"
