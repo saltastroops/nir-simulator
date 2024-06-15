@@ -254,6 +254,9 @@ def telescope_throughput() -> SpectralElement:
     path = pathlib.Path(get_file_base_dir() / "telescope_throughput.npz")
     with open(path, "rb") as f:
         wavelengths, throughputs = read_from_file(f)
+    # Apply a throughput fudge factor, as suggestedc in
+    # Encarni's email from 14 June 2024
+    throughputs *= 0.9
     return SpectralElement(Empirical1D, points=wavelengths, lookup_table=throughputs)
 
 
