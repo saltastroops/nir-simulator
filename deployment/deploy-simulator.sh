@@ -23,7 +23,7 @@ if [ -z "$DEBUG" ] && [ "$HOSTNAME" != "simulator" ]; then
   exit 1;
 fi
 
-# Go to the right directory.
+# Go to the simulator directory.
 cd ~/nir-simulator || {
   echo "Could not cd into the NIRWALS Simulator directory." 1>&2
   exit 1;
@@ -36,12 +36,24 @@ if [ "${branch: -4}" != "main" ]; then
     exit 1
 fi
 
+# Go to the deployment directory
+cd deployment || {
+  echo "Could not cd into the deployment directory." 1>&2
+  exit 1;
+}
+
 # Stop the Simulator. We do this here already, as the docker compose on the repository
 # might have changed, and the Simulator should be stopped with the same compose file
 # that launched it.
 docker compose down || {
   echo "The container for the NIRWALS Simulator could not be stopped." 1>&2
   exit 1
+}
+
+# Go back to the project's root directory
+cd .. || {
+  echo "Could not cd into the NIRWALS Simulator directory." 1>&2
+  exit 1;
 }
 
 # Update the Simulator code.
@@ -69,11 +81,13 @@ git pull || {
   exit 1
 }
 
-# Launch the Simulator.
-cd deployment || {
+# Go to the deployment directory
+cd ../deployment || {
   echo "Could not cd into deployment directory." 1>&2
   exit 1
 }
+
+# Launch the Simulator.
 docker compose up --build -d || {
   echo "The NIRWALS Simulator could not be launched." 1>&2
   exit 1
