@@ -139,7 +139,7 @@ $$
 
     In the actual simulator implementation, [synphot](https://synphot.readthedocs.io/en/latest/) is
     used to convert from an energy flux to a photon (count) flux.
-    
+
 The photon rate suffers losses related to various effects:
 
 - Telescope throughput, including the mirror efficiency
