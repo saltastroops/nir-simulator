@@ -46,8 +46,9 @@ export class SNR {
     // SNR
     const snr = data.snr;
     const minSnr = 1;
-    if (Number.isNaN(snr) || snr < minSnr || !Number.isInteger(snr)) {
-      errors.snr = `The signal-to-noise ratio must be an integer greater than or equal to ${minSnr}.`;
+    if (Number.isNaN(snr) || snr < minSnr) {
+      errors.snr = `The signal-to-noise ratio must be a number greater than or equal to
+       ${minSnr}.`;
     }
 
     return errors;
@@ -92,7 +93,7 @@ export function ExposureTimeQueryTab({ snr, update, updatePlots }: Props) {
       </div>
 
       <div className="field">
-        <label>SNR Requested at Which Wavelength?</label>
+        <label>SNR Requested at Which Wavelength? (Å)</label>
         <div className="control">
           <input
             className={input("w-52")}
@@ -119,7 +120,7 @@ export function ExposureTimeQueryTab({ snr, update, updatePlots }: Props) {
       <div className="field ">
         <div className="control">
           <button className="button is-link" onClick={updatePlots}>
-            Solve for Exposure Time
+            Show Exposure Time
           </button>
         </div>
       </div>

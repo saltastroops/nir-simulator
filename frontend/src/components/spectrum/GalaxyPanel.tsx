@@ -1,6 +1,6 @@
 import { Spectrum } from "../../types";
 import Errors from "../Errors.tsx";
-import { input, label, select } from "../utils.ts";
+import { input, select } from "../utils.ts";
 
 let idCounter = 0;
 
@@ -13,6 +13,7 @@ interface GalaxyParameters {
   type: string;
   age: string;
   redshift: string;
+  withEmissionLines: boolean;
 }
 
 export class Galaxy implements Spectrum {
@@ -21,6 +22,7 @@ export class Galaxy implements Spectrum {
   public type = "S0";
   public age = "Young";
   public redshift = "0";
+  public withEmissionLines = false;
 
   public constructor(parameters?: GalaxyParameters) {
     if (parameters) {
@@ -28,6 +30,7 @@ export class Galaxy implements Spectrum {
       this.type = parameters.type;
       this.age = parameters.age;
       this.redshift = parameters.redshift;
+      this.withEmissionLines = parameters.withEmissionLines
     }
   }
 
@@ -72,6 +75,7 @@ export class Galaxy implements Spectrum {
       type: this.type,
       age: this.age,
       redshift: parseFloat(this.redshift),
+      withEmissionLines: this.withEmissionLines,
     };
   }
 
@@ -86,85 +90,112 @@ interface Props {
 }
 
 export default function GalaxyPanel({ galaxy, update }: Props) {
-  const { magnitude, type, age, redshift, errors } = galaxy;
+  const { magnitude, type, age, redshift, withEmissionLines, errors } = galaxy;
 
-  const updateParameter = (parameter: string, newValue: string) => {
+  const updateParameter = (parameter: string, newValue: string | boolean) => {
     const updatedParameters = {
       magnitude,
       type,
       age,
       redshift,
+      withEmissionLines,
       [parameter]: newValue,
     };
     update(new Galaxy(updatedParameters));
   };
 
   idCounter++;
-  const magnitudeId = `centralWavelength-${idCounter}`;
+  const magnitudeId = `magnitude-${idCounter}`;
   const typeId = `fwhm-${idCounter}`;
   const ageId = `flux-${idCounter}`;
   const redshiftId = `redshift-${idCounter}`;
+  const withEmissionLinesId = `withEmissionLines-${idCounter}`;
 
   return (
     <div>
-      <div className="flex items-center">
-        {/* magnitude */}
-        <label htmlFor={magnitudeId} className={label("mr-2")}>
-          Apparent Magnitude
-        </label>
-        <input
-          id={magnitudeId}
-          className={input("w-12")}
-          type="text"
-          value={magnitude}
-          onChange={(event) => updateParameter("magnitude", event.target.value)}
-        />
+      {/* magnitude */}
+      <div className="field">
+        <label htmlFor={magnitudeId}>Apparent Magnitude (J Band)</label>
+        <div className="control">
+          <input
+            id={magnitudeId}
+            className={input("w-48")}
+            type="text"
+            value={magnitude}
+            onChange={(event) =>
+              updateParameter("magnitude", event.target.value)
+            }
+          />
+        </div>
+      </div>
 
-        {/* galaxy type */}
-        <label htmlFor={typeId} className={label("ml-5 mr-2")}>
-          Type
-        </label>
-        <select
-          id={typeId}
-          value={type}
-          className={select("w-16")}
-          onChange={(event) => updateParameter("type", event.target.value)}
-        >
-          {GALAXY_TYPES.map((type) => (
-            <option key={type} value={type}>
-              {type}
-            </option>
-          ))}
-        </select>
+      {/* galaxy type */}
+      <div className="field">
+        <label htmlFor={typeId}>Type</label>
+        <div className="control">
+          <select
+            id={typeId}
+            value={type}
+            className={select("w-48")}
+            onChange={(event) => updateParameter("type", event.target.value)}
+          >
+            {GALAXY_TYPES.map((type) => (
+              <option key={type} value={type}>
+                {type}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
 
-        {/* age */}
-        <label htmlFor={ageId} className={label("ml-5 mr-2")}>
-          Age
-        </label>
-        <select
-          id={ageId}
-          value={age}
-          className={select("w-24")}
-          onChange={(event) => updateParameter("age", event.target.value)}
-        >
-          {GALAXY_AGES.map((age) => (
-            <option key={age} value={age}>
-              {age}
-            </option>
-          ))}
-        </select>
+      {/* age */}
+      <div className="field">
+        <label htmlFor={ageId}>Age</label>
+        <div className="control">
+          <select
+            id={ageId}
+            value={age}
+            className={select("w-48")}
+            onChange={(event) => updateParameter("age", event.target.value)}
+          >
+            {GALAXY_AGES.map((age) => (
+              <option key={age} value={age}>
+                {age}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
 
-        {/* Redshift */}
-        <label htmlFor={redshiftId} className="ml-4 mr-2">
-          Redshift
+      {/* Redshift */}
+      <div className="field">
+        <label htmlFor={redshiftId}>Redshift</label>
+        <div className="control">
+          <input
+            id={redshiftId}
+            className={input("w-48")}
+            type="text"
+            value={redshift}
+            onChange={(event) =>
+              updateParameter("redshift", event.target.value)
+            }
+          />
+        </div>
+      </div>
+
+      {/* with emission lines? */}
+      <div>
+        <label htmlFor={withEmissionLinesId} className="pt-6">
+          <input
+              id={withEmissionLinesId}
+              type="checkbox"
+              checked={withEmissionLines}
+              onChange={(event) =>
+                  updateParameter("withEmissionLines", event.target.checked)
+              }
+          />
+          <span className="ml-2">Automatically add emission lines</span>
         </label>
-        <input
-          id={redshiftId}
-          className={input("w-12")}
-          type="text"
-          value={redshift}
-          onChange={(event) => updateParameter("redshift", event.target.value)}
-        />
       </div>
 
       {/* errors */}

@@ -38,11 +38,16 @@ fi
 
 # Stop the Simulator. We do this here already, as the docker compose on the repository
 # might have changed, and the Simulator should be stopped with the same compose file
-# that launched it.
-docker compose down || {
-  echo "The container for the NIRWALS Simulator could not be stopped." 1>&2
+# that launched it. We don't exit if this fails, as it might simply mean that the
+# Simulator isn't running at the moment.
+cd deployment || {
+  echo "Could not cd into deployment directory." 1>&2
   exit 1
 }
+docker compose down || {
+  echo "The container for the NIRWALS Simulator could not be stopped. (Maybe it was not running?)"
+}
+cd ..
 
 # Update the Simulator code.
 git pull || {
@@ -70,7 +75,7 @@ git pull || {
 }
 
 # Launch the Simulator.
-cd deployment || {
+cd ../../deployment || {
   echo "Could not cd into deployment directory." 1>&2
   exit 1
 }

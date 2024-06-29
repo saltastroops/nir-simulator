@@ -81,34 +81,38 @@ export default function BlackbodyPanel({ blackbody, update }: Props) {
 
   return (
     <div>
-      <div className="flex items-center">
-        {/* magnitude */}
+      {/* magnitude */}
+      <div className="field">
         <label htmlFor={magnitudeId} className={label("mr-2")}>
-          Apparent Magnitude
+          Apparent Magnitude (J Band)
         </label>
-        <input
-          id={magnitudeId}
-          className={input("w-12")}
-          type="text"
-          value={magnitude}
-          onChange={(event) => updateParameter("magnitude", event.target.value)}
-        />
-
-        {/* temperature */}
-        <label htmlFor={temperatureId} className={label("ml-5 mr-2")}>
-          Temperature
-        </label>
-        <input
-          id={temperatureId}
-          className={input("w-16")}
-          type="text"
-          value={temperature}
-          onChange={(event) =>
-            updateParameter("temperature", event.target.value)
-          }
-        />
+        <div className="control">
+          <input
+            id={magnitudeId}
+            className={input("")}
+            type="text"
+            value={magnitude}
+            onChange={(event) =>
+              updateParameter("magnitude", event.target.value)
+            }
+          />
+        </div>
       </div>
-
+      {/* temperature */}
+      <div className="field">
+        <label htmlFor={temperatureId}>Temperature (K)</label>
+        <div className="control">
+          <input
+            id={temperatureId}
+            className={input("")}
+            type="text"
+            value={temperature}
+            onChange={(event) =>
+              updateParameter("temperature", event.target.value)
+            }
+          />
+        </div>
+      </div>
       {/* errors */}
       {blackbody.hasErrors && (
         <Errors errors={errors} keys={["magnitude", "temperature"]} />

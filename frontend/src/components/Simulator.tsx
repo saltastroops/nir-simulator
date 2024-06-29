@@ -1,13 +1,10 @@
 import { useRef, useState } from "react";
 import { SpectrumGenerationTab } from "./spectrum/SpectrumGenerationTab";
-import {
-  ExposureConfiguration,
-  ExposurePanel,
-} from "./exposure/ExposurePanel.tsx";
+import { ExposureConfiguration, ExposureTab } from "./exposure/ExposureTab.tsx";
 import {
   InstrumentConfiguration,
-  InstrumentConfigurationPanel,
-} from "./instrument/InstrumentConfigurationPanel.tsx";
+  InstrumentConfigurationTab,
+} from "./instrument/InstrumentConfigurationTab.tsx";
 import { Moon } from "./spectrum/MoonPanel";
 import { Sun } from "./spectrum/SunPanel";
 import { Earth } from "./spectrum/EarthPanel.tsx";
@@ -132,13 +129,19 @@ export function Simulator() {
           <li ref={exposureLIRef}>
             <a onClick={() => switchToIndex(3)}>Make an Exposure</a>
           </li>
+          <li>
+            <a href="https://simulator.salt.ac.za/docs/" target="_blank">
+              Documentation
+            </a>
+          </li>
         </ul>
       </div>
+
       <div ref={spectrumDivRef} style={{ display: "block" }}>
         <SpectrumGenerationTab setup={setup} updateSetup={updateSetup} />
       </div>
       <div ref={instrumentConfigDivRef} style={{ display: "none" }}>
-        <InstrumentConfigurationPanel
+        <InstrumentConfigurationTab
           instrumentConfiguration={setup.instrumentConfiguration}
           setupData={setup}
           update={(instrumentConfiguration: InstrumentConfiguration) =>
@@ -147,7 +150,7 @@ export function Simulator() {
         />
       </div>
       <div ref={exposureDivRef} style={{ display: "none" }}>
-        <ExposurePanel
+        <ExposureTab
           setup={setup}
           update={(exposureConfiguration: ExposureConfiguration) =>
             updateSetup("exposureConfiguration", exposureConfiguration)

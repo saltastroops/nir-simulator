@@ -1,7 +1,7 @@
 import { GainSelector } from "./GainSelector.tsx";
 import { NonEditableGainPanel } from "./NonEditableGainPanel.tsx";
 import { CustomGainPanel } from "./CustomGainPanel.tsx";
-import { ExposureConfiguration } from "../ExposurePanel.tsx";
+import { ExposureConfiguration } from "../ExposureTab.tsx";
 
 export type GainType = "Faint" | "Bright" | "Custom";
 
@@ -92,15 +92,15 @@ export function GainPanel({ exposureConfiguration, update }: Props) {
     );
   };
   return (
-    <>
-      <div className="columns">
-        <div className="column pr-4 is-two-fifths">
+    <div>
+      <div className="flex">
+        <div className="mr-2 p-1">
           <GainSelector
             updateGain={updateGain}
             gain={exposureConfiguration.gain}
           />
         </div>
-        <div className="column pl-0">
+        <div className="ml-2 p-1">
           {(exposureConfiguration.gain.gainType === "Bright" ||
             exposureConfiguration.gain.gainType === "Faint") && (
             <NonEditableGainPanel gain={exposureConfiguration.gain} />
@@ -113,6 +113,6 @@ export function GainPanel({ exposureConfiguration, update }: Props) {
           )}
         </div>
       </div>
-    </>
+    </div>
   );
 }

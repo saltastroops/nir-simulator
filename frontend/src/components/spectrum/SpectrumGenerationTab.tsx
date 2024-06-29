@@ -1,12 +1,13 @@
 import SourceForm, { Source } from "./SourceForm";
 import { Earth, EarthPanel } from "./EarthPanel.tsx";
-import { button } from "../utils.ts";
+import { button, spectrumFormData } from "../utils.ts";
 import { SimulationSetup } from "../Simulator.tsx";
 import { spectra } from "../../services.ts";
 import { useMemo, useState } from "react";
 import { defaultLinePlotOptions } from "../plots/PlotOptions.ts";
 import { LinePlot } from "../plots/LinePlot.tsx";
-import { ChartContent } from "../instrument/InstrumentConfigurationPanel.tsx";
+import { ChartContent } from "../instrument/InstrumentConfigurationTab.tsx";
+import { isEqual } from "lodash";
 
 interface Props {
   setup: SimulationSetup;
@@ -15,6 +16,8 @@ interface Props {
 
 export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
   const { source, earth } = setup;
+  const fluxUnits =
+    source.type == "Point" ? "erg/(cm² s Å)" : "erg/(cm² s arcsec² Å)";
 
   const [sourceChartContent, setSourceChartContent] = useState<ChartContent>({
     chartData: {
@@ -22,8 +25,8 @@ export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
       y: [],
       lineColor: "rgb(255, 0, 0)",
       options: defaultLinePlotOptions(
-        "Wavelength (\u212B)",
-        "Flux (photons sec\u002D\u00B9 \u212B\u002D\u00B9 cm\u002D\u00B2)",
+        "Wavelength (Å)",
+        `Flux(${fluxUnits})`,
         "Source Spectrum",
       ),
     },
@@ -31,12 +34,7 @@ export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
   });
   const [error, setError] = useState<string | null>(null);
   const sourceChart = useMemo(
-    () => (
-      <LinePlot
-        chartContent={sourceChartContent}
-        isOutdated={false && sourceChartContent.requested}
-      />
-    ),
+    () => <LinePlot chartContent={sourceChartContent} />,
     [sourceChartContent],
   );
 
@@ -46,20 +44,15 @@ export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
       y: [],
       lineColor: "rgb(75,100,192)",
       options: defaultLinePlotOptions(
-        "Wavelength (\u212B)",
-        "Flux (photons sec\u002D\u00B9 \u212B\u002D\u00B9 cm\u002D\u00B2)",
+        "Wavelength (Å)",
+        "Flux (erg/(cm² s arcsec² Å)",
         "Sky Background Spectrum",
       ),
     },
     requested: false,
   });
   const skyChart = useMemo(
-    () => (
-      <LinePlot
-        chartContent={skyChartContent}
-        isOutdated={false && skyChartContent.requested}
-      />
-    ),
+    () => <LinePlot chartContent={skyChartContent} />,
     [skyChartContent],
   );
 
@@ -74,7 +67,11 @@ export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
           x: sourceData.wavelengths,
           y: sourceData.fluxes,
           lineColor: previousChartContent.chartData.lineColor,
-          options: previousChartContent.chartData.options,
+          options: defaultLinePlotOptions(
+            "Wavelength (Å)",
+            `Flux (${fluxUnits})`,
+            "Source Spectrum",
+          ),
         };
         setError(null);
         return {
@@ -90,6 +87,7 @@ export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
           lineColor: previousChartContent.chartData.lineColor,
           options: previousChartContent.chartData.options,
         };
+        setPlotMetadata(currentMetadata);
         return {
           chartData: updatedChartData,
           requested: true,
@@ -101,10 +99,15 @@ export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
     }
   };
 
+  const [plotMetadata, setPlotMetadata] = useState({} as any);
+
+  const currentMetadata = spectrumFormData(setup);
+  const isPlotOutdated = !isEqual(currentMetadata, plotMetadata);
+
   return (
-    <div className="columns">
-      <div className="column">
-        <div className="bg-gray-50">
+    <div className="flex flex-col items-center md:flex-row  md:items-start">
+      <div className="mr-2 ml-2 max-w-[378px] mb-3">
+        <div className="bg-gray-50 p-2">
           <fieldset className="border border-solid border-gray-300 p-3">
             <legend>Source Spectrum</legend>
             <SourceForm
@@ -112,7 +115,8 @@ export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
               update={(source: Source) => updateSetup("source", source)}
             />
           </fieldset>
-          <div className="mt-4 mb-4 p-2 border border-orange-300 bg-yellow-50 text-orange-300 font-semibold">
+
+          <div className="mt-4 mb-4 p-2 border border-orange-300 bg-yellow-50 text-orange-300 font-semibold max-w-[350px]">
             The NIRWALS Simulator currently uses the same atmospheric background
             spectrum irrespective of solar and lunar conditions.
           </div>
@@ -148,27 +152,49 @@ export function SpectrumGenerationTab({ setup, updateSetup }: Props) {
           {/*</fieldset>*/}
 
           <button
-            className={button("mt-6 text-white bg-green-600")}
+            className={button("mt-3 text-white bg-green-600")}
             onClick={updatePlots}
           >
             Show Spectrum
           </button>
+          {error && (
+            <div>
+              <p className={"has-text-danger"}>{error}</p>
+            </div>
+          )}
         </div>
       </div>
-      <div className="column">
-        <div className="bg-gray-50">
-          <div className={!error ? "tile" : "tile notification is-danger"}>
-            {sourceChart}
+      <div className="ml-2 w-full">
+        {!sourceChartContent.requested && (
+          <div>
+            <p className={"hidden m-4 md:block"}>
+              Press the "Show Spectrum" button to generate the plots
+            </p>
           </div>
-        </div>
-        <div className="bg-gray-50 mt-2">
-          <div className={!error ? "tile" : "tile notification is-danger"}>
-            {skyChart}
-          </div>
-        </div>
-        {error && (
-          <div className="tile">
-            <p className={"has-text-danger"}>{error}</p>
+        )}
+
+        {sourceChartContent.requested && (
+          <div>
+            <div className="bg-gray-50 p-2">
+              <div className={!error ? "" : "bg-red-300"}>
+                <div className="chart-container">
+                  {isPlotOutdated && sourceChartContent.requested && (
+                    <div className="watermark">Outdated</div>
+                  )}
+                  {sourceChart}
+                </div>
+              </div>
+            </div>
+            <div className="bg-gray-50 mt-2 p-2">
+              <div className={!error ? "" : "bg-red-300"}>
+                <div className="chart-container">
+                  {isPlotOutdated && sourceChartContent.requested && (
+                    <div className="watermark">Outdated</div>
+                  )}
+                  {skyChart}
+                </div>
+              </div>
+            </div>
           </div>
         )}
       </div>

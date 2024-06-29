@@ -17,7 +17,7 @@ GalaxyType = Literal["E", "S0", "Sa", "Sb", "Sc", "Sd"]
 
 GratingName = Literal["950"]
 
-SamplingType = Literal["Fowler", "Up-the-Ramp"]
+SamplingMode = Literal["Fowler", "Up-the-Ramp"]
 
 SourceExtension = Literal["Diffuse", "Point"]
 
@@ -185,7 +185,7 @@ class Detector:
     gain: float
     read_noise: float
     samplings: int
-    sampling_type: SamplingType
+    sampling_mode: SamplingMode
 
 
 @dataclasses.dataclass
@@ -337,7 +337,7 @@ def _parse_source(data: dict[str, Any]) -> Source | None:
                     galaxy_type=s["type"],
                     magnitude=float(s["magnitude"]),
                     redshift=float(s["redshift"]),
-                    with_emission_lines=False,
+                    with_emission_lines=s["withEmissionLines"],
                 )
             case _:
                 raise ValueError(f"Unsupported spectrum type: {spectrum_type}")
@@ -403,20 +403,20 @@ def configuration(data: dict[str, Any]) -> Configuration:
     if "exposure_configuration" in data:
         exposure_configuration = data["exposure_configuration"]
 
-        sampling_type_data: str = exposure_configuration["sampling"]["samplingType"]
-        if sampling_type_data == "Fowler":
-            sampling_type: SamplingType = "Fowler"
-        elif sampling_type_data == "Up The Ramp":
-            sampling_type = "Up-the-Ramp"
+        sampling_mode_data: str = exposure_configuration["sampling"]["samplingMode"]
+        if sampling_mode_data == "Fowler":
+            sampling_mode: SamplingMode = "Fowler"
+        elif sampling_mode_data == "Up The Ramp":
+            sampling_mode = "Up-the-Ramp"
         else:
-            raise ValueError(f"Unsupported sampling type: {sampling_type_data}")
+            raise ValueError(f"Unsupported sampling type: {sampling_mode_data}")
 
         detector: Detector | None = Detector(
             full_well=int(exposure_configuration["gain"]["fullWell"]),
             gain=float(exposure_configuration["gain"]["gain"]),
             read_noise=float(exposure_configuration["gain"]["readNoise"]),
             samplings=int(exposure_configuration["sampling"]["numberOfSamples"]),
-            sampling_type=sampling_type,
+            sampling_mode=sampling_mode,
         )
 
         exposures = 0

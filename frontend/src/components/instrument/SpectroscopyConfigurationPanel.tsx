@@ -47,11 +47,10 @@ export default function SpectroscopyConfigurationPanel({
   };
 
   return (
-    <div className="tile is-child box mt-2">
-      <div className="title is-6">Spectroscopy</div>
+    <div>
       <div className="field">
-        <div className="control  pb-2">
-          <label>Grating</label>
+        <div className="control pb-2">
+          <label>Grating (lines per mm)</label>
           <div>
             <select
               className={select("w-32")}
@@ -65,8 +64,8 @@ export default function SpectroscopyConfigurationPanel({
             </select>
           </div>
         </div>
-        <div className="control  pb-2">
-          <label>Grating Angle</label>
+        <div className="control pb-2">
+          <label>Grating Angle (degrees)</label>
           <div>
             <select
               className={select("w-32")}

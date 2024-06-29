@@ -29,7 +29,7 @@ def get_default_configuration() -> Configuration:
         A default simulator configuration.
     """
     detector = Detector(
-        full_well=83500, gain=2.04, read_noise=24.6, samplings=1, sampling_type="Fowler"
+        full_well=83500, gain=2.04, read_noise=24.6, samplings=1, sampling_mode="Fowler"
     )
     exposure = Exposure(exposures=1, exposure_time=100 * u.s, snr=None)
     moon = Moon(

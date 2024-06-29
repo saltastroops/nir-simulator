@@ -535,12 +535,12 @@ def test_source_electrons() -> Figure:
 
 def test_readout_noise() -> None:
     assert (
-        pytest.approx(readout_noise(read_noise=5, samplings=3, sampling_type="Fowler"))
+        pytest.approx(readout_noise(read_noise=5, samplings=3, sampling_mode="Fowler"))
         == 50 / 3
     )
     assert (
         pytest.approx(
-            readout_noise(read_noise=8, samplings=5, sampling_type="Up-the-Ramp")
+            readout_noise(read_noise=8, samplings=5, sampling_mode="Up-the-Ramp")
         )
         == 153.6
     )

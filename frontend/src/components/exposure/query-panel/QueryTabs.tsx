@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ExposureTime, SNRQueryTab } from "./SNRQueryTab.tsx";
 import { ExposureTimeQueryTab, SNR } from "./ExposureTimeQueryTab.tsx";
-import { ExposureConfiguration } from "../ExposurePanel.tsx";
+import { ExposureConfiguration } from "../ExposureTab.tsx";
 
 interface Props {
   exposureConfiguration: ExposureConfiguration;
@@ -37,7 +37,7 @@ export function QueryTabs({
   };
 
   return (
-    <>
+    <div>
       <div className="tabs is-boxed">
         <ul>
           <li className={activeTab === 1 ? "is-active" : ""}>
@@ -69,6 +69,6 @@ export function QueryTabs({
           updatePlots={updatePlots}
         />
       )}
-    </>
+    </div>
   );
 }

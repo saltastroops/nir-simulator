@@ -35,7 +35,7 @@ export function GainSelector({ updateGain, gain }: Props) {
   };
 
   return (
-    <>
+    <div>
       <div className="field">
         <div className="control">
           <label className="radio">
@@ -66,7 +66,7 @@ export function GainSelector({ updateGain, gain }: Props) {
       </div>
       <div className="field">
         <div className="control">
-          <label className="radio">
+          <label className="radio flex">
             <input
               className="mr-2"
               type="radio"
@@ -74,10 +74,10 @@ export function GainSelector({ updateGain, gain }: Props) {
               checked={gain.gainType === "Custom"}
               onChange={() => update("Custom")}
             />
-            Custom Object
+            Custom&nbsp;Object
           </label>
         </div>
       </div>
-    </>
+    </div>
   );
 }
