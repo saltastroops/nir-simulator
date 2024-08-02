@@ -22,7 +22,7 @@ interface InstrumentConfigurationParameters {
 
 export class InstrumentConfiguration {
   public modeConfiguration: ModeConfiguration = new SpectroscopyConfiguration();
-  public filter: string = "Clear Filter";
+  public filter: string = "clear-filter";
 
   public constructor(parameters?: InstrumentConfigurationParameters) {
     if (parameters) {
