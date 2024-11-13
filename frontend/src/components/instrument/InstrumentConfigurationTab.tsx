@@ -195,8 +195,8 @@ export function InstrumentConfigurationTab({
                     }
                     name="filter"
                   >
-                    <option value={"clear-filter"}>Clear Filter</option>
-                    <option value={"lwbf"}>LWBF</option>
+                    <option value={"Clear Filter"}>Clear Filter</option>
+                    <option value={"LWBF"}>LWBF</option>
                   </select>
                 </div>
               </div>

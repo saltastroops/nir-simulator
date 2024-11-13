@@ -382,13 +382,7 @@ def configuration(data: dict[str, Any]) -> Configuration:
         sun = None
 
     if "filter" in data:
-        filter_name_data: str | None = data["filter"]
-        if filter_name_data == "clear-filter":
-            filter_name: Filter | None = "Clear Filter"
-        elif filter_name_data == "lwbf":
-            filter_name = "LWBF"
-        else:
-            raise ValueError(f"Unsupported filter name: {filter_name_data}")
+        filter_name: Filter | None = data["filter"]
     else:
         filter_name = None
 
