@@ -1,13 +1,12 @@
 import "./linePlot.css";
 import { Line } from "react-chartjs-2";
-import { ChartContent } from "../instrument/InstrumentConfigurationPanel.tsx";
+import { ChartContent } from "../instrument/InstrumentConfigurationTab.tsx";
 
 interface Props {
   chartContent: ChartContent;
-  isOutdated: boolean;
 }
 
-export function LinePlot({ chartContent, isOutdated }: Props) {
+export function LinePlot({ chartContent }: Props) {
   const plotData = {
     labels: chartContent.chartData.x,
     datasets: [
@@ -22,9 +21,6 @@ export function LinePlot({ chartContent, isOutdated }: Props) {
   };
 
   return (
-    <div className="chart-container">
-      {isOutdated && <div className="watermark">Outdated</div>}
-      <Line data={plotData} options={chartContent.chartData.options as any} />
-    </div>
+    <Line data={plotData} options={chartContent.chartData.options as any} />
   );
 }

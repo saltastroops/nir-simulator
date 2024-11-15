@@ -10,7 +10,8 @@ import { defaultLinePlotOptions, LineOptions } from "../plots/PlotOptions.ts";
 import { LinePlot } from "../plots/LinePlot.tsx";
 import { throughput } from "../../services.ts";
 import { SimulationSetup } from "../Simulator.tsx";
-import { button, select } from "../utils.ts";
+import { button, select, throughputFormData } from "../utils.ts";
+import { isEqual } from "lodash";
 
 type ModeConfiguration = ImagingConfiguration | SpectroscopyConfiguration;
 
@@ -54,7 +55,7 @@ interface Props {
   update: (instrumentConfiguration: InstrumentConfiguration) => void;
 }
 
-export function InstrumentConfigurationPanel({
+export function InstrumentConfigurationTab({
   instrumentConfiguration,
   setupData,
   update,
@@ -74,12 +75,7 @@ export function InstrumentConfigurationPanel({
   });
   const [error, setError] = useState<string | null>(null);
   const Chart = useMemo(
-    () => (
-      <LinePlot
-        chartContent={chartContent}
-        isOutdated={false && chartContent.requested}
-      />
-    ),
+    () => <LinePlot chartContent={chartContent} />,
     [chartContent],
   );
 
@@ -130,21 +126,27 @@ export function InstrumentConfigurationPanel({
           options: previousChartContent.chartData.options,
         };
         setError(null);
+        setPlotMetadata(currentMetadata);
         return {
           chartData: updatedChartData,
           requested: true,
         };
       });
     } catch (error) {
-      setError("Failed to fetch plot data.");
+      setError("Data request failed.");
       console.error("Error fetching plot data:", error);
     }
   };
 
+  const [plotMetadata, setPlotMetadata] = useState({} as any);
+
+  const currentMetadata = throughputFormData(setupData);
+  const isPlotOutdated = !isEqual(currentMetadata, plotMetadata);
+
   return (
     <div>
-      <div className="flex">
-        <div className="mr-2 ml-2">
+      <div className="flex flex-col items-center md:flex-row  md:items-start">
+        <div className="mr-2 ml-2 max-w-[378px] mb-3">
           <div className="bg-gray-50 p-2">
             {/* instrument mode */}
             <fieldset className="border border-solid border-gray-300 p-3">
@@ -193,8 +195,8 @@ export function InstrumentConfigurationPanel({
                     }
                     name="filter"
                   >
-                    <option value={"clear-filter"}>Clear Filter</option>
-                    <option value={"lwbf"}>LWBF</option>
+                    <option value={"Clear Filter"}>Clear Filter</option>
+                    <option value={"LWBF"}>LWBF</option>
                   </select>
                 </div>
               </div>
@@ -243,9 +245,28 @@ export function InstrumentConfigurationPanel({
         </div>
 
         <div className="ml-2 w-full">
-          <div className="bg-gray-50 p-2">
-            <div className={!error ? "" : "bg-red-300"}>{Chart}</div>
-          </div>
+          {!chartContent.requested && (
+            <div>
+              <p className={"hidden m-4 md:block"}>
+                Press the "Show Throughput" button to generate the plots
+              </p>
+            </div>
+          )}
+
+          {chartContent.requested && (
+            <div>
+              <div className="bg-gray-50 p-2">
+                <div className={!error ? "" : "bg-red-300"}>
+                  <div className="chart-container">
+                    {chartContent.requested && isPlotOutdated && (
+                      <div className="watermark">Outdated</div>
+                    )}
+                    {Chart}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

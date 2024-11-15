@@ -337,7 +337,7 @@ def _parse_source(data: dict[str, Any]) -> Source | None:
                     galaxy_type=s["type"],
                     magnitude=float(s["magnitude"]),
                     redshift=float(s["redshift"]),
-                    with_emission_lines=False,
+                    with_emission_lines=s["withEmissionLines"],
                 )
             case _:
                 raise ValueError(f"Unsupported spectrum type: {spectrum_type}")
@@ -382,13 +382,7 @@ def configuration(data: dict[str, Any]) -> Configuration:
         sun = None
 
     if "filter" in data:
-        filter_name_data: str | None = data["filter"]
-        if filter_name_data == "Clear Filter":
-            filter_name: Filter | None = "Clear Filter"
-        elif filter_name_data == "lwbf":
-            filter_name = "LWBF"
-        else:
-            raise ValueError(f"Unsupported filter name: {filter_name_data}")
+        filter_name: Filter | None = data["filter"]
     else:
         filter_name = None
 

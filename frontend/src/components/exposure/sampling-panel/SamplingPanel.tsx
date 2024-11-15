@@ -1,4 +1,4 @@
-import { ExposureConfiguration } from "../ExposurePanel.tsx";
+import { ExposureConfiguration } from "../ExposureTab.tsx";
 import { Error } from "../../Error.tsx";
 import { input } from "../../utils.ts";
 
