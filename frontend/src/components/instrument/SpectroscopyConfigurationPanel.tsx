@@ -67,20 +67,18 @@ export default function SpectroscopyConfigurationPanel({
         <div className="control pb-2">
           <label>Grating Angle (degrees)</label>
           <div>
-            <select
-              className={select("w-32")}
-              value={gratingAngle}
-              onChange={(event) =>
-                updateParameter("gratingAngle", event.target.value)
-              }
-              name="gratingAngle"
-            >
-              <option value="30">30</option>
-              <option value="35">35</option>
-              <option value="40">40</option>
-              <option value="45">45</option>
-              <option value="50">50</option>
-            </select>
+            <input
+                type="number"
+                className={select("w-32")}
+                value={gratingAngle}
+                min="25"
+                max="50"
+                step="1"
+                onChange={(event) =>
+                    updateParameter("gratingAngle", event.target.value)
+                }
+                name="gratingAngle"
+            />
           </div>
         </div>
       </div>
