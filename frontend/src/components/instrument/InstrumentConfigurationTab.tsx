@@ -22,7 +22,7 @@ interface InstrumentConfigurationParameters {
 
 export class InstrumentConfiguration {
   public modeConfiguration: ModeConfiguration = new SpectroscopyConfiguration();
-  public filter: string = "Clear Filter";
+  public filter: string = "clear-filter";
 
   public constructor(parameters?: InstrumentConfigurationParameters) {
     if (parameters) {
@@ -195,8 +195,8 @@ export function InstrumentConfigurationTab({
                     }
                     name="filter"
                   >
-                    <option value={"Clear Filter"}>Clear Filter</option>
-                    <option value={"LWBF"}>LWBF</option>
+                    <option value={"clear-filter"}>Clear Filter</option>
+                    <option value={"lwbf"}>LWBF</option>
                   </select>
                 </div>
               </div>
